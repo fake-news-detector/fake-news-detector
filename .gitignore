@@ -1,1 +1,3 @@
-links.csv
+data/*
+!data/.gitkeep
+__pycache__
