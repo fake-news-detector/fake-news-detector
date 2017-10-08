@@ -44,8 +44,10 @@ def train():
     pickle.dump(clf, open('model.pkl', 'wb'))
 
 
-def predict(titles):
+def load_model():
     print("Loading model...")
-    clf = pickle.load(open('model.pkl', 'rb'))
+    return pickle.load(open('model.pkl', 'rb'))
 
-    return clf.predict(titles)
+
+def predict(titles):
+    return load_model().predict(titles)

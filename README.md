@@ -30,3 +30,7 @@ To run tests:
 ```
 python3 -m unittest tests/*_test.py
 ```
+
+## Deploy
+
+Read more about deploying docker with heroku [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
