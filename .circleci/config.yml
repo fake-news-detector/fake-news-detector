@@ -1,13 +1,30 @@
 version: 2
 jobs:
   build:
+    docker:
+      - image: docker
     working_directory: ~/app
-    machine: true
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
-          name: build image
-          command: docker build -t robinho .
+          name: fetch existing image
+          command: docker pull fakenewsdetector/robinho
+      - run:
+          name: build
+          command: |
+            docker build -t fakenewsdetector/robinho .
+            docker login --username=$DOCKER_USER --password=$DOCKER_PASS
+            docker push fakenewsdetector/robinho
       - run:
           name: run tests
-          command: docker run --rm robinho python3 -m unittest tests/*_test.py
+          command: docker run --rm fakenewsdetector/robinho python3 -m unittest tests/*_test.py
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+              docker tag fakenewsdetector/robinho:latest registry.heroku.com/robinho/web
+              docker push registry.heroku.com/robinho/web
+            fi
