@@ -2,24 +2,12 @@ version: 2
 jobs:
   build:
     working_directory: ~/app
-    docker:
-      - image: circleci/python:3.6.1
+    machine: true
     steps:
       - checkout
-      - restore_cache:
-          key: dependencies-{{ checksum "requirements.txt" }}
       - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-      - save_cache:
-          paths:
-            - ./venv
-          key: dependencies-{{ checksum "requirements.txt" }}
+          name: build image
+          command: docker build -t robinho .
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            python -m unittest tests/*_test.py
+          command: docker run --rm robinho python3 -m unittest tests/*_test.py
