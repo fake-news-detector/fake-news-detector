@@ -14,5 +14,6 @@ class AccuracyTestCase(unittest.TestCase):
         clf = clf.fit(X_train, y_train)
 
         accuracy = clf.score(X_test, y_test)
+        print('accuracy', accuracy)
 
         self.assertGreater(accuracy, 0.1)
