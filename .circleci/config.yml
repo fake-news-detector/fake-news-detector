@@ -14,7 +14,7 @@ jobs:
       - run:
           name: build
           command: |
-            docker build -t fakenewsdetector/robinho .
+            docker build --cache-from fakenewsdetector/robinho:latest -t fakenewsdetector/robinho .
             docker login --username=$DOCKER_USER --password=$DOCKER_PASS
             docker push fakenewsdetector/robinho
       - run:
