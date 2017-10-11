@@ -6,8 +6,7 @@ jobs:
     working_directory: ~/app
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: fetch existing image
           command: docker pull fakenewsdetector/robinho
