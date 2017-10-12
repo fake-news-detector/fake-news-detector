@@ -6,6 +6,20 @@
 Robinho
 =======
 
+## JSON API endpoints
+
+The JSON API is currently running under the url https://robinho.herokuapp.com/
+
+### Predictions
+
+You can predict the category of a news by calling:
+
+`GET /predict?title=string`
+
+Response format:
+
+`{ predictions: [{ category_id: int, chance: float }] }`
+
 ## How to run
 
 First you need to install the dependencies:
