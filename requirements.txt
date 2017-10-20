@@ -2,3 +2,4 @@ pandas
 sklearn
 imblearn
 tornado
+jupyter
