@@ -9,19 +9,19 @@ import robinho.common as common
 def features_labels():
     df = common.load_links()
 
-    df["is_fake_news"] = [
-        category_id == 2 for category_id in df["category_id"]
+    df["is_click_bait"] = [
+        category_id == 3 for category_id in df["category_id"]
     ]
 
     X = df["title"]
-    y = df["is_fake_news"]
+    y = df["is_click_bait"]
 
     return X, y
 
 
 def classifier():
     return Pipeline([
-        ('vect', CountVectorizer(ngram_range=(1, 2))),
+        ('vect', CountVectorizer(ngram_range=(1, 1))),
         ('tfidf', TfidfTransformer()),
         ('sampling', RandomUnderSampler()),
         ('clf', MultinomialNB()),
@@ -34,8 +34,8 @@ def train():
     clf = classifier()
     clf = clf.fit(X, y)
 
-    common.save(clf, 'fake_news')
+    common.save(clf, 'click_bait')
 
 
 def predict(title):
-    return common.predict('fake_news', title)
+    return common.predict('click_bait', title)

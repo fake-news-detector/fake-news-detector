@@ -6,15 +6,6 @@ from imblearn.pipeline import Pipeline
 import robinho.common as common
 
 
-def classifier():
-    return Pipeline([
-        ('vect', CountVectorizer(ngram_range=(1, 1))),
-        ('tfidf', TfidfTransformer()),
-        ('sampling', RandomUnderSampler()),
-        ('clf', MultinomialNB()),
-    ])
-
-
 def features_labels():
     df = common.load_links()
 
@@ -26,10 +17,18 @@ def features_labels():
     return X, y
 
 
+def classifier():
+    return Pipeline([
+        ('vect', CountVectorizer(ngram_range=(1, 1))),
+        ('tfidf', TfidfTransformer()),
+        ('sampling', RandomUnderSampler()),
+        ('clf', MultinomialNB()),
+    ])
+
+
 def train():
     X, y = features_labels()
 
-    print("Fitting data...")
     clf = classifier()
     clf = clf.fit(X, y)
 
