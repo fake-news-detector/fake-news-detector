@@ -4,7 +4,6 @@ import pickle
 
 def load_links():
     try:
-        print("Loading local links data...")
         df = pd.read_csv("data/links.csv")
     except:
         print("Downloading links data...")
@@ -18,13 +17,11 @@ def load_links():
 
 
 def save(clf, model_name):
-    print("Saving model...")
     with open('data/' + model_name + '.pkl', "wb") as f:
         pickle.dump(clf, f)
 
 
 def load(model_name):
-    print("Loading model...")
     with open('data/' + model_name + '.pkl', "rb") as f:
         return pickle.load(f)
 
