@@ -1,6 +1,7 @@
 import unittest
 
 import robinho.click_bait as model
+import robinho.common as common
 from tests.helpers import test_multiple
 
 X, y = model.features_labels()
@@ -28,6 +29,7 @@ class ClickBaitTestCase(unittest.TestCase):
     def test_make_predictions(self):
         model.train()
         self.assertGreater(
-            model.predict(
+            common.predict(
+                model.load(),
                 "8 truques que os pintores de paredes não contam para você"),
             0.5)

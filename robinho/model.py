@@ -1,38 +1,34 @@
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.pipeline import Pipeline
-import pickle
-from robinho.data import load_data
+import robinho.fake_news as fake_news
+import robinho.click_bait as click_bait
+import robinho.extremely_biased as extremely_biased
+import robinho.common as common
 
 
-def classifier():
-    return Pipeline([
-        ('vect', CountVectorizer()),
-        ('tfidf', TfidfTransformer()),
-        ('sampling', RandomUnderSampler()),
-        ('clf', MultinomialNB()),
-    ])
+class Robinho():
+    def train(self):
+        fake_news.train()
+        click_bait.train()
+        extremely_biased.train()
 
+    def load(self):
+        self.fake_news = fake_news.load()
+        self.click_bait = click_bait.load()
+        self.extremely_biased = extremely_biased.load()
 
-def train():
-    X, y = load_data()
+    def predict(self, title):
+        classifiers = {
+            "fake_news": self.fake_news,
+            "click_bait": self.click_bait,
+            "extremely_biased": self.extremely_biased
+        }
 
-    print("Fitting data...")
-    clf = classifier()
-    clf = clf.fit(X, y)
+        predictions = []
+        for category in ["fake_news", "click_bait", "extremely_biased"]:
+            score = common.predict(classifiers[category], title)
+            if score > 0.5:
+                predictions.append({
+                    'category_id': common.categories[category],
+                    'chance': score
+                })
 
-    print("Saving model...")
-    pickle.dump(clf, open('model.pkl', 'wb'))
-
-
-def load_model():
-    print("Loading model...")
-    return pickle.load(open('model.pkl', 'rb'))
-
-
-def predict(titles):
-    return load_model().predict(titles)
+        return predictions

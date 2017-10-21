@@ -10,7 +10,8 @@ def features_labels():
     df = common.load_links()
 
     df["is_fake_news"] = [
-        category_id == 2 for category_id in df["category_id"]
+        category_id == common.categories["fake_news"]
+        for category_id in df["category_id"]
     ]
 
     X = df["title"]
@@ -37,5 +38,5 @@ def train():
     common.save(clf, 'fake_news')
 
 
-def predict(title):
-    return common.predict('fake_news', title)
+def load():
+    return common.load('fake_news')

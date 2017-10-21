@@ -1,6 +1,7 @@
 import unittest
 
 import robinho.fake_news as model
+import robinho.common as common
 from tests.helpers import test_multiple
 
 X, y = model.features_labels()
@@ -28,4 +29,5 @@ class FakeNewsTestCase(unittest.TestCase):
     def test_make_predictions(self):
         model.train()
         self.assertGreater(
-            model.predict("Novela apresentará Beijo gay infantil"), 0.5)
+            common.predict(model.load(),
+                           "Novela apresentará Beijo gay infantil"), 0.5)

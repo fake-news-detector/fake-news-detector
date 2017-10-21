@@ -1,6 +1,8 @@
 import pandas as pd
 import pickle
 
+categories = {"fake_news": 2, "click_bait": 3, "extremely_biased": 4}
+
 
 def load_links():
     try:
@@ -26,5 +28,5 @@ def load(model_name):
         return pickle.load(f)
 
 
-def predict(model_name, title):
-    return load(model_name).predict_proba([title])[0][1]
+def predict(model, title):
+    return model.predict_proba([title])[0][1]
