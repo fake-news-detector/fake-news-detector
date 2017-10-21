@@ -47,7 +47,7 @@ python3 . --retrain
 To run tests:
 
 ```
-python3 -m unittest tests/**/*_test.py
+python3 -m unittest
 ```
 
 ## Deploy
