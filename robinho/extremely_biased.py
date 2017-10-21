@@ -9,7 +9,10 @@ import robinho.common as common
 def features_labels():
     df = common.load_links()
 
-    df["is_biased"] = [category_id == 4 for category_id in df["category_id"]]
+    df["is_biased"] = [
+        category_id == common.categories["extremely_biased"]
+        for category_id in df["category_id"]
+    ]
 
     X = df["title"]
     y = df["is_biased"]
@@ -35,5 +38,5 @@ def train():
     common.save(clf, 'extremely_biased')
 
 
-def predict(title):
-    return common.predict('extremely_biased', title)
+def load():
+    return common.load('extremely_biased')

@@ -10,7 +10,8 @@ def features_labels():
     df = common.load_links()
 
     df["is_click_bait"] = [
-        category_id == 3 for category_id in df["category_id"]
+        category_id == common.categories["click_bait"]
+        for category_id in df["category_id"]
     ]
 
     X = df["title"]
@@ -37,5 +38,5 @@ def train():
     common.save(clf, 'click_bait')
 
 
-def predict(title):
-    return common.predict('click_bait', title)
+def load():
+    return common.load('click_bait')
