@@ -1,33 +1,28 @@
-import robinho.fake_news as fake_news
-import robinho.click_bait as click_bait
-import robinho.extremely_biased as extremely_biased
-import robinho.common as common
+from robinho.classifiers.fake_news import FakeNews
+from robinho.classifiers.click_bait import ClickBait
+from robinho.classifiers.extremely_biased import ExtremelyBiased
+from robinho.categories import categories
 
 
 class Robinho():
-    def train(self):
-        fake_news.train()
-        click_bait.train()
-        extremely_biased.train()
-
-    def load(self):
-        self.fake_news = fake_news.load()
-        self.click_bait = click_bait.load()
-        self.extremely_biased = extremely_biased.load()
-
-    def predict(self, title):
-        classifiers = {
-            "fake_news": self.fake_news,
-            "click_bait": self.click_bait,
-            "extremely_biased": self.extremely_biased
+    def __init__(self):
+        self.classifiers = {
+            "fake_news": FakeNews(),
+            "click_bait": ClickBait(),
+            "extremely_biased": ExtremelyBiased()
         }
 
+    def train(self):
+        for category, classifier in self.classifiers.items():
+            classifier.train()
+
+    def predict(self, title):
         predictions = []
-        for category in ["fake_news", "click_bait", "extremely_biased"]:
-            score = common.predict(classifiers[category], title)
+        for category, classifier in self.classifiers.items():
+            score = classifier.predict(title)
             if score > 0.5:
                 predictions.append({
-                    'category_id': common.categories[category],
+                    'category_id': categories[category],
                     'chance': score
                 })
 
