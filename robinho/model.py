@@ -1,53 +1,29 @@
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.pipeline import Pipeline
-import pickle
+from robinho.classifiers.fake_news import FakeNews
+from robinho.classifiers.click_bait import ClickBait
+from robinho.classifiers.extremely_biased import ExtremelyBiased
+from robinho.categories import categories
 
 
-def load_data():
-    try:
-        print("Loading local data...")
-        df = pd.read_csv("data/links.csv")
-    except:
-        print("Downloading data...")
-        df = pd.read_json(
-            "http://fake-news-detector-api.herokuapp.com/links/all")
-        df.to_csv("data/links.csv")
+class Robinho():
+    def __init__(self):
+        self.classifiers = {
+            "fake_news": FakeNews(),
+            "click_bait": ClickBait(),
+            "extremely_biased": ExtremelyBiased()
+        }
 
-    X = df["title"]
-    y = df["category_id"]
+    def train(self):
+        for category, classifier in self.classifiers.items():
+            classifier.train()
 
-    return X, y
+    def predict(self, title):
+        predictions = []
+        for category, classifier in self.classifiers.items():
+            score = classifier.predict(title)
+            if score > 0.5:
+                predictions.append({
+                    'category_id': categories[category],
+                    'chance': score
+                })
 
-
-def classifier():
-    return Pipeline([
-        ('vect', CountVectorizer()),
-        ('tfidf', TfidfTransformer()),
-        ('sampling', RandomUnderSampler()),
-        ('clf', MultinomialNB()),
-    ])
-
-
-def train():
-    X, y = load_data()
-
-    print("Fitting data...")
-    clf = classifier()
-    clf = clf.fit(X, y)
-
-    print("Saving model...")
-    pickle.dump(clf, open('model.pkl', 'wb'))
-
-
-def load_model():
-    print("Loading model...")
-    return pickle.load(open('model.pkl', 'rb'))
-
-
-def predict(titles):
-    return load_model().predict(titles)
+        return predictions

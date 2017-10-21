@@ -1,28 +1,22 @@
 import tornado.ioloop
 import tornado.web
-import robinho.model as robinho
+from robinho.model import Robinho
 import os
 
+robinho = Robinho()
 
-def handler(model):
-    class MainHandler(tornado.web.RequestHandler):
-        def get(self):
-            titles = self.get_arguments("title")
-            predictions = model.predict_proba(titles)[0]
-            predictions = [{
-                'category_id': index + 1,
-                'chance': chance
-            } for index, chance in enumerate(predictions)]
 
-            self.finish({'predictions': predictions})
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        title = self.get_arguments("title")[0]
+        predictions = robinho.predict(title)
 
-    return MainHandler
+        self.finish({'predictions': predictions})
 
 
 def start():
-    model = robinho.load_model()
     app = tornado.web.Application([
-        (r"/predict", handler(model)),
+        (r"/predict", MainHandler),
     ])
     port = os.getenv("PORT") or 8888
     app.listen(port)
