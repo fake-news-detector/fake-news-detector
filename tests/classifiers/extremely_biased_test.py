@@ -1,9 +1,9 @@
 import unittest
 
-import robinho.extremely_biased as model
-import robinho.common as common
+from robinho.classifiers.extremely_biased import ExtremelyBiased
 from tests.helpers import test_multiple
 
+model = ExtremelyBiased()
 X, y = model.features_labels()
 
 
@@ -28,5 +28,4 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
 
     def test_make_predictions(self):
         model.train()
-        self.assertGreater(
-            common.predict(model.load(), "Chora bandidagem"), 0.5)
+        self.assertGreater(ExtremelyBiased().predict("Chora bandidagem"), 0.5)

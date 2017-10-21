@@ -1,29 +1,22 @@
 import tornado.ioloop
 import tornado.web
 from robinho.model import Robinho
-import robinho.common as common
-import robinho.fake_news as fake_news
-import robinho.click_bait as click_bait
-import robinho.extremely_biased as extremely_biased
 import os
 
+robinho = Robinho()
 
-def handler(robinho):
-    class MainHandler(tornado.web.RequestHandler):
-        def get(self):
-            title = self.get_arguments("title")[0]
-            predictions = robinho.predict(title)
 
-            self.finish({'predictions': predictions})
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        title = self.get_arguments("title")[0]
+        predictions = robinho.predict(title)
 
-    return MainHandler
+        self.finish({'predictions': predictions})
 
 
 def start():
-    robinho = Robinho()
-    robinho.load()
     app = tornado.web.Application([
-        (r"/predict", handler(robinho)),
+        (r"/predict", MainHandler),
     ])
     port = os.getenv("PORT") or 8888
     app.listen(port)
