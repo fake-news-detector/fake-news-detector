@@ -17,7 +17,7 @@ jobs:
           command: docker build --cache-from registry.heroku.com/robinho/web:latest -t registry.heroku.com/robinho/web .
       - run:
           name: run tests
-          command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest tests/*_test.py
+          command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest
       - deploy:
           name: deploy
           command: |
