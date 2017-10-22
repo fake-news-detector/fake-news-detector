@@ -7,4 +7,4 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD python3 . --server
+CMD bash -c "rm data/links.csv; python3 . --retrain && python3 . --server"
