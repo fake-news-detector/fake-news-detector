@@ -25,7 +25,7 @@ class FakeNews(BaseClassifier):
 
     def classifier(self):
         return Pipeline([
-            ('vect', CountVectorizer(ngram_range=(1, 2))),
+            ('vect', CountVectorizer(ngram_range=(2, 2))),
             ('tfidf', TfidfTransformer()),
             ('sampling', RandomUnderSampler()),
             ('clf', MultinomialNB()),
