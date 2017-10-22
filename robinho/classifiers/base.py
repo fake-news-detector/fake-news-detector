@@ -43,7 +43,9 @@ class BaseClassifier():
         clf = clf.fit(X, y)
 
         with open('data/' + self.name + '.pkl', "wb") as f:
-            pickle.dump(self.clf, f)
+            pickle.dump(clf, f)
+
+        self.clf = clf
 
     def predict(self, title):
         return self.clf.predict_proba([title])[0][1]

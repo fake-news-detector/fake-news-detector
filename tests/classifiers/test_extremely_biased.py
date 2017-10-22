@@ -18,10 +18,10 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
         self.avg_positive_recall = avg_positive_recall
 
     def test_accuracy(self):
-        self.assertGreater(self.avg_accuracy, 0.57)
+        self.assertGreater(self.avg_accuracy, 0.5)
 
     def test_f1(self):
-        self.assertGreater(self.avg_f1, 0.54)
+        self.assertGreater(self.avg_f1, 0.5)
 
     def test_positive_recall(self):
         self.assertGreater(self.avg_positive_recall, 0.8)
