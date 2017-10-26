@@ -14,10 +14,10 @@ jobs:
             docker pull registry.heroku.com/robinho/web
       - run:
           name: build
-          command: make build
+          command: docker build --cache-from registry.heroku.com/robinho/web:latest -t registry.heroku.com/robinho/web .
       - run:
           name: run tests
-          command: make test
+          command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest
       - deploy:
           name: deploy
           command: |
