@@ -6,6 +6,64 @@
 Robinho
 =======
 
+## Running
+
+### With Docker
+
+#### Running
+
+```sh
+make run
+```
+
+#### Test Suite
+
+```sh
+make test
+```
+
+### Without Docker
+
+First you need to install the dependencies:
+
+#### Setup
+
+```sh
+pip3 install -r requirements.txt
+```
+
+Then you can use the saved model to do predictions:
+
+```sh
+python3 . "notícia do mbl"
+>> Extremely Biased
+
+python3 . "notícia do neymar"
+>> Legitimate
+```
+
+To retrain the model:
+
+```sh
+python3 . --retrain
+```
+
+#### Running
+
+To run the server:
+
+```sh
+python3 . --server
+```
+
+#### Test Suite
+
+You can run all tests with:
+
+```sh
+python3 -m unittest
+```
+
 ## JSON API endpoints
 
 The JSON API is currently running under the url https://robinho.herokuapp.com/
@@ -22,33 +80,7 @@ Response format:
 
 ## How to run
 
-First you need to install the dependencies:
-
-```
-pip3 install -r requirements.txt
-```
-
-Then you can use the saved model to do predictions:
-
-```
-python3 . "notícia do mbl"
->> Extremely Biased
-
-python3 . "notícia do neymar"
->> Legitimate
-```
-
-To retrain the model:
-
-```
-python3 . --retrain
-```
-
 To run tests:
-
-```
-python3 -m unittest
-```
 
 ## Deploy
 
