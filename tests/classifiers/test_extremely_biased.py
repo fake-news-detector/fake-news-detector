@@ -21,10 +21,10 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
         self.assertGreater(self.avg_accuracy, 0.6)
 
     def test_f1(self):
-        self.assertGreater(self.avg_f1, 0.55)
+        self.assertGreater(self.avg_f1, 0.6)
 
     def test_positive_recall(self):
-        self.assertGreater(self.avg_positive_recall, 0.9)
+        self.assertGreater(self.avg_positive_recall, 0.78)
 
     def test_make_predictions(self):
         model.train()
