@@ -16,11 +16,11 @@ class Robinho():
         for category, classifier in self.classifiers.items():
             classifier.train()
 
-    def predict(self, title):
+    def predict(self, title, content):
         predictions = []
         for category, classifier in self.classifiers.items():
-            score = classifier.predict(title)
-            if score > 0.5:
+            score = classifier.predict(title, content)
+            if score > 0.51:
                 predictions.append({
                     'category_id': categories[category],
                     'chance': score

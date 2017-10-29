@@ -19,7 +19,7 @@ def test_once(X, y, clf):
 
 
 def test_multiple(X, y, clf):
-    times = 50
+    times = 20
     total_accuracy = 0
     total_f1 = 0
     total_positive_recall = 0
