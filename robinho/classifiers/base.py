@@ -1,27 +1,26 @@
 import pandas as pd
 import pickle
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.feature_extraction.text import TfidfTransformer
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.pipeline import Pipeline
 
 
 class BaseClassifier():
     def __init__(self):
-        with open('data/' + self.name + '.pkl', "rb") as f:
-            self.clf = pickle.load(f)
+        try:
+            with open('data/' + self.name + '.pkl', "rb") as f:
+                self.clf = pickle.load(f)
+        except:
+            self.train()
 
     def features_labels(self):
         raise NotImplementedError
 
+    def extract_title(self, X):
+        return X['title']
+
+    def extract_content(self, X):
+        return X['content']
+
     def classifier(self):
-        return Pipeline([
-            ('vect', CountVectorizer(ngram_range=(1, 1))),
-            ('tfidf', TfidfTransformer()),
-            ('sampling', RandomUnderSampler()),
-            ('clf', MultinomialNB()),
-        ])
+        raise NotImplementedError
 
     def load_links(self):
         try:
@@ -33,6 +32,7 @@ class BaseClassifier():
             df.to_csv("data/links.csv")
 
         df.dropna(subset=["title"], inplace=True)
+        df.dropna(subset=["content"], inplace=True)
 
         return df
 
@@ -47,5 +47,8 @@ class BaseClassifier():
 
         self.clf = clf
 
-    def predict(self, title):
-        return self.clf.predict_proba([title])[0][1]
+    def predict(self, title, content):
+        df = pd.DataFrame()
+        df['title'] = [title]
+        df['content'] = [content]
+        return self.clf.predict_proba(df)[0][1]
