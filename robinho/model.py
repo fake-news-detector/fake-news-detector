@@ -20,7 +20,7 @@ class Robinho():
         predictions = []
         for category, classifier in self.classifiers.items():
             score = classifier.predict(title, content)
-            if score > 0.5:
+            if score > 0.51:
                 predictions.append({
                     'category_id': categories[category],
                     'chance': score
