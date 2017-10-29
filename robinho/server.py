@@ -9,7 +9,7 @@ robinho = Robinho()
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         title = self.get_arguments("title")[0]
-        title = self.get_arguments("content")[0]
+        content = self.get_arguments("content")[0]
         predictions = robinho.predict(title, content)
 
         self.finish({'predictions': predictions})
