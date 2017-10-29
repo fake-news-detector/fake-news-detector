@@ -5,6 +5,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
+from sklearn.preprocessing import FunctionTransformer
 
 
 class FakeNews(BaseClassifier):
@@ -18,13 +19,14 @@ class FakeNews(BaseClassifier):
             for category_id in df["category_id"]
         ]
 
-        X = df["title"]
+        X = df[["title"]]
         y = df["is_fake_news"]
 
         return X, y
 
     def classifier(self):
         return Pipeline([
+            ('selector', FunctionTransformer(self.extract_title, validate=False)),
             ('vect', CountVectorizer(ngram_range=(2, 2))),
             ('tfidf', TfidfTransformer()),
             ('sampling', RandomUnderSampler()),
