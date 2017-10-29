@@ -13,7 +13,7 @@ class ClickBait(BaseClassifier):
             for category_id in df["category_id"]
         ]
 
-        X = df["title"]
+        X = df[["title"]]
         y = df["is_click_bait"]
 
         return X, y

@@ -29,4 +29,4 @@ class FakeNewsTestCase(unittest.TestCase):
     def test_make_predictions(self):
         model.train()
         self.assertGreater(
-            FakeNews().predict("Novela apresentará Beijo gay infantil"), 0.5)
+            FakeNews().predict("Novela apresentará Beijo gay infantil", ""), 0.5)
