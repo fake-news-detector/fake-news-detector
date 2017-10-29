@@ -31,7 +31,7 @@ class ExtremelyBiased(BaseClassifier):
                 transformer_list=[
                     ('title', Pipeline([
                         ('selector1', FunctionTransformer(self.extract_title, validate=False)),
-                        ('vect1', CountVectorizer(ngram_range=(2, 1))),
+                        ('vect1', CountVectorizer(ngram_range=(3, 3))),
                         ('tfidf1', TfidfTransformer())
                     ])),
                     ('content', Pipeline([
@@ -41,8 +41,8 @@ class ExtremelyBiased(BaseClassifier):
                     ]))
                 ],
                 transformer_weights={
-                    'title': 1.0,
-                    'content': 0.8,
+                    'title': 0.5,
+                    'content': 1.0,
                 },
             )),
             ('sampling', RandomUnderSampler()),

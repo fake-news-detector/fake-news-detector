@@ -6,6 +6,7 @@ from imblearn.pipeline import Pipeline
 from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.pipeline import FeatureUnion
 
 
 class FakeNews(BaseClassifier):
@@ -19,16 +20,31 @@ class FakeNews(BaseClassifier):
             for category_id in df["category_id"]
         ]
 
-        X = df[["title"]]
+        X = df[["title", "content"]]
         y = df["is_fake_news"]
 
         return X, y
 
     def classifier(self):
         return Pipeline([
-            ('selector', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect', CountVectorizer(ngram_range=(2, 2))),
-            ('tfidf', TfidfTransformer()),
+            ('features', FeatureUnion(
+                transformer_list=[
+                    ('title', Pipeline([
+                        ('selector1', FunctionTransformer(self.extract_title, validate=False)),
+                        ('vect1', CountVectorizer(ngram_range=(4, 4))),
+                        ('tfidf1', TfidfTransformer())
+                    ])),
+                    ('content', Pipeline([
+                        ('selector2', FunctionTransformer(self.extract_content, validate=False)),
+                        ('vect2', CountVectorizer(ngram_range=(4, 4))),
+                        ('tfidf2', TfidfTransformer())
+                    ]))
+                ],
+                transformer_weights={
+                    'title': 0.5,
+                    'content': 1.0,
+                },
+            )),
             ('sampling', RandomUnderSampler()),
-            ('clf', MultinomialNB()),
+            ('clf', MultinomialNB())
         ])
