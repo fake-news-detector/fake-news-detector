@@ -24,7 +24,7 @@ class ClickBaitTestCase(unittest.TestCase):
         self.assertGreater(self.avg_f1, 0.5)
 
     def test_positive_recall(self):
-        self.assertGreater(self.avg_positive_recall, 0.45)
+        self.assertGreater(self.avg_positive_recall, 0.42)
 
     def test_make_predictions(self):
         model.train()
