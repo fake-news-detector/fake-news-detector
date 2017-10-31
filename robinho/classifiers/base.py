@@ -28,7 +28,7 @@ class BaseClassifier():
         except:
             print("Downloading links data...")
             df = pd.read_json(
-                "http://fake-news-detector-api.herokuapp.com/links/all")
+                "https://api.fakenewsdetector.org/links/all")
             df.to_csv("data/links.csv")
 
         df.dropna(subset=["title"], inplace=True)

@@ -66,7 +66,7 @@ python3 -m unittest
 
 ## JSON API endpoints
 
-The JSON API is currently running under the url https://robinho.herokuapp.com/
+The JSON API is currently running under the url https://robinho.fakenewsdetector.org/
 
 ### Predictions
 
