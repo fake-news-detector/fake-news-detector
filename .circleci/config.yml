@@ -14,13 +14,18 @@ jobs:
             docker pull registry.heroku.com/robinho/web
       - run:
           name: build
-          command: docker build --cache-from registry.heroku.com/robinho/web:latest -t registry.heroku.com/robinho/web .
-      - run:
-          name: run tests
-          command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest
+          command: docker build --cache-from registry.heroku.com/robinho/web:latest -t fakenewsdetector/robinho .
+      # - run:
+      #     name: run tests
+      #     command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest
       - deploy:
           name: deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
+              docker push fakenewsdetector/robinho
+
+              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+              docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
               docker push registry.heroku.com/robinho/web
             fi
