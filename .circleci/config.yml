@@ -12,10 +12,10 @@ jobs:
           command: docker pull fakenewsdetector/robinho
       - run:
           name: build
-          command: docker build --cache-from registry.heroku.com/robinho/web:latest -t fakenewsdetector/robinho .
+          command: docker build --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
       - run:
           name: run tests
-          command: docker run --rm registry.heroku.com/robinho/web python3 -m unittest
+          command: docker run --rm fakenewsdetector/robinho python3 -m unittest
       - deploy:
           name: deploy
           command: |
