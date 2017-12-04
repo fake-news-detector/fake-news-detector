@@ -72,7 +72,7 @@ The JSON API is currently running under the url https://robinho.fakenewsdetector
 
 You can predict the category of a news by calling:
 
-`GET /predict?title=string`
+`GET /predict?title=string&content=string`
 
 Response format:
 
