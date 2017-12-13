@@ -45,6 +45,6 @@ class ExtremelyBiased(BaseClassifier):
                     'content': 1.0,
                 },
             )),
-            ('sampling', RandomUnderSampler()),
+            ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
             ('clf', MultinomialNB())
         ])
