@@ -3,6 +3,8 @@ import pickle
 
 
 class BaseClassifier():
+    RANDOM_SEED = 123
+
     def __init__(self):
         try:
             with open('data/' + self.name + '.pkl', "rb") as f:
