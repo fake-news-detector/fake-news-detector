@@ -9,7 +9,7 @@ class BaseClassifier():
         try:
             with open('data/' + self.name + '.pkl', "rb") as f:
                 self.clf = pickle.load(f)
-        except:
+        except FileNotFoundError:
             self.train()
 
     def features_labels(self):
@@ -27,7 +27,7 @@ class BaseClassifier():
     def load_links(self):
         try:
             df = pd.read_csv("data/links.csv")
-        except:
+        except FileNotFoundError:
             print("Downloading links data...")
             df = pd.read_json(
                 "https://api.fakenewsdetector.org/links/all")
