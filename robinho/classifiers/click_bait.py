@@ -5,7 +5,6 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
-from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 
 

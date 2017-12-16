@@ -3,7 +3,10 @@
 build:
 	docker build --cache-from registry.heroku.com/robinho/web:latest -t registry.heroku.com/robinho/web .
 
-test: build
+stylecheck: build
+	docker run --rm registry.heroku.com/robinho/web flake8 robinho/
+
+test: stylecheck
 	docker run --rm registry.heroku.com/robinho/web python3 -m unittest
 
 run: build

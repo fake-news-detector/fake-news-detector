@@ -14,6 +14,9 @@ jobs:
           name: build
           command: docker build --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
       - run:
+          name: run style check
+          command: docker run --rm fakenewsdetector/robinho flake8 robinho/
+      - run:
           name: run tests
           command: docker run --rm fakenewsdetector/robinho python3 -m unittest
       - deploy:
