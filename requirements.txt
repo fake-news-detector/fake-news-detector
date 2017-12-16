@@ -3,3 +3,4 @@ sklearn
 imblearn
 tornado
 jupyter
+flake8
