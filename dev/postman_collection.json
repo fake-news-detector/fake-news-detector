@@ -1,0 +1,90 @@
+{
+	"info": {
+		"name": "Robinho API",
+		"_postman_id": "1df9b996-7eb8-6ad9-6b75-8262745461d1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost",
+			"item": [
+				{
+					"name": "GET /predict",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8888/predict?title=Chora bandidagem&content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"predict"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "Chora bandidagem",
+									"equals": true
+								},
+								{
+									"key": "content",
+									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "production",
+			"item": [
+				{
+					"name": "GET /predict",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://robinho.fakenewsdetector.org/predict?title=Chora bandidagem&content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+							"protocol": "https",
+							"host": [
+								"robinho",
+								"fakenewsdetector",
+								"org"
+							],
+							"path": [
+								"predict"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "Chora bandidagem",
+									"equals": true
+								},
+								{
+									"key": "content",
+									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+									"equals": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
