@@ -9,6 +9,3 @@ if "--retrain" in sys.argv:
     print("Done!")
 elif "--server" in sys.argv:
     server.start()
-else:
-    predicted = robinho.predict(sys.argv[-1])
-    print(predicted)

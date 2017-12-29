@@ -2,8 +2,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, recall_score
 
 
-def test_once(X, y, clf):
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
+def test_once(X, y, clf, random_state=123):
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=random_state)
 
     clf = clf.fit(X_train, y_train)
 
@@ -25,7 +26,7 @@ def test_multiple(X, y, clf):
     total_positive_recall = 0
 
     for i in range(0, times):
-        accuracy, f1, positive_recall = test_once(X, y, clf)
+        accuracy, f1, positive_recall = test_once(X, y, clf, random_state=i)
         total_accuracy += accuracy
         total_f1 += f1
         total_positive_recall += positive_recall
