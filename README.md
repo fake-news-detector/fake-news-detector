@@ -21,34 +21,28 @@ Response format:
 
 ## Running
 
-### With Docker
-
-#### Running
-
-```sh
-make run
-```
-
-#### Test Suite
-
-```sh
-make test
-```
-
 ### Without Docker
 
-First you need to install the dependencies:
-
-#### Setup
+You will need Python 3 with pip, then you can install the dependencies:
 
 ```sh
 pip3 install -r requirements.txt
 ```
 
-To retrain the model:
+Now you can retrain the model:
 
 ```sh
 python3 . --retrain
+```
+
+Then use the saved model to do predictions, by passing the news title and body:
+
+```sh
+python3 . "Chora bandidagem" "Chora turma dos direitos humanos. Michel Temer acaba de sancionar..."
+>> Extremely Biased
+
+python3 . "Pato rebate provocação de Neymar com foto" "Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro..."
+>> Legitimate
 ```
 
 #### Running
@@ -65,6 +59,20 @@ You can run all tests with:
 
 ```sh
 python3 -m unittest
+```
+
+### With Docker
+
+#### Running
+
+```sh
+make run
+```
+
+#### Test Suite
+
+```sh
+make test
 ```
 
 ## Deploy
