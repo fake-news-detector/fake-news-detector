@@ -19,6 +19,14 @@ Response format:
 
 `{ predictions: [{ category_id: int, chance: float }] }`
 
+### Postman
+
+Postman is an app that helps you make requests when developing APIs.
+
+We have a postman collection ready for you to use for debugging the API, just [download postman](https://www.getpostman.com/) and import the `dev/postman_collection.json` file.
+
+<img width="303" alt="Postman Collection" src="https://user-images.githubusercontent.com/792201/34436375-8c11a10a-ec7c-11e7-8319-a567613701e4.png">
+
 ## Running
 
 ### Without Docker
