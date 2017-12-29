@@ -21,12 +21,12 @@ class ClickBaitTestCase(unittest.TestCase):
         self.assertGreater(self.avg_accuracy, 0.67)
 
     def test_f1(self):
-        self.assertGreater(self.avg_f1, 0.5)
+        self.assertGreater(self.avg_f1, 0.52)
 
     def test_positive_recall(self):
-        self.assertGreater(self.avg_positive_recall, 0.40)
+        self.assertGreater(self.avg_positive_recall, 0.57)
 
     def test_make_predictions(self):
         model.train()
         self.assertGreater(ClickBait().predict(
-            "8 truques que os pintores de paredes não contam para você", ""), 0.5)
+            "8 truques que os pintores de paredes não contam para você", ""), 0.64)
