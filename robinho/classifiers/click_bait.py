@@ -27,7 +27,8 @@ class ClickBait(BaseClassifier):
     def classifier(self):
         return Pipeline([
             ('selector', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect', CountVectorizer(ngram_range=(2, 1))),
+            ('vect', CountVectorizer(strip_accents='ascii',
+                                     ngram_range=(2, 1))),
             ('tfidf', TfidfTransformer()),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
             ('clf', MultinomialNB()),

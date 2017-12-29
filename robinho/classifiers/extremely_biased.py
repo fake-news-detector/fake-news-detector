@@ -26,19 +26,23 @@ class ExtremelyBiased(BaseClassifier):
         return X, y
 
     def classifier(self):
+        title_transformer = Pipeline([
+            ('selector1', FunctionTransformer(self.extract_title, validate=False)),
+            ('vect1', CountVectorizer(strip_accents='ascii', ngram_range=(3, 3))),
+            ('tfidf1', TfidfTransformer())
+        ])
+
+        content_transformer = Pipeline([
+            ('selector2', FunctionTransformer(self.extract_content, validate=False)),
+            ('vect2', CountVectorizer(strip_accents='ascii', ngram_range=(3, 3))),
+            ('tfidf2', TfidfTransformer())
+        ])
+
         return Pipeline([
             ('features', FeatureUnion(
                 transformer_list=[
-                    ('title', Pipeline([
-                        ('selector1', FunctionTransformer(self.extract_title, validate=False)),
-                        ('vect1', CountVectorizer(ngram_range=(3, 3))),
-                        ('tfidf1', TfidfTransformer())
-                    ])),
-                    ('content', Pipeline([
-                        ('selector2', FunctionTransformer(self.extract_content, validate=False)),
-                        ('vect2', CountVectorizer(ngram_range=(3, 3))),
-                        ('tfidf2', TfidfTransformer())
-                    ]))
+                    ('title', title_transformer),
+                    ('content', content_transformer)
                 ],
                 transformer_weights={
                     'title': 0.5,
