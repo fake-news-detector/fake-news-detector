@@ -7,6 +7,9 @@ from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.pipeline import FeatureUnion
+import nltk
+import unidecode
+from nltk.stem.snowball import SnowballStemmer
 
 
 class FakeNews(BaseClassifier):
@@ -25,31 +28,16 @@ class FakeNews(BaseClassifier):
 
         return X, y
 
+    def preprocess(self, X):
+        texts = X['title'] + ' ' + X['content']
+
+        return texts
+
     def classifier(self):
-        title_transformer = Pipeline([
-            ('selector1', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect1', CountVectorizer(strip_accents='ascii', ngram_range=(4, 4))),
-            ('tfidf1', TfidfTransformer())
-        ])
-
-        content_transformer = Pipeline([
-            ('selector2', FunctionTransformer(self.extract_content, validate=False)),
-            ('vect2', CountVectorizer(strip_accents='ascii',
-                                      ngram_range=(4, 4), max_df=0.7, min_df=2)),
-            ('tfidf2', TfidfTransformer())
-        ])
-
         return Pipeline([
-            ('features', FeatureUnion(
-                transformer_list=[
-                    ('title', title_transformer),
-                    ('content', content_transformer)
-                ],
-                transformer_weights={
-                    'title': 0.5,
-                    'content': 1.0,
-                },
-            )),
+            ('preprocess', FunctionTransformer(self.preprocess, validate=False)),
+            ('vect', CountVectorizer(strip_accents='ascii', ngram_range=(1, 3), max_df=0.5, min_df=5)),
+            ('tfidf', TfidfTransformer(use_idf=True)),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
-            ('clf', MultinomialNB())
+            ('clf', MultinomialNB(fit_prior=False)),
         ])

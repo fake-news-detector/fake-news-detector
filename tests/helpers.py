@@ -21,7 +21,7 @@ def test_once(X, y, clf, random_state=123):
 
 
 def test_multiple(X, y, clf):
-    times = 20
+    times = 10
     total_accuracy = 0
     total_f1 = 0
     total_positive_recall = 0
@@ -38,14 +38,14 @@ def test_multiple(X, y, clf):
 def test_scores_snapshot(self, name, model):
     X, y = model.features_labels()
 
-    accuracy, f1, positive_recall = test_multiple(
-        X, y, model.classifier())
+    accuracy, f1, positive_recall = test_multiple(X, y, model.classifier())
 
     print("\n==", name, "==")
-    print(pd.DataFrame({
-        "Accur": [str(accuracy)[0:4]],
-        "F1": [str(f1)[0:4]],
-        "Recall": [str(positive_recall)[0:4]]
-    }))
+    print(
+        pd.DataFrame({
+            "Accur": [str(accuracy)[0:4]],
+            "F1": [str(f1)[0:4]],
+            "Recall": [str(positive_recall)[0:4]]
+        }))
 
     return accuracy, f1, positive_recall

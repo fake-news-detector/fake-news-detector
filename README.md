@@ -31,10 +31,12 @@ We have a postman collection ready for you to use for debugging the API, just [d
 
 ### Without Docker
 
-You will need Python 3 with pip, then you can install the dependencies:
+You will need Python 3 with pip, then you can install the python and nltk dependencies:
 
 ```sh
 pip3 install -r requirements.txt
+
+python3 -m nltk.downloader stopwords snowball_data punkt averaged_perceptron_tagger
 ```
 
 Now you can retrain the model:

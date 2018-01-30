@@ -4,3 +4,5 @@ imblearn
 tornado
 jupyter
 flake8
+nltk
+unidecode

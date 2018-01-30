@@ -33,8 +33,8 @@ class BaseClassifier():
                 "https://api.fakenewsdetector.org/links/all")
             df.to_csv("data/links.csv")
 
-        df.dropna(subset=["title"], inplace=True)
-        df.dropna(subset=["content"], inplace=True)
+        df.dropna(subset=["title", "content"], inplace=True, how="all")
+        df = df.fillna('')
 
         return df
 
