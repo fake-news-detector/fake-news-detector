@@ -15,9 +15,15 @@ class MainHandler(tornado.web.RequestHandler):
         self.finish({'predictions': predictions})
 
 
+class HealthCheckHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.finish('OK')
+
+
 def start():
     app = tornado.web.Application([
         (r"/predict", MainHandler),
+        (r"/healthcheck", HealthCheckHandler),
     ])
     port = os.getenv("PORT") or 8888
     app.listen(port)
