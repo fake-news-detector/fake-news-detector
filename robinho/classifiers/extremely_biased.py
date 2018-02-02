@@ -23,18 +23,18 @@ class ExtremelyBiased(BaseClassifier):
         X = df[["title", "content"]]
         y = df["is_extremely_biased"]
 
-        return X, y
+        return self.undersample_data(X, y)
 
     def classifier(self):
         title_transformer = Pipeline([
             ('selector1', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect1', CountVectorizer(strip_accents='ascii', ngram_range=(3, 3))),
+            ('vect1', CountVectorizer(strip_accents='ascii', ngram_range=(2, 2))),
             ('tfidf1', TfidfTransformer())
         ])
 
         content_transformer = Pipeline([
             ('selector2', FunctionTransformer(self.extract_content, validate=False)),
-            ('vect2', CountVectorizer(strip_accents='ascii', ngram_range=(3, 3))),
+            ('vect2', CountVectorizer(strip_accents='ascii', ngram_range=(2, 2))),
             ('tfidf2', TfidfTransformer())
         ])
 

@@ -1,5 +1,6 @@
 import pandas as pd
 import pickle
+from imblearn.under_sampling import RandomUnderSampler
 
 
 class BaseClassifier():
@@ -14,6 +15,15 @@ class BaseClassifier():
 
     def features_labels(self):
         raise NotImplementedError
+
+    def undersample_data(self, X, y):
+        columns = X.columns.values.tolist()
+
+        X, y = RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED, ratio='all').fit_sample(
+            X.values.tolist(), y.values.tolist())
+        X = pd.DataFrame(X, columns=columns)
+
+        return X, y
 
     def extract_title(self, X):
         return X['title']
@@ -33,8 +43,8 @@ class BaseClassifier():
                 "https://api.fakenewsdetector.org/links/all")
             df.to_csv("data/links.csv")
 
-        df.dropna(subset=["title"], inplace=True)
-        df.dropna(subset=["content"], inplace=True)
+        df.dropna(subset=["title", "content"], inplace=True, how="all")
+        df = df.fillna('')
 
         return df
 

@@ -22,7 +22,7 @@ class ClickBait(BaseClassifier):
         X = df[["title", "content"]]
         y = df["is_click_bait"]
 
-        return X, y
+        return self.undersample_data(X, y)
 
     def classifier(self):
         return Pipeline([

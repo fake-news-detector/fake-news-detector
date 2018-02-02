@@ -21,15 +21,15 @@ class ModelTestCase(unittest.TestCase):
 
     def test_make_click_bait_predictions(self):
         predictions = Robinho().predict(
-            "8 truques que os pintores de paredes não contam para você", "")
+            "20+ Art History Tweets That Prove Nothing Has Changed In 100s Of Years", "")
         prediction = top_prediction(predictions)
 
         self.assertEqual(prediction['category_id'], 3)
         self.assertGreater(prediction['chance'], 0.5)
 
     def test_make_extremely_biased_predictions(self):
-        title = "Chora bandidagem"
-        content = "Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas."
+        title = "Em entrevista exclusiva, psicóloga afirma que existe um movimento para “naturalizar a pedofilia”"
+        content = "Marisa Lobo, psicóloga e especialista em Direitos Humanos, concedeu uma entrevista exclusiva ao JornaLivre para tratar sobre a polêmica do caso “MAM” e a “performance La Bête”. Confira a entrevista: JL: Como mulher e mãe, quais foram suas impressões ao assistir pela primeira vez ao vídeo da performance que ocorreu na abertura do 35 Panorama da Arte Brasileira do MAM-SP?"
 
         predictions = Robinho().predict(title, content)
         prediction = top_prediction(predictions)

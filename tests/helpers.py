@@ -2,7 +2,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, recall_score
 import pandas as pd
 
-
 def test_once(X, y, clf, random_state=123):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, random_state=random_state)
@@ -33,7 +32,6 @@ def test_multiple(X, y, clf):
         total_positive_recall += positive_recall
 
     return total_accuracy / times, total_f1 / times, total_positive_recall / times
-
 
 def test_scores_snapshot(self, name, model):
     X, y = model.features_labels()
