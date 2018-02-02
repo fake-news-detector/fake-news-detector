@@ -1,6 +1,3 @@
-data/*
-!data/.gitkeep
-!data/links.csv
 __pycache__
 
 .idea
