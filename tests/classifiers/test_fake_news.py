@@ -14,7 +14,7 @@ class FakeNewsTestCase(unittest.TestCase):
 
         self.assertGreater(accuracy, 0.74)
         self.assertGreater(f1, 0.73)
-        self.assertGreater(positive_recall, 0.93)
+        self.assertGreater(positive_recall, 0.92)
 
     def test_make_predictions(self):
         model.train()
