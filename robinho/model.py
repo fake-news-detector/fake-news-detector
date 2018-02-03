@@ -20,6 +20,11 @@ class Robinho():
         predictions = []
         for category, classifier in self.classifiers.items():
             score = classifier.predict(title, content)
+
+            # TODO: Remove this workaound
+            if category == "fake_news":
+                score = score - 0.1
+
             if score > 0.51:
                 predictions.append({
                     'category_id': categories[category],
