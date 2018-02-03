@@ -6,6 +6,7 @@ from imblearn.pipeline import Pipeline
 from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
 from sklearn.preprocessing import FunctionTransformer
+from robinho.marisa_vectorizers import MarisaTfidfVectorizer
 
 
 class FakeNews(BaseClassifier):
@@ -33,12 +34,12 @@ class FakeNews(BaseClassifier):
         return Pipeline([
             ('preprocess', FunctionTransformer(
                 self.preprocess, validate=False)),
-            ('vect', CountVectorizer(
+            ('tfidf', MarisaTfidfVectorizer(
                 strip_accents='ascii',
                 ngram_range=(1, 3),
                 max_df=0.5,
-                min_df=5)),
-            ('tfidf', TfidfTransformer(use_idf=True)),
+                min_df=5,
+                use_idf=True)),
             ('sampling',
              RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
             ('clf', MultinomialNB(fit_prior=False)),

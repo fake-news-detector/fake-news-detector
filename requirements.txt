@@ -4,3 +4,4 @@ imblearn
 tornado
 jupyter
 flake8
+marisa-trie

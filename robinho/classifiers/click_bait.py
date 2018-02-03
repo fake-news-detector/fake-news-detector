@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
+from robinho.marisa_vectorizers import MarisaTfidfVectorizer
 
 
 class ClickBait(BaseClassifier):
@@ -27,9 +28,7 @@ class ClickBait(BaseClassifier):
     def classifier(self):
         return Pipeline([
             ('selector', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect', CountVectorizer(strip_accents='ascii',
-                                     ngram_range=(2, 1))),
-            ('tfidf', TfidfTransformer()),
+            ('tfidf', MarisaTfidfVectorizer(strip_accents='ascii', ngram_range=(2, 1))),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
             ('clf', MultinomialNB()),
         ])

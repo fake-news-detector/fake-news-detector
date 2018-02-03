@@ -7,6 +7,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
+from robinho.marisa_vectorizers import MarisaTfidfVectorizer
 
 
 class ExtremelyBiased(BaseClassifier):
@@ -28,14 +29,14 @@ class ExtremelyBiased(BaseClassifier):
     def classifier(self):
         title_transformer = Pipeline([
             ('selector1', FunctionTransformer(self.extract_title, validate=False)),
-            ('vect1', CountVectorizer(strip_accents='ascii', ngram_range=(2, 2))),
-            ('tfidf1', TfidfTransformer())
+            ('tfidf1', MarisaTfidfVectorizer(
+                strip_accents='ascii', ngram_range=(2, 2)))
         ])
 
         content_transformer = Pipeline([
             ('selector2', FunctionTransformer(self.extract_content, validate=False)),
-            ('vect2', CountVectorizer(strip_accents='ascii', ngram_range=(2, 2))),
-            ('tfidf2', TfidfTransformer())
+            ('tfidf2', MarisaTfidfVectorizer(
+                strip_accents='ascii', ngram_range=(2, 2)))
         ])
 
         return Pipeline([
