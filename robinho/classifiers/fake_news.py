@@ -1,6 +1,4 @@
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.feature_extraction.text import TfidfTransformer
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from robinho.categories import categories

@@ -1,4 +1,6 @@
-# Source: https://blog.scrapinghub.com/2014/03/26/optimizing-memory-usage-of-scikit-learn-models-using-succinct-tries/
+# Source:
+# https://blog.scrapinghub.com/2014/03/26/optimizing-memory-usage-of-scikit-learn-models-using-succinct-tries/
+
 import marisa_trie
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
