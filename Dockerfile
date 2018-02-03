@@ -8,6 +8,7 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 ARG FLOYDHUB_TOKEN
+ARG CACHEBUST=1
 RUN bash floydhub_scripts/download.sh
 
 CMD bash -c "python3 . --server"
