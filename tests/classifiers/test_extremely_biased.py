@@ -13,8 +13,8 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
             self, "ExtremelyBiased", model)
 
         self.assertGreater(accuracy, 0.69)
-        self.assertGreater(f1, 0.68)
-        self.assertGreater(positive_recall, 0.78)
+        self.assertGreater(f1, 0.69)
+        self.assertGreater(positive_recall, 0.82)
 
     def test_make_predictions(self):
         model.train()

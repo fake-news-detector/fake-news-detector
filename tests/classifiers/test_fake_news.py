@@ -12,9 +12,9 @@ class FakeNewsTestCase(unittest.TestCase):
         accuracy, f1, positive_recall = test_scores_snapshot(
             self, "FakeNews", model)
 
-        self.assertGreater(accuracy, 0.74)
+        self.assertGreater(accuracy, 0.73)
         self.assertGreater(f1, 0.73)
-        self.assertGreater(positive_recall, 0.92)
+        self.assertGreater(positive_recall, 0.93)
 
     def test_make_predictions(self):
         model.train()

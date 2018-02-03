@@ -20,7 +20,7 @@ def test_once(X, y, clf, random_state=123):
 
 
 def test_multiple(X, y, clf):
-    times = 20
+    times = 5
     total_accuracy = 0
     total_f1 = 0
     total_positive_recall = 0
