@@ -8,7 +8,7 @@ class BaseClassifier():
 
     def __init__(self):
         try:
-            with open('data/' + self.name + '.pkl', "rb") as f:
+            with open('output/' + self.name + '.pkl', "rb") as f:
                 self.clf = pickle.load(f)
         except FileNotFoundError:
             self.train()
@@ -36,12 +36,12 @@ class BaseClassifier():
 
     def load_links(self):
         try:
-            df = pd.read_csv("data/links.csv")
+            df = pd.read_csv("output/links.csv")
         except FileNotFoundError:
             print("Downloading links data...")
             df = pd.read_json(
                 "https://api.fakenewsdetector.org/links/all")
-            df.to_csv("data/links.csv")
+            df.to_csv("output/links.csv")
 
         df.dropna(subset=["title", "content"], inplace=True, how="all")
         df = df.fillna('')
@@ -54,7 +54,7 @@ class BaseClassifier():
         clf = self.classifier()
         clf = clf.fit(X, y)
 
-        with open('data/' + self.name + '.pkl', "wb") as f:
+        with open('output/' + self.name + '.pkl', "wb") as f:
             pickle.dump(clf, f)
 
         self.clf = clf

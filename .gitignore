@@ -1,3 +1,6 @@
 __pycache__
 
 .idea
+output/*
+!output/.gitkeep
+!output/links.csv

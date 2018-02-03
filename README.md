@@ -40,7 +40,7 @@ pip3 install -r requirements.txt
 Now you can retrain the model:
 
 ```sh
-rm data/links.csv; python3 . --retrain
+rm output/links.csv; python3 . --retrain
 ```
 
 Then use the saved model to do predictions, by passing the news title and body:
