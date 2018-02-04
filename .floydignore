@@ -12,5 +12,6 @@ var
 *.pyc
 *.swp
 .DS_Store
-output/*.pkl
-output/*.csv
+output/*
+!output/.gitkeep
+links.csv

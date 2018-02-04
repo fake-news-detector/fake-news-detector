@@ -36,12 +36,12 @@ class BaseClassifier():
 
     def load_links(self):
         try:
-            df = pd.read_csv("output/links.csv")
+            df = pd.read_csv("links.csv")
         except FileNotFoundError:
             print("Downloading links data...")
             df = pd.read_json(
                 "https://api.fakenewsdetector.org/links/all")
-            df.to_csv("output/links.csv")
+            df.to_csv("links.csv")
 
         df.dropna(subset=["title", "content"], inplace=True, how="all")
         df = df.fillna('')
