@@ -9,6 +9,7 @@ COPY . .
 
 ARG FLOYDHUB_TOKEN
 ARG CACHEBUST=1
+RUN pip3 install -U floyd-cli
 RUN bash floydhub_scripts/download.sh
 
 CMD bash -c "python3 . --server"
