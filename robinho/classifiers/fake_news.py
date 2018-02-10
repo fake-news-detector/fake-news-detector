@@ -23,15 +23,10 @@ class FakeNews(BaseClassifier):
 
         return self.undersample_data(X, y)
 
-    def preprocess(self, X):
-        texts = X['title'] + ' ' + X['content']
-
-        return texts
-
     def classifier(self):
         return Pipeline([
             ('preprocess', FunctionTransformer(
-                self.preprocess, validate=False)),
+                self.join_text_and_content, validate=False)),
             ('tfidf', MarisaTfidfVectorizer(
                 strip_accents='ascii',
                 ngram_range=(1, 3),

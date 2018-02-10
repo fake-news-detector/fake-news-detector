@@ -31,6 +31,9 @@ class BaseClassifier():
     def extract_content(self, X):
         return X['content']
 
+    def join_text_and_content(self, X):
+        return X['title'] + ' ' + X['content']
+
     def classifier(self):
         raise NotImplementedError
 
@@ -54,6 +57,9 @@ class BaseClassifier():
         clf = self.classifier()
         clf = clf.fit(X, y)
 
+        self.save_model(clf)
+
+    def save_model(self, clf):
         with open('output/' + self.name + '.pkl', "wb") as f:
             pickle.dump(clf, f)
 
