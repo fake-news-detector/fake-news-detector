@@ -1,9 +1,6 @@
 import numpy as np
-import pandas as pd
 from robinho.classifiers.base import BaseClassifier
 from robinho.marisa_vectorizers import MarisaTfidfVectorizer
-from imblearn.pipeline import Pipeline
-from sklearn.preprocessing import FunctionTransformer
 from nltk.corpus import stopwords
 
 AMOUNT_OF_KEYWORDS = 8
