@@ -7,3 +7,4 @@ flake8
 marisa-trie
 floyd-cli
 lime
+nltk
