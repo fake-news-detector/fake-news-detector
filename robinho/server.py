@@ -1,11 +1,9 @@
 import tornado.ioloop
 import tornado.web
 from robinho.model import Robinho
-from robinho.classifiers.keywords import Keywords
 import os
 
 robinho = Robinho()
-keywords_model = Keywords()
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -13,7 +11,7 @@ class MainHandler(tornado.web.RequestHandler):
         title = self.get_arguments("title")[0]
         content = self.get_arguments("content")[0]
         predictions = robinho.predict(title, content)
-        keywords = keywords_model.find_keywords(title, content)
+        keywords = robinho.find_keywords(title, content)
 
         self.finish({'predictions': predictions, 'keywords': keywords})
 

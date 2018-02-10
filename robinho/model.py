@@ -2,6 +2,9 @@ from robinho.classifiers.fake_news import FakeNews
 from robinho.classifiers.click_bait import ClickBait
 from robinho.classifiers.extremely_biased import ExtremelyBiased
 from robinho.categories import categories
+from robinho.classifiers.keywords import Keywords
+
+keywords = Keywords()
 
 
 class Robinho():
@@ -15,6 +18,7 @@ class Robinho():
     def train(self):
         for category, classifier in self.classifiers.items():
             classifier.train()
+        keywords.train()
 
     def predict(self, title, content):
         predictions = []
@@ -32,3 +36,6 @@ class Robinho():
                 })
 
         return predictions
+
+    def find_keywords(self, title, content):
+        return keywords.find_keywords(title, content)

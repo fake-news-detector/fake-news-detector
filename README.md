@@ -35,6 +35,7 @@ You will need Python 3 with pip, then you can install the dependencies:
 
 ```sh
 pip3 install -r requirements.txt
+python3 -m nltk.downloader stopwords
 ```
 
 Now you can retrain the model:
