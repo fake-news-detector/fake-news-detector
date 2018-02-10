@@ -17,7 +17,7 @@ You can predict the category of a news by calling:
 
 Response format:
 
-`{ predictions: [{ category_id: int, chance: float }] }`
+`{ predictions: [{ category_id: int, chance: float }], keywords: [ string ] }`
 
 ### Postman
 

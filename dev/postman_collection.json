@@ -1,7 +1,7 @@
 {
 	"info": {
 		"name": "Robinho API",
-		"_postman_id": "1df9b996-7eb8-6ad9-6b75-8262745461d1",
+		"_postman_id": "82d7ae83-714f-8b04-951f-b7f3e3e9fe17",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -18,7 +18,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8888/predict?title=Chora bandidagem&content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+							"raw": "http://localhost:8888/predict?title=Chora bandidagem&content=Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas.",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -35,7 +35,7 @@
 								},
 								{
 									"key": "content",
-									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+									"value": "Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas.",
 									"equals": true
 								}
 							]
@@ -58,7 +58,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "https://robinho.fakenewsdetector.org/predict?title=Chora bandidagem&content=Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+							"raw": "https://robinho.fakenewsdetector.org/predict?title=Chora bandidagem&content=Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas.",
 							"protocol": "https",
 							"host": [
 								"robinho",
@@ -76,7 +76,7 @@
 								},
 								{
 									"key": "content",
-									"value": "Chora turma dos direitos humanos. Michel Temer acaba de sancionar...",
+									"value": "Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas.",
 									"equals": true
 								}
 							]

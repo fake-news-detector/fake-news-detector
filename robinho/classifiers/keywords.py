@@ -6,7 +6,7 @@ from imblearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 from nltk.corpus import stopwords
 
-AMOUNT_OF_KEYWORDS = 10
+AMOUNT_OF_KEYWORDS = 8
 
 
 class Keywords(BaseClassifier):

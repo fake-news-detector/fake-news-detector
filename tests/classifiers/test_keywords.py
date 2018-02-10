@@ -40,7 +40,7 @@ class KeywordsTestCase(unittest.TestCase):
         keywords = model.find_keywords(title, content)
 
         self.assertIn('minuto', keywords)
-        self.assertIn('paz', keywords)
+        self.assertIn('historico', keywords)
 
     def test_returns_empty_for_small_texts(self):
         keywords = model.find_keywords("hello there", "")
