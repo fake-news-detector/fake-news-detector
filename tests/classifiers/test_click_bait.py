@@ -17,6 +17,5 @@ class ClickBaitTestCase(unittest.TestCase):
         self.assertGreater(positive_recall, 0.71)
 
     def test_make_predictions(self):
-        model.train()
         self.assertGreater(ClickBait().predict(
             "8 truques que os pintores de paredes não contam para você", ""), 0.58)
