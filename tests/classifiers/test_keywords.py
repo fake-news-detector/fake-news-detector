@@ -3,6 +3,7 @@ import unittest
 from robinho.classifiers.keywords import Keywords
 
 model = Keywords()
+model.train()
 
 
 class KeywordsTestCase(unittest.TestCase):
