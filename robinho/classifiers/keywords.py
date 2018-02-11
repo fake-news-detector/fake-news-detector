@@ -34,6 +34,7 @@ class Keywords(BaseClassifier):
             max_df=0.1,
             min_df=5,
             use_idf=True,
+            lowercase=True,
             stop_words=all_stopwords)
 
     def find_keywords(self, title, content):
