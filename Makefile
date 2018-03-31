@@ -9,8 +9,8 @@ stylecheck: build
 test: stylecheck
 	docker run --rm fakenewsdetector/robinho python3 -m unittest
 
-run: build
-	docker run -p 8888:8888 --rm fakenewsdetector/robinho sh -c 'rm data/links.csv; python3 . --retrain && python3 . --server'
+run:
+	docker run -p 8888:8888 -it --rm fakenewsdetector/robinho
 
 retrain:
 	bash floydhub_scripts/retrain.sh

@@ -17,7 +17,16 @@ You can predict the category of a news by calling:
 
 Response format:
 
-`{ predictions: [{ category_id: int, chance: float }], keywords: [ string ] }`
+```
+{
+  predictions: {
+    fake_news: float,
+    extremely_biased: float,
+    clickbait_title: float
+  },
+  keywords: [ string ]
+}
+```
 
 ### Postman
 
@@ -28,6 +37,21 @@ We have a postman collection ready for you to use for debugging the API, just [d
 <img width="303" alt="Postman Collection" src="https://user-images.githubusercontent.com/792201/34436375-8c11a10a-ec7c-11e7-8319-a567613701e4.png">
 
 ## Running
+
+### With Docker
+
+#### Running
+
+```sh
+make build
+make run
+```
+
+#### Test Suite
+
+```sh
+make test
+```
 
 ### Without Docker
 
@@ -68,20 +92,6 @@ You can run all tests with:
 
 ```sh
 python3 -m unittest
-```
-
-### With Docker
-
-#### Running
-
-```sh
-make run
-```
-
-#### Test Suite
-
-```sh
-make test
 ```
 
 ## Deploy
