@@ -11,7 +11,7 @@ class Robinho():
         self.classifiers = {
             "fake_news": FakeNews(),
             "extremely_biased": ExtremelyBiased(),
-            "clickbait_title": ClickBait(),
+            "clickbait": ClickBait(),
         }
 
     def train(self):
@@ -26,7 +26,7 @@ class Robinho():
         return {
             "fake_news": predict_class("fake_news"),
             "extremely_biased": predict_class("extremely_biased"),
-            "clickbait_title": predict_class("clickbait_title")
+            "clickbait": predict_class("clickbait")
         }
 
     def find_keywords(self, title, content):

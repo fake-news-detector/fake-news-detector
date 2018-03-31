@@ -22,7 +22,7 @@ Response format:
   predictions: {
     fake_news: float,
     extremely_biased: float,
-    clickbait_title: float
+    clickbait: float
   },
   keywords: [ string ]
 }
@@ -99,8 +99,3 @@ python3 -m unittest
 The deploy is made by CircleCI using docker on heroku.
 
 Read more about deploying docker with heroku [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
-
-But the ML models are trained and saved at Floydhub:
-https://www.floydhub.com/rchaves/projects/robinho
-
-Floydhub provides GPU as a service among other tools which allows us to train our ML models and download the output.
