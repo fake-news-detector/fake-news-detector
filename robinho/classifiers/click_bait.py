@@ -32,5 +32,5 @@ class ClickBait(BaseClassifier):
             ('tfidf', MarisaTfidfVectorizer(
                 strip_accents='ascii', ngram_range=(1, 3))),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
-            ('clf', MultinomialNB()),
+            ('clf', MultinomialNB(fit_prior=False)),
         ])

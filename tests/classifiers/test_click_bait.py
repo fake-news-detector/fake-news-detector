@@ -25,9 +25,9 @@ class ClickBaitTestCase(unittest.TestCase):
         accuracy, f1, positive_recall = test_scores_snapshot(
             self, "ClickBait", model)
 
-        self.assertGreater(accuracy, 0.64)
-        self.assertGreater(f1, 0.63)
-        self.assertGreater(positive_recall, 0.60)
+        self.assertGreater(accuracy, 0.56)
+        self.assertGreater(f1, 0.56)
+        self.assertGreater(positive_recall, 0.65)
 
     def test_make_predictions(self):
         model.train()

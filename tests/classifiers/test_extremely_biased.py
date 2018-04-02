@@ -27,9 +27,9 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
         accuracy, f1, positive_recall = test_scores_snapshot(
             self, "ExtremelyBiased", model)
 
-        self.assertGreater(accuracy, 0.70)
-        self.assertGreater(f1, 0.69)
-        self.assertGreater(positive_recall, 0.84)
+        self.assertGreater(accuracy, 0.68)
+        self.assertGreater(f1, 0.68)
+        self.assertGreater(positive_recall, 0.68)
 
     def test_make_predictions(self):
         title = "Chora bandidagem"
