@@ -38,7 +38,9 @@ class BaseClassifier():
         raise NotImplementedError
 
     def filter(self, df):
-        return (df['content'].str.len() > 120) & (df['url'].str.contains('youtube.com|youtu.be|twitter.com|vimeo.com|facebook.com') == False)
+        return (df['content'].str.len() > 120) & \
+            (df['url'].str.contains(
+                'youtube.com|youtu.be|twitter.com|vimeo.com|facebook.com') == False)  # NOQA
 
     def load_links(self):
         try:
