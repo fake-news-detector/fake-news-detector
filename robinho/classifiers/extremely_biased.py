@@ -1,15 +1,18 @@
 from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
-from sklearn.naive_bayes import MultinomialNB
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 from robinho.marisa_vectorizers import MarisaTfidfVectorizer
+from sklearn.linear_model import SGDClassifier
 
 
 class ExtremelyBiased(BaseClassifier):
     name = "extremely_biased"
+
+    def filter(self, df):
+        return df['content'].str.len() > 120
 
     def features_labels(self):
         df = self.load_links()
@@ -49,5 +52,6 @@ class ExtremelyBiased(BaseClassifier):
                 },
             )),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
-            ('clf', MultinomialNB())
+            ('clf', SGDClassifier(max_iter=1000, loss='log',
+                                  random_state=BaseClassifier.RANDOM_SEED))
         ])

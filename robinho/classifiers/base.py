@@ -37,6 +37,9 @@ class BaseClassifier():
     def classifier(self):
         raise NotImplementedError
 
+    def filter(self, df):
+        raise NotImplementedError
+
     def load_links(self):
         try:
             df = pd.read_csv("links.csv")
@@ -48,6 +51,7 @@ class BaseClassifier():
 
         df.dropna(subset=["title", "content"], inplace=True, how="all")
         df = df.fillna('')
+        df = df.loc[self.filter]
 
         return df
 
