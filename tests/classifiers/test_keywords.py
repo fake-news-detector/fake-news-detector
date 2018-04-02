@@ -10,8 +10,9 @@ class KeywordsTestCase(unittest.TestCase):
     def test_find_keywords_portuguese_text(self):
         title = "Novela apresentará Beijo gay infantil"
         content = "O programa Encontro, abordou nesta manhã, mais uma vez a questão das crianças transgênero. “crianças que não se identificam com o sexo com que nasceram”. Especialista convidado foi o psiquiatra Alex Sedha, que é coordenador do Ambulatório transdisciplinar de identidade de gênero e orientação sexual. Ele fez questão de frisar que “Não tem nada de errado” com as crianças que desde cedo acreditam ter nascido “no corpo errado”. Citou ainda que atende meninos e meninas com “3 ou 4 anos de idade”."
+        url = "http://example.com"
 
-        keywords = model.find_keywords(title, content)
+        keywords = model.find_keywords(title, content, url)
 
         self.assertIn('criancas', keywords)
         self.assertIn('beijo', keywords)
@@ -20,8 +21,9 @@ class KeywordsTestCase(unittest.TestCase):
     def test_find_keywords_english_text(self):
         title = "Breaking: Top Leftists Call For Civil War"
         content = "The global elite are preparing for a major operation. The elite want to start a fight with Trump and American patriots to combat the current anti-globalist surge spreading throughout the world."
+        url = "http://example.com"
 
-        keywords = model.find_keywords(title, content)
+        keywords = model.find_keywords(title, content, url)
 
         self.assertIn('elite', keywords)
         self.assertIn('fight', keywords)
@@ -37,13 +39,23 @@ class KeywordsTestCase(unittest.TestCase):
 
         Aunque los deportistas están acostumbrados a competir en bajas temperaturas, los juegos de Pyeongchang van a ser muy fríos, tanto que el frío puede llegar a ser histórico, según los expertos.
         """
+        url = "http://example.com"
 
-        keywords = model.find_keywords(title, content)
+        keywords = model.find_keywords(title, content, url)
 
         self.assertIn('minuto', keywords)
         self.assertIn('diplomacia', keywords)
 
     def test_returns_empty_for_small_texts(self):
-        keywords = model.find_keywords("hello there", "")
+        keywords = model.find_keywords("hello there", "", "http://example.com")
+
+        self.assertEqual(keywords, [])
+
+    def test_returns_empty_for_filtered_out_domains(self):
+        title = "Breaking: Top Leftists Call For Civil War"
+        content = "The global elite are preparing for a major operation. The elite want to start a fight with Trump and American patriots to combat the current anti-globalist surge spreading throughout the world."
+        url = "http://youtu.be"
+
+        keywords = model.find_keywords(title, content, url)
 
         self.assertEqual(keywords, [])

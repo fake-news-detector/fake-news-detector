@@ -29,5 +29,5 @@ class Robinho():
             "clickbait": predict_class("clickbait")
         }
 
-    def find_keywords(self, title, content):
-        return keywords.find_keywords(title, content)
+    def find_keywords(self, title, content, url):
+        return keywords.find_keywords(title, content, url)

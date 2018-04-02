@@ -30,7 +30,8 @@ class ModelTestCase(unittest.TestCase):
     def test_find_keywords(self):
         title = "Em entrevista exclusiva, psicóloga afirma que existe um movimento para “naturalizar a pedofilia”"
         content = "Marisa Lobo, psicóloga e especialista em Direitos Humanos, concedeu uma entrevista exclusiva ao JornaLivre para tratar sobre a polêmica do caso “MAM” e a “performance La Bête”. Confira a entrevista: JL: Como mulher e mãe, quais foram suas impressões ao assistir pela primeira vez ao vídeo da performance que ocorreu na abertura do 35 Panorama da Arte Brasileira do MAM-SP?"
+        url = "http://example.com"
 
-        keywords = robinho.find_keywords(title, content)
+        keywords = robinho.find_keywords(title, content, url)
 
         self.assertIn("entrevista", keywords)

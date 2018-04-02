@@ -2,6 +2,7 @@ import numpy as np
 from robinho.classifiers.base import BaseClassifier
 from robinho.marisa_vectorizers import MarisaTfidfVectorizer
 from nltk.corpus import stopwords
+import pandas as pd
 
 AMOUNT_OF_KEYWORDS = 8
 
@@ -37,13 +38,19 @@ class Keywords(BaseClassifier):
             lowercase=True,
             stop_words=all_stopwords)
 
-    def find_keywords(self, title, content):
+    def find_keywords(self, title, content, url):
         text = title + content
         response = self.clf.transform([text])
         feature_array = np.array(self.clf.get_feature_names())
 
         response_arr = response.toarray()
         valid_words = [word for word in response_arr[0] if word > 0.0]
+
+        df = pd.DataFrame()
+        df['content'] = [text]
+        df['url'] = [url]
+        if not self.filter(df).bool():
+            return []
 
         if len(valid_words) < AMOUNT_OF_KEYWORDS:
             return []
