@@ -10,9 +10,6 @@ from sklearn.linear_model import SGDClassifier
 class FakeNews(BaseClassifier):
     name = "fake_news"
 
-    def filter(self, df):
-        return df['content'].str.len() > 120
-
     def features_labels(self):
         df = self.load_links()
 

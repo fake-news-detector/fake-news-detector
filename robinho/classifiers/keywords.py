@@ -9,9 +9,6 @@ AMOUNT_OF_KEYWORDS = 8
 class Keywords(BaseClassifier):
     name = "keywords"
 
-    def filter(self, df):
-        return (df['title'] + df['content']).str.len() > 60
-
     def features(self):
         df = self.load_links()
         df["title_content"] = self.join_text_and_content(df)

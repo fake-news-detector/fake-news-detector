@@ -38,7 +38,7 @@ class BaseClassifier():
         raise NotImplementedError
 
     def filter(self, df):
-        raise NotImplementedError
+        return df['content'].str.len() > 120
 
     def load_links(self):
         try:

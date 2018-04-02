@@ -1,27 +1,12 @@
 import unittest
 
 from robinho.classifiers.keywords import Keywords
-import pandas as pd
 
 model = Keywords()
 model.train()
 
 
 class KeywordsTestCase(unittest.TestCase):
-    def test_filter_small_text(self):
-        df = pd.DataFrame()
-        df['title'] = ["Example"]
-        df['content'] = ["Foo Bar"]
-
-        self.assertEqual(model.filter(df).bool(), False)
-
-    def test_filter_bigger_text(self):
-        df = pd.DataFrame()
-        df['title'] = ["Novela apresentará Beijo gay infantil"]
-        df['content'] = ["O programa Encontro, abordou nesta manhã, mais uma vez a questão das crianças transgênero. “crianças que não se identificam com o sexo com que nasceram”. Especialista convidado foi o psiquiatra Alex Sedha, que é coordenador do Ambulatório transdisciplinar de identidade de gênero e orientação sexual. Ele fez questão de frisar que “Não tem nada de errado” com as crianças que desde cedo acreditam ter nascido “no corpo errado”. Citou ainda que atende meninos e meninas com “3 ou 4 anos de idade”."]
-
-        self.assertEqual(model.filter(df).bool(), True)
-
     def test_find_keywords_portuguese_text(self):
         title = "Novela apresentará Beijo gay infantil"
         content = "O programa Encontro, abordou nesta manhã, mais uma vez a questão das crianças transgênero. “crianças que não se identificam com o sexo com que nasceram”. Especialista convidado foi o psiquiatra Alex Sedha, que é coordenador do Ambulatório transdisciplinar de identidade de gênero e orientação sexual. Ele fez questão de frisar que “Não tem nada de errado” com as crianças que desde cedo acreditam ter nascido “no corpo errado”. Citou ainda que atende meninos e meninas com “3 ou 4 anos de idade”."
@@ -30,7 +15,7 @@ class KeywordsTestCase(unittest.TestCase):
 
         self.assertIn('criancas', keywords)
         self.assertIn('beijo', keywords)
-        self.assertIn('novela', keywords)
+        self.assertIn('errado', keywords)
 
     def test_find_keywords_english_text(self):
         title = "Breaking: Top Leftists Call For Civil War"
