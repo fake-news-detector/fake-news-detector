@@ -73,4 +73,6 @@ class BaseClassifier():
         df = pd.DataFrame()
         df['title'] = [title]
         df['content'] = [content]
+        if not self.filter(df).bool():
+            return 0.0
         return self.clf.predict_proba(df)[0][1]
