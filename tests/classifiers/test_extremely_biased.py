@@ -12,13 +12,14 @@ class ExtremelyBiasedTestCase(unittest.TestCase):
         accuracy, f1, positive_recall = test_scores_snapshot(
             self, "ExtremelyBiased", model)
 
-        self.assertGreater(accuracy, 0.66)
-        self.assertGreater(f1, 0.66)
-        self.assertGreater(positive_recall, 0.68)
+        self.assertGreater(accuracy, 0.72)
+        self.assertGreater(f1, 0.72)
+        self.assertGreater(positive_recall, 0.77)
 
     def test_make_predictions(self):
         title = "Chora bandidagem"
         content = "Chora bandidagem. Chora turma dos direitos humanos. O bagulho agora vai ficar frenético, como diz a bandidagem. O presidente Michel Temer acaba de sancionar o projeto de lei aprovado pelo Congresso Nacional que livra os militares envolvidos em conflitos com civis de serem processados na Justiça comum. O projeto de lei que teve o aval de Temer transfere para a Justiça Militar os casos de crimes dolosos contra a vida de civis praticados por militares no exercício de missões como as realizadas nos morros cariocas."
+        url = "http://example.com"
 
         model.train()
-        self.assertGreater(model.predict(title, content), 0.61)
+        self.assertGreater(model.predict(title, content, url), 0.61)

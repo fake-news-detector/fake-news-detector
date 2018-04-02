@@ -19,9 +19,9 @@ class Robinho():
             classifier.train()
         keywords.train()
 
-    def predict(self, title, content):
+    def predict(self, title, content, url):
         def predict_class(name):
-            return self.classifiers[name].predict(title, content)
+            return self.classifiers[name].predict(title, content, url)
 
         return {
             "fake_news": predict_class("fake_news"),

@@ -38,7 +38,7 @@ class BaseClassifier():
         raise NotImplementedError
 
     def filter(self, df):
-        return df['content'].str.len() > 120
+        return (df['content'].str.len() > 120) & (df['url'].str.contains('youtube.com|youtu.be|twitter.com|vimeo.com|facebook.com') == False)
 
     def load_links(self):
         try:
@@ -69,10 +69,11 @@ class BaseClassifier():
 
         self.clf = clf
 
-    def predict(self, title, content):
+    def predict(self, title, content, url):
         df = pd.DataFrame()
         df['title'] = [title]
         df['content'] = [content]
+        df['url'] = [url]
         if not self.filter(df).bool():
             return 0.0
         return self.clf.predict_proba(df)[0][1]

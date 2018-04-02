@@ -32,4 +32,4 @@ class ClickBaitTestCase(unittest.TestCase):
     def test_make_predictions(self):
         model.train()
         self.assertGreater(model.predict(
-            "8 truques que os pintores de paredes não contam para você", ""), 0.55)
+            "8 truques que os pintores de paredes não contam para você", "", "http://example.com"), 0.55)

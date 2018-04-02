@@ -10,7 +10,8 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         title = self.get_arguments("title")[0]
         content = self.get_arguments("content")[0]
-        predictions = robinho.predict(title, content)
+        url = self.get_arguments("url")[0]
+        predictions = robinho.predict(title, content, url)
         keywords = robinho.find_keywords(title, content)
 
         self.finish({'predictions': predictions, 'keywords': keywords})
