@@ -1,4 +1,3 @@
-from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
 from sklearn.naive_bayes import MultinomialNB
 from imblearn.under_sampling import RandomUnderSampler
@@ -17,8 +16,8 @@ class ClickBait(BaseClassifier):
         df = self.load_links()
 
         df["is_click_bait"] = [
-            category_id == categories["click_bait"]
-            for category_id in df["category_id"]
+            clickbait_title == 1.0
+            for clickbait_title in df["clickbait_title"]
         ]
 
         X = df[["title", "content"]]
