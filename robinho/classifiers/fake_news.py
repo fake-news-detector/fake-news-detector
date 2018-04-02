@@ -1,10 +1,10 @@
-from sklearn.naive_bayes import MultinomialNB
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline
 from robinho.categories import categories
 from robinho.classifiers.base import BaseClassifier
 from sklearn.preprocessing import FunctionTransformer
 from robinho.marisa_vectorizers import MarisaTfidfVectorizer
+from sklearn.linear_model import SGDClassifier
 
 
 class FakeNews(BaseClassifier):
@@ -35,5 +35,6 @@ class FakeNews(BaseClassifier):
                 use_idf=True)),
             ('sampling',
              RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
-            ('clf', MultinomialNB(fit_prior=False)),
+            ('clf', SGDClassifier(max_iter=1000, loss='log',
+                                  random_state=BaseClassifier.RANDOM_SEED)),
         ])

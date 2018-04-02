@@ -37,6 +37,9 @@ class BaseClassifier():
     def classifier(self):
         raise NotImplementedError
 
+    def filter(self, df):
+        return df['content'].str.len() > 120
+
     def load_links(self):
         try:
             df = pd.read_csv("links.csv")
@@ -48,6 +51,7 @@ class BaseClassifier():
 
         df.dropna(subset=["title", "content"], inplace=True, how="all")
         df = df.fillna('')
+        df = df.loc[self.filter]
 
         return df
 
@@ -69,4 +73,6 @@ class BaseClassifier():
         df = pd.DataFrame()
         df['title'] = [title]
         df['content'] = [content]
+        if not self.filter(df).bool():
+            return 0.0
         return self.clf.predict_proba(df)[0][1]

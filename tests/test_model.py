@@ -8,7 +8,7 @@ robinho = Robinho()
 class ModelTestCase(unittest.TestCase):
     def test_make_fake_news_predictions(self):
         predictions = robinho.predict(
-            "Novela apresentará Beijo gay infantil", "")
+            "Novela apresentará Beijo gay infantil", "O programa Encontro, abordou nesta manhã, mais uma vez a questão das crianças transgênero. “crianças que não se identificam com o sexo com que nasceram”. Especialista convidado foi o psiquiatra Alex Sedha, que é coordenador do Ambulatório transdisciplinar de identidade de gênero e orientação sexual. Ele fez questão de frisar que “Não tem nada de errado” com as crianças que desde cedo acreditam ter nascido “no corpo errado”. Citou ainda que atende meninos e meninas com “3 ou 4 anos de idade”.")
 
         self.assertGreater(predictions['fake_news'], 0.5)
 
