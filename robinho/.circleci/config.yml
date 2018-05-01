@@ -9,7 +9,7 @@ robinho:
     - run:
         name: check for changes
         command: |
-          if [ ! -e ~/monorepo/.project-metadata/.robinho-changed ]; then
+          if [ ! -e .project-metadata/.robinho-changed ]; then
             echo "robinho has not changed, skipping build"
             circleci step halt
           fi
@@ -36,7 +36,3 @@ robinho:
             docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
             docker push registry.heroku.com/robinho/web
           fi
-    - save_cache:
-        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-        paths:
-          - ~/monorepo/.robinho-hash

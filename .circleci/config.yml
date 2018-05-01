@@ -6,7 +6,7 @@
 version: 2
 
 jobs:
-  clone_and_hash:
+  hash-projects:
     docker:
       - image: circleci/node:8
     working_directory: ~/monorepo
@@ -14,9 +14,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-project-metadata-{{ .Branch }}
-            - v1-project-metadata-master
-
+            - v2-project-metadata-{{ .Branch }}
+            - v2-project-metadata-master
       - run:
           name: Initialize project metadata, hash them and determine changed ones
           command: |
@@ -30,21 +29,21 @@ jobs:
             mv .api-hash{.new,}
           
             touch .extension-hash
-            git log --pretty=format:'%H' -n 1 -- api > .extension-hash.new
+            git log --pretty=format:'%H' -n 1 -- extension > .extension-hash.new
             if ! diff .extension-hash{,.new} > /dev/null; then
               touch .project-metadata/.extension-changed
             fi
             mv .extension-hash{.new,}
           
             touch .robinho-hash
-            git log --pretty=format:'%H' -n 1 -- api > .robinho-hash.new
+            git log --pretty=format:'%H' -n 1 -- robinho > .robinho-hash.new
             if ! diff .robinho-hash{,.new} > /dev/null; then
               touch .project-metadata/.robinho-changed
             fi
             mv .robinho-hash{.new,}
           
             touch .site-hash
-            git log --pretty=format:'%H' -n 1 -- api > .site-hash.new
+            git log --pretty=format:'%H' -n 1 -- site > .site-hash.new
             if ! diff .site-hash{,.new} > /dev/null; then
               touch .project-metadata/.site-changed
             fi
@@ -54,6 +53,18 @@ jobs:
           root: .
           paths:
             - .project-metadata
+      - save_cache:
+          key: v2-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            
+            - .api-hash
+            
+            - .extension-hash
+            
+            - .robinho-hash
+            
+            - .site-hash
+            
 
 
   api:
@@ -67,7 +78,7 @@ jobs:
       - run:
           name: check for changes
           command: |
-            if [ ! -e ~/monorepo/.project-metadata/.api-changed ]; then
+            if [ ! -e .project-metadata/.api-changed ]; then
               echo "api has not changed, skipping build"
               circleci step halt
             fi
@@ -91,10 +102,6 @@ jobs:
               docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
               docker push registry.heroku.com/fake-news-detector-api/web
             fi
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/monorepo/.api-hash
 
   extension:
     working_directory: ~/monorepo/extension
@@ -106,7 +113,7 @@ jobs:
       - run:
           name: check for changes
           command: |
-            if [ ! -e ~/monorepo/.project-metadata/.extension-changed ]; then
+            if [ ! -e .project-metadata/.extension-changed ]; then
               echo "extension has not changed, skipping build"
               circleci step halt
             fi
@@ -138,10 +145,6 @@ jobs:
               (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
               (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
             fi
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/monorepo/.extension-hash
   
 
   robinho:
@@ -155,7 +158,7 @@ jobs:
       - run:
           name: check for changes
           command: |
-            if [ ! -e ~/monorepo/.project-metadata/.robinho-changed ]; then
+            if [ ! -e .project-metadata/.robinho-changed ]; then
               echo "robinho has not changed, skipping build"
               circleci step halt
             fi
@@ -182,10 +185,6 @@ jobs:
               docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
               docker push registry.heroku.com/robinho/web
             fi
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/monorepo/.robinho-hash
 
   site:
     working_directory: ~/monorepo/site
@@ -197,7 +196,7 @@ jobs:
       - run:
           name: check for changes
           command: |
-            if [ ! -e ~/monorepo/.project-metadata/.site-changed ]; then
+            if [ ! -e .project-metadata/.site-changed ]; then
               echo "site has not changed, skipping build"
               circleci step halt
             fi
@@ -224,10 +223,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               npm run deploy
             fi
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ~/monorepo/.site-hash
   
 
 
@@ -236,21 +231,21 @@ workflows:
 
   monorepo-pipelines:
     jobs:
-      - clone_and_hash
+      - hash-projects
       
       - api:
           requires:
-            - clone_and_hash
+            - hash-projects
       
       - extension:
           requires:
-            - clone_and_hash
+            - hash-projects
       
       - robinho:
           requires:
-            - clone_and_hash
+            - hash-projects
       
       - site:
           requires:
-            - clone_and_hash
+            - hash-projects
       

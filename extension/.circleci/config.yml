@@ -8,7 +8,7 @@ extension:
     - run:
         name: check for changes
         command: |
-          if [ ! -e ~/monorepo/.project-metadata/.extension-changed ]; then
+          if [ ! -e .project-metadata/.extension-changed ]; then
             echo "extension has not changed, skipping build"
             circleci step halt
           fi
@@ -40,7 +40,3 @@ extension:
             (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
             (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
           fi
-    - save_cache:
-        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-        paths:
-          - ~/monorepo/.extension-hash

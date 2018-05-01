@@ -8,7 +8,7 @@ site:
     - run:
         name: check for changes
         command: |
-          if [ ! -e ~/monorepo/.project-metadata/.site-changed ]; then
+          if [ ! -e .project-metadata/.site-changed ]; then
             echo "site has not changed, skipping build"
             circleci step halt
           fi
@@ -35,7 +35,3 @@ site:
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
             npm run deploy
           fi
-    - save_cache:
-        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-        paths:
-          - ~/monorepo/.site-hash

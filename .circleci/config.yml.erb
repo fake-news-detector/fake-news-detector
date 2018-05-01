@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  clone_and_hash:
+  hash-projects:
     docker:
       - image: circleci/node:8
     working_directory: ~/monorepo
@@ -9,16 +9,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-project-metadata-{{ .Branch }}
-            - v1-project-metadata-master
-
+            - v2-project-metadata-{{ .Branch }}
+            - v2-project-metadata-master
       - run:
           name: Initialize project metadata, hash them and determine changed ones
           command: |
             mkdir -p .project-metadata
           <% projects.each do |project| %>
             touch .<%= project %>-hash
-            git log --pretty=format:'%H' -n 1 -- api > .<%= project %>-hash.new
+            git log --pretty=format:'%H' -n 1 -- <%= project %> > .<%= project %>-hash.new
             if ! diff .<%= project %>-hash{,.new} > /dev/null; then
               touch .project-metadata/.<%= project %>-changed
             fi
@@ -28,6 +27,12 @@ jobs:
           root: .
           paths:
             - .project-metadata
+      - save_cache:
+          key: v2-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            <% projects.each do |project| %>
+            - .<%= project %>-hash
+            <% end %>
 
 <% circleciConfigs.each do |config| %>
   <%= config.gsub(/\n/, "\n  ") %>
@@ -38,9 +43,9 @@ workflows:
 
   monorepo-pipelines:
     jobs:
-      - clone_and_hash
+      - hash-projects
       <% projects.each do |project| %>
       - <%= project %>:
           requires:
-            - clone_and_hash
+            - hash-projects
       <% end %>
