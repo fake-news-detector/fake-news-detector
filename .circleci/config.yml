@@ -50,21 +50,31 @@ jobs:
       - attach_workspace: { at: . }
       - setup_remote_docker
       - run:
-          name: api
+          name: check for changes
           command: |
-            if [ -e ~/monorepo/.project-metadata/.api-changed ]; then
-              docker pull fakenewsdetector/api
-              docker build --cache-from fakenewsdetector/api -t fakenewsdetector/api .
-              docker run --rm fakenewsdetector/api cargo test
+            if [ ! -e ~/monorepo/.project-metadata/.api-changed ]; then
+              echo "api has not changed, skipping build"
+              circleci step halt
+            fi
+      - run:
+          name: fetch existing image
+          command: docker pull fakenewsdetector/api
+      - run:
+          name: build
+          command: docker build --cache-from fakenewsdetector/api -t fakenewsdetector/api .
+      - run:
+          name: test
+          command: docker run --rm fakenewsdetector/api cargo test
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+              docker push fakenewsdetector/api
 
-              if [ "${CIRCLE_BRANCH}" == "master" ]; then
-                echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
-                docker push fakenewsdetector/robinho
-
-                echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
-                docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
-                docker push registry.heroku.com/robinho/web
-              fi
+              echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+              docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
+              docker push registry.heroku.com/fake-news-detector-api/web
             fi
 
   robinho:
@@ -92,6 +102,8 @@ jobs:
                 docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
                 docker push registry.heroku.com/robinho/web
               fi
+            else
+              echo "api has not changed, skipping build"
             fi
 
 workflows:
