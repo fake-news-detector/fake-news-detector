@@ -1,19 +1,108 @@
 version: 2
+
 jobs:
-  build:
+  clone_and_hash:
     docker:
-      - image: docker
-    working_directory: ~/app
+      - image: circleci/node:8
+    working_directory: ~/monorepo
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-project-metadata-{{ .Branch }}
+            - v1-project-metadata-master
+
+      - run:
+          name: Initialize project metadata, hash them and determine changed ones
+          command: |
+            mkdir -p .project-metadata
+            touch .{api,robinho}-hash
+
+            git log --pretty=format:'%H' -n 1 -- api > .api-hash.new
+            git log --pretty=format:'%H' -n 1 -- robinho > .robinho-hash.new
+
+            if ! diff .api-hash{,.new} > /dev/null; then
+              touch .project-metadata/.api-changed
+            fi
+            if ! diff .robinho-hash{,.new} > /dev/null; then
+              touch .project-metadata/.robinho-changed
+            fi
+
+            mv .api-hash{.new,}
+            mv .robinho-hash{.new,}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .project-metadata
+
+      - save_cache:
+          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            - .api-hash
+            - .robinho-hash
+
+  api:
+    docker:
+      - image: docker
+    working_directory: ~/monorepo/api
+    steps:
+      - checkout: { path: ~/monorepo }
+      - attach_workspace: { at: . }
       - setup_remote_docker
       - run:
-          name: auth
-          command: |
-            # if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
-            echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
-            # fi
-      - run:
           name: api
-          command: ./api/deploy.sh
+          command: |
+            if [ -e ~/monorepo/.project-metadata/.api-changed ]; then
+              docker pull fakenewsdetector/api
+              docker build --cache-from fakenewsdetector/api -t fakenewsdetector/api .
+              docker run --rm fakenewsdetector/api cargo test
+
+              if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+                docker push fakenewsdetector/robinho
+
+                echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+                docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
+                docker push registry.heroku.com/robinho/web
+              fi
+            fi
+
+  robinho:
+    docker:
+      - image: docker
+    working_directory: ~/monorepo/robinho
+    steps:
+      - checkout: { path: ~/monorepo }
+      - attach_workspace: { at: . }
+      - setup_remote_docker
+      - run:
+          name: robinho
+          command: |
+            if [ -e ~/monorepo/.project-metadata/.robinho-changed ]; then
+              docker pull fakenewsdetector/robinho
+              docker build --build-arg CACHEBUST=$(date +%s) --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
+              docker run --rm fakenewsdetector/robinho flake8 robinho/
+              docker run --rm fakenewsdetector/robinho python3 -m unittest
+
+              if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+                docker push fakenewsdetector/robinho
+
+                echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+                docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
+                docker push registry.heroku.com/robinho/web
+              fi
+            fi
+
+workflows:
+  version: 2
+
+  build_test_deploy:
+    jobs:
+      - clone_and_hash
+      - api:
+          requires:
+            - clone_and_hash
+      - robinho:
+          requires:
+            - clone_and_hash

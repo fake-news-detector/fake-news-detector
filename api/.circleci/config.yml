@@ -20,10 +20,10 @@ jobs:
           name: deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
+              echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
               docker push fakenewsdetector/api
 
-              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+              echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
               docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
               docker push registry.heroku.com/fake-news-detector-api/web
             fi
