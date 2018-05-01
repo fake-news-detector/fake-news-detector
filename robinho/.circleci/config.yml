@@ -36,3 +36,7 @@ robinho:
             docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
             docker push registry.heroku.com/robinho/web
           fi
+    - save_cache:
+        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+        paths:
+          - ~/monorepo/.robinho-hash

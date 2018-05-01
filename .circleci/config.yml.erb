@@ -29,13 +29,6 @@ jobs:
           paths:
             - .project-metadata
 
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-          <% projects.each do |project| %>
-            - .<%= project %>-hash
-          <% end %>
-
 <% circleciConfigs.each do |config| %>
   <%= config.gsub(/\n/, "\n  ") %>
 <% end %>
@@ -43,7 +36,7 @@ jobs:
 workflows:
   version: 2
 
-  build_test_deploy:
+  monorepo-pipelines:
     jobs:
       - clone_and_hash
       <% projects.each do |project| %>

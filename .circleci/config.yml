@@ -1,6 +1,8 @@
 #
 # WARNING: THIS IS A GENERATED FILE, DO NOT CHANGE IT DIRECTLY
 #
+# instead, update it by running `ruby .circleci/generate.rb`
+#
 version: 2
 
 jobs:
@@ -53,19 +55,6 @@ jobs:
           paths:
             - .project-metadata
 
-      - save_cache:
-          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
-          paths:
-          
-            - .api-hash
-          
-            - .extension-hash
-          
-            - .robinho-hash
-          
-            - .site-hash
-          
-
 
   api:
     working_directory: ~/monorepo/api
@@ -102,6 +91,10 @@ jobs:
               docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
               docker push registry.heroku.com/fake-news-detector-api/web
             fi
+      - save_cache:
+          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/monorepo/.api-hash
 
   extension:
     working_directory: ~/monorepo/extension
@@ -145,6 +138,10 @@ jobs:
               (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
               (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
             fi
+      - save_cache:
+          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/monorepo/.extension-hash
   
 
   robinho:
@@ -185,6 +182,10 @@ jobs:
               docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
               docker push registry.heroku.com/robinho/web
             fi
+      - save_cache:
+          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/monorepo/.robinho-hash
 
   site:
     working_directory: ~/monorepo/site
@@ -223,13 +224,17 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               npm run deploy
             fi
+      - save_cache:
+          key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/monorepo/.site-hash
   
 
 
 workflows:
   version: 2
 
-  build_test_deploy:
+  monorepo-pipelines:
     jobs:
       - clone_and_hash
       

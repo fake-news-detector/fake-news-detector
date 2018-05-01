@@ -40,3 +40,7 @@ extension:
             (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
             (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
           fi
+    - save_cache:
+        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+        paths:
+          - ~/monorepo/.extension-hash

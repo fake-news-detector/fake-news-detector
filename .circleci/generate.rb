@@ -9,7 +9,7 @@ end
 
 template = File.read("#{__dir__}/config.yml.erb")
 result = ERB.new(template).result
-result = "#\n# WARNING: THIS IS A GENERATED FILE, DO NOT CHANGE IT DIRECTLY\n#\n" + result
+result = "#\n# WARNING: THIS IS A GENERATED FILE, DO NOT CHANGE IT DIRECTLY\n#\n# instead, update it by running `ruby .circleci/generate.rb`\n#\n" + result
 
 File.open("#{__dir__}/config.yml", 'w') { |file| file.write(result) }
 

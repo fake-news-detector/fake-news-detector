@@ -33,3 +33,7 @@ api:
             docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
             docker push registry.heroku.com/fake-news-detector-api/web
           fi
+    - save_cache:
+        key: v1-project-metadata-{{ .Branch }}-{{ epoch }}
+        paths:
+          - ~/monorepo/.api-hash
