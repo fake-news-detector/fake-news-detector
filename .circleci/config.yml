@@ -10,12 +10,10 @@ jobs:
       - run:
           name: auth
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
-              docker push fakenewsdetector/api
-
-              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
-            fi
+            # if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+            echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+            # fi
       - run:
           name: api
           command: ./api/deploy.sh
