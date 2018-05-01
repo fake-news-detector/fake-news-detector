@@ -1,32 +1,38 @@
-version: 2
-jobs:
-  build:
-    docker:
-      - image: docker
-    working_directory: ~/app
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: fetch existing image
-          command: docker pull fakenewsdetector/robinho
-      - run:
-          name: build
-          command: docker build --build-arg CACHEBUST=$(date +%s) --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
-      - run:
-          name: run style check
-          command: docker run --rm fakenewsdetector/robinho flake8 robinho/
-      - run:
-          name: run tests
-          command: docker run --rm fakenewsdetector/robinho python3 -m unittest
-      - deploy:
-          name: deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
-              docker push fakenewsdetector/robinho
+robinho:
+  docker:
+    - image: docker
+  working_directory: ~/monorepo/robinho
+  steps:
+    - checkout: { path: ~/monorepo }
+    - attach_workspace: { at: . }
+    - setup_remote_docker
+    - run:
+        name: check for changes
+        command: |
+          if [ ! -e ~/monorepo/.project-metadata/.robinho-changed ]; then
+            echo "robinho has not changed, skipping build"
+            circleci step halt
+          fi
+    - run:
+        name: fetch existing image
+        command: docker pull fakenewsdetector/robinho
+    - run:
+        name: build
+        command: docker build --build-arg CACHEBUST=$(date +%s) --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
+    - run:
+        name: run style check
+        command: docker run --rm fakenewsdetector/robinho flake8 robinho/
+    - run:
+        name: run tests
+        command: docker run --rm fakenewsdetector/robinho python3 -m unittest
+    - deploy:
+        name: deploy
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+            docker push fakenewsdetector/robinho
 
-              echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
-              docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
-              docker push registry.heroku.com/robinho/web
-            fi
+            echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+            docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
+            docker push registry.heroku.com/robinho/web
+          fi

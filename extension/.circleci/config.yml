@@ -1,36 +1,42 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/app
-    docker:
-      - image: circleci/node:8
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
-      - run:
-          name: install-dependencies
-          command: npm install
-      - run:
-          name: test
-          command: npm test
-      - run:
-          name: build
-          command: npm run build
-      - save_cache:
-          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
-          paths:
-            - node_modules
-            - elm-stuff
-            - test/elm-stuff
-      - deploy:
-          name: deploy
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              npm run publish:chrome > publish.log 2>&1 && cat publish.log ||
-              (cat publish.log && cat publish.log | grep PKG_INVALID_VERSION_NUMBER && echo "Same version, skipping the deploy to chrome")
+extension:
+  working_directory: ~/monorepo/extension
+  docker:
+    - image: circleci/node:8
+  steps:
+    - checkout: { path: ~/monorepo }
+    - attach_workspace: { at: . }
+    - run:
+        name: check for changes
+        command: |
+          if [ ! -e ~/monorepo/.project-metadata/.extension-changed ]; then
+            echo "extension has not changed, skipping build"
+            circleci step halt
+          fi
+    - restore_cache:
+        key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
+    - run:
+        name: install-dependencies
+        command: npm install
+    - run:
+        name: test
+        command: npm test
+    - run:
+        name: build
+        command: npm run build
+    - save_cache:
+        key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
+        paths:
+          - node_modules
+          - elm-stuff
+          - test/elm-stuff
+    - deploy:
+        name: deploy
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            npm run publish:chrome > publish.log 2>&1 && cat publish.log ||
+            (cat publish.log && cat publish.log | grep PKG_INVALID_VERSION_NUMBER && echo "Same version, skipping the deploy to chrome")
 
-              npm run publish:firefox > publish.log 2>&1 && cat publish.log ||
-              (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
-              (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
-            fi
+            npm run publish:firefox > publish.log 2>&1 && cat publish.log ||
+            (cat publish.log && cat publish.log | grep "Version already exists" && echo "Same version, skipping the deploy to firefox") ||
+            (cat publish.log && cat publish.log | grep "Your add-on has been submitted for review" && echo "Deploy to firefox successfull")
+          fi
