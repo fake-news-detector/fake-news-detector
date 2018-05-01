@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: fetch existing image
+          command: docker pull fakenewsdetector/api
+      - run:
+          name: build
+          command: docker build --cache-from fakenewsdetector/api -t fakenewsdetector/api .
+      - run:
+          name: test
+          command: docker run --rm fakenewsdetector/api cargo test
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
+              docker push fakenewsdetector/api
+
+              docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
+              docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
+              docker push registry.heroku.com/fake-news-detector-api/web
+            fi

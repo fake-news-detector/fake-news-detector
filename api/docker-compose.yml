@@ -1,0 +1,19 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+  web:
+    build: .
+    depends_on:
+      - database
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: "bash -c 'diesel database setup && (cargo watch -w admin -s \"elm-make --yes admin/Main.elm --output target/admin.js\" & cargo watch -w src -x run)'"
+    environment:
+      DATABASE_URL: "postgres://postgres:password@database:5432/fakenews"
