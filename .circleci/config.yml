@@ -8,25 +8,14 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: fetch existing image
-          command: docker pull fakenewsdetector/robinho
-      - run:
-          name: build
-          command: docker build --build-arg CACHEBUST=$(date +%s) --cache-from fakenewsdetector/robinho -t fakenewsdetector/robinho .
-      - run:
-          name: run style check
-          command: docker run --rm fakenewsdetector/robinho flake8 robinho/
-      - run:
-          name: run tests
-          command: docker run --rm fakenewsdetector/robinho python3 -m unittest
-      - deploy:
-          name: deploy
+          name: auth
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker login --username=$DOCKERHUB_USER --password=$DOCKERHUB_PASS
-              docker push fakenewsdetector/robinho
+              docker push fakenewsdetector/api
 
               docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
-              docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
-              docker push registry.heroku.com/robinho/web
             fi
+      - run:
+          name: api
+          command: ./api/deploy.sh
