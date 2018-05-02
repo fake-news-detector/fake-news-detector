@@ -1,0 +1,39 @@
+{
+  "name": "fake-news-detector-extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install": "elm-package install -y && cd test && elm-package install -y",
+    "start": "npm run start:extension & webpack --watch",
+    "start:extension": "web-ext run --ignore-files 'src/**/*' 'elm-stuff/**/*'",
+    "lint": "web-ext lint --ignore-files 'elm-stuff/**/*'",
+    "build": "rm -r web-ext-artifacts; NODE_ENV=production webpack --progress && web-ext build --ignore-files 'elm-stuff/**/*' 'src/**/*' 'test/**/*'",
+    "test": "jest && elm-test",
+    "test:watch": "concurrently --kill-others 'jest --watch' 'elm-test --watch'",
+    "publish:chrome": "webstore upload --source web-ext-artifacts/*.zip --extension-id alomdfnfpbaagehmdokilpbjcjhacabk --client-id $CLIENT_ID --client-secret $CLIENT_SECRET --refresh-token $REFRESH_TOKEN --auto-publish",
+    "publish:firefox": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --id='{c86a2f84-c0e0-49fd-b29c-2bfe62300612}' --ignore-files 'elm-stuff/**/*' 'src/**/*' 'test/**/*'"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
+    "chrome-webstore-upload-cli": "^1.1.1",
+    "concurrently": "^3.5.1",
+    "copy-webpack-plugin": "^4.1.1",
+    "elm": "^0.18.0",
+    "elm-test": "^0.18.12",
+    "elm-webpack-loader": "^4.3.1",
+    "jest": "^22.4.3",
+    "uglifyjs-webpack-plugin": "^1.0.0-beta.3",
+    "web-ext": "^2.0.0",
+    "webpack": "^3.6.0"
+  },
+  "dependencies": {
+    "uuid": "^3.1.0",
+    "webextension-polyfill": "^0.2.1"
+  }
+}

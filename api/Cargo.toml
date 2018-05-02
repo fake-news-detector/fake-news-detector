@@ -1,0 +1,22 @@
+[package]
+name = "fake-news-api"
+version = "0.1.0"
+authors = ["Rogerio Chaves <rogeriocfj@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.3"
+rocket_codegen = "0.3.3"
+serde = "1.0.15"
+serde_derive = "1.0.15"
+serde_json = "1.0.3"
+diesel = { version = "0.16.0", features = ["postgres"] }
+diesel_codegen = { version = "0.16.0", features = ["postgres"] }
+r2d2-diesel = "0.16.0"
+r2d2 = "0.7.4"
+reqwest = "0.8.0"
+select = "0.4.2"
+md5 = "0.3.6"
+
+[dependencies.rocket_contrib]
+version = "0.3.3"
+features = ["handlebars_templates"]

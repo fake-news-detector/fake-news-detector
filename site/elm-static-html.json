@@ -1,0 +1,20 @@
+{
+  "files": {
+    "src/Main.elm": {
+      "output": "build/static/pages/index.html",
+      "viewFunction": "staticViewPt"
+    },
+    "src//Main.elm": {
+      "output": "build/static/pages/en.html",
+      "viewFunction": "staticViewEn"
+    },
+    "src///Main.elm": {
+      "output": "build/static/pages/es.html",
+      "viewFunction": "staticViewEs"
+    },
+    "src////Main.elm": {
+      "output": "build/static/pages/pt.html",
+      "viewFunction": "staticViewPt"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Detector de Fake News e Click Bait do Robinho</title>
+    <meta name="description" content="Ajude o Robinho a detectar Fake News pela internet">
+    <meta name="keywords" content="fake news, robinho, machine learning, click bait">
+    <meta name="author" content="Rogério Chaves">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="static/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="static/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="static/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="static/favicons/manifest.json">
+    <link rel="mask-icon" href="static/favicons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="static/favicons/favicon.ico">
+    <meta name="msapplication-config" content="static/favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+      img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <%
+      // Temporary Fix for https://github.com/eeue56/elm-static-html/issues/10
+      var html = require('../build/static/pages/' + htmlWebpackPlugin.options.page + '.html');
+      var trimmedHtml = html.replace(/[\s\t\n]*</g, '<').replace(/>[\s\t\n]*/g, '>')
+    %>
+    <div id="app"><%= trimmedHtml %></div>
+
+    <a href="https://github.com/fake-news-detector">
+      <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png">
+    </a>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-108055161-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-108055161-1');
+    </script>
+  </body>
+</html>

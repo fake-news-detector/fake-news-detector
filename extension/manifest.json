@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
+  "version": "0.30",
+  "homepage_url": "https://fakenewsdetector.org/",
+  "icons": {
+    "48": "icons/trump-48.png",
+    "96": "icons/trump-96.png"
+  },
+  "permissions": ["*://api.fakenewsdetector.org/*", "webRequest", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.facebook.com/*", "*://*.twitter.com/*"],
+      "js": ["dist/bundle.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icons/trump-48.png",
+    "default_title": "Fake News Detector",
+    "default_popup": "dist/index.html"
+  },
+  "web_accessible_resources": ["dist/bundle.js"]
+}

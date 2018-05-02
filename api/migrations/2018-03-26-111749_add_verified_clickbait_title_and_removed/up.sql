@@ -1,0 +1,3 @@
+ALTER TABLE links
+ADD COLUMN verified_clickbait_title BOOLEAN NULL,
+ADD COLUMN removed BOOLEAN NOT NULL DEFAULT FALSE;

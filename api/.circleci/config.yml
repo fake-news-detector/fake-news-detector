@@ -1,0 +1,35 @@
+api:
+  working_directory: ~/monorepo/api
+  docker:
+    - image: docker
+  steps:
+    - checkout: { path: ~/monorepo }
+    - attach_workspace: { at: . }
+    - setup_remote_docker
+    - run:
+        name: check for changes
+        command: |
+          if [ ! -e .project-metadata/.api-changed ]; then
+            echo "api has not changed, skipping build"
+            circleci step halt
+          fi
+    - run:
+        name: fetch existing image
+        command: docker pull fakenewsdetector/api
+    - run:
+        name: build
+        command: docker build --cache-from fakenewsdetector/api -t fakenewsdetector/api .
+    - run:
+        name: test
+        command: docker run --rm fakenewsdetector/api cargo test
+    - deploy:
+        name: deploy
+        command: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            echo $DOCKERHUB_PASS | docker login --username=$DOCKERHUB_USER --password-stdin
+            docker push fakenewsdetector/api
+
+            echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
+            docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
+            docker push registry.heroku.com/fake-news-detector-api/web
+          fi

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Detector de Fake News e Click Bait</title>
+    <style>
+      body {
+        max-width: 800px;
+        padding: 0 10px;
+        margin: 0 auto;
+      }
+      img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Humanos e Robôs trabalhando junto contra os Fake News</h1>
+    <p>
+      O Detector de Fake News é uma extensão para o
+      <a href="https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk">Chrome</a>
+      e
+      <a href="https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/">Firefox</a>
+      que permite detectar e classificar direto do seu feed do Facebook as notícias como <b>Legítimas</b>,
+      <b>Fake News</b>, <b>Click Bait</b>, <b>Extremamente Tendenciosa</b> ou <b>Sátira</b>.
+    </p>
+    <a href="https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk"><img height="58" src="add-to-chrome.png" /></a>
+    <a href="https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/"><img height="58" src="add-to-firefox.png"  /></a>
+    <p>
+      Ao classificar uma notícia, outras pessoas que tem a extensão vão ver a sua sinalização,
+      ficarão mais atentas e também poderão sinalizar. Essas informações são guardadas em um
+      banco de dados, e são lidas pelo nosso robô, o
+      <a href="https://github.com/fake-news-detector/robinho">Robinho</a>.
+    </p>
+    <p>
+      O Robinho se baseia na informação dada por nós humanos, e vai aprendendo com o tempo a classificar
+      automaticamente uma notícia como Fake News, Click Bait, etc, pelo seu texto. Com isso, mesmo novas
+      notícias que ninguém nunca viu poderão ser rapidamente classificadas.
+    </p>
+    <p>
+      A extensão então mostra nas notícias do seu facebook a avaliação do robô e das pessoas:
+    </p>
+    <img src="clickbait.png" width="471" alt="Extensão mostrando que uma notícia foi classificada como click bait no facebook" />
+    <p>
+      Quanto mais você avalia as notícias, mais você contribui para a construção de uma base para
+      ensinar e melhorar o Robinho, que ainda está bem no início do seu desenvolvimento, veja, ele ainda
+      é um bebê robô:
+    </p>
+    <img src="robinho.jpg" width="350" alt="Foto do Robinho"> <br />
+    <small>Créditos a <a href="http://www.paper-toy.fr/baby-robot-friend-de-drew-tetz/" target="_blank">Drew Tetz</a> pela foto</small> <br />
+    <small>Créditos a <a href="https://twitter.com/laurapaschoal" target="_blank">@laurapaschoal</a> pelo nome Robinho</small>
+    <h2>Motivação</h2>
+    <p>
+      Em 2016, durante a eleição dos Estados Unidos, muitos sites de fake news foram criados,
+      e propagados através das redes sociais, principalmente do Facebook, mas foram muitos,
+      <b>muitos mesmo!</b> Tanto que as Fake News tiveram
+      <a target="_blank" href="http://www.patheos.com/blogs/accordingtomatthew/2016/12/fake-news-stories-received-more-clicks-than-real-news-during-end-of-2016-election-season/">
+        mais cliques que as notícias reais.
+      </a>
+    </p>
+    <p>
+      Um dos casos mais icônicos foi o de um morador da Macedônia que tinha
+      <a target="_blank" href="https://www.wired.com/2017/02/veles-macedonia-fake-news/">mais de 100 sites de fake news registrados</a>,
+      chegando a ganhar milhares de dólares por mês com anúncios.
+    </p>
+    <p>
+      A maioria desses sites era pró-Trump, por que? O Macedônio era um defensor ferrenho do Trump?
+      Não! Simplesmente porque o eleitorado do Trump era mais sucetível a acreditar e propagar Fake News.
+    </p>
+    <p>
+      Agora, em 2018, teremos eleições no Brasil, e há muitas páginas por aí que não se preocupam em
+      conferir as fontes, e podem se aproveitar (e já estão se aproveitando) da mesma estratégia
+      que beneficiou Donald Trump.
+    </p>
+    <p>
+      Além disso, ainda temos muitas publicações extremamente tendenciosas de todos os lados e
+      os irritantes click-baits.
+    </p>
+    <p>
+      O Detector de Fake News é uma pequena iniciativa para tentar fazer alguma diferença na luta contra
+      esse problema, unindo a boa vontade das pessoas (Crowdsourcing) com tecnologia (Machine Learning)
+    </p>
+    <h2>Como contribuir</h2>
+    <p>
+      Só de baixar a extensão e sinalizar as notícias você já vai estar ajudando muito! Tanto outros
+      usuários, quanto no desenvolvimento do Robinho.
+    </p>
+    <p>
+      Mas se você é programador ou cientista de dados, o Detector de Fake News é um projeto de
+      código aberto que precisa muito da sua ajuda! Todos os repositórios estão disponíveis em:
+      <a href="https://github.com/fake-news-detector">https://github.com/fake-news-detector</a>.
+    </p>
+    <p>
+      As tecnologias também são muito empolgantes: usamos Elm com WebExtensions para
+      a extensão, Rust para a API e Python para Machine Learning. Não conhece? Não tem problema, afinal o objetivo do
+      projeto é justamente aprender essas tecnologias enquanto ajuda o mundo.
+    </p>
+    <p>
+      Se quiser ajudar, dê uma olhada no nosso <a href="https://github.com/fake-news-detector/fake-news-detector.github.io/blob/master/ROADMAP.md">ROADMAP</a> (em inglês) para entender a direção do projeto, e dê uma olhada também nas <a href="https://github.com/fake-news-detector">issues do github dos projetos</a>.
+    </p>
+    <p>
+      Se você ficou interessado mas tem dúvidas de como pode ajudar, me procure no twitter,
+      <a href="https://twitter.com/_rchaves_">@_rchaves_</a>.
+    </p>
+    <a href="https://github.com/fake-news-detector">
+      <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png">
+    </a>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-108055161-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-108055161-1');
+    </script>
+  </body>
+</html>

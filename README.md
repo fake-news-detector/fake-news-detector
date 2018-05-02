@@ -3,99 +3,41 @@
 [ci-svg]: https://circleci.com/gh/fake-news-detector/robinho.svg?style=shield
 [ci-url]: https://circleci.com/gh/fake-news-detector/robinho
 
-# Robinho
+# The Fake News Detector
 
-## JSON API endpoints
+The [Fake News Detector](https://fakenewsdetector.org/) is an extension for [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
+and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
+that allows you to detect and flag news directly from your Facebook into
+**Legitimate**, **Fake News**, **Click Bait**, **Extremely Biased**, **Satire** or **Not news**.
 
-The JSON API is currently running under the url https://robinho.fakenewsdetector.org/
+After flagging a newstory, other people that have the extension will be able to see your flagging,
+will pay more attention to it and may also flag it. The data is then saved on a database and read by our robot,
+[Robinho](https://github.com/fake-news-detector/robinho).
 
-### Predictions
+Robinho reads the information given by us humans and learn with time to automatically flag
+news as Fake News, Click Bait, etc, based on its text. By doing that, even fresh news that no
+one saw may be quickly flagged.
 
-You can predict the category of a news by calling:
+# Contributing
 
-`GET /predict?title=string&content=string`
+This is the main repo for the project, which is divided into smaller projects, you can read more about those and learn how to contribute to them:
 
-Response format:
+### /robinho <small>[ [README](robinho/README.md) ]</small>
 
-```
-{
-  predictions: {
-    fake_news: float,
-    extremely_biased: float,
-    clickbait: float
-  },
-  keywords: [ string ]
-}
-```
+This is where our machine learning models live, it also provides an endpoint for giving predictions. It uses Python.
 
-### Postman
+### /api <small>[ [README](api/README.md) | [CONTRIBUTING](api/CONTRIBUTING.md) ]</small>
 
-Postman is an app that helps you make requests when developing APIs.
+The API saves flagged content to the database, retrieve them, authenticate users and so on, basically all backend work except predictions. It uses Rust.
 
-We have a postman collection ready for you to use for debugging the API, just [download postman](https://www.getpostman.com/) and import the `dev/postman_collection.json` file.
+### /extension <small>[ [README](extension/README.md) | [CONTRIBUTING](extension/CONTRIBUTING.md) ]</small>
 
-<img width="303" alt="Postman Collection" src="https://user-images.githubusercontent.com/792201/34436375-8c11a10a-ec7c-11e7-8319-a567613701e4.png">
+This is the WebExtension that users can install to flag and detect bad content on their twitter and facebook feeds. It uses Elm and JavaScript.
 
-## Running
+### /site <small>[ [README](site/README.md) ]</small>
 
-### With Docker
+This is the main website, which also allows users to check and flag content without having to install the extension. It uses Elm.
 
-#### Running
+---
 
-```sh
-make build
-make run
-```
-
-#### Test Suite
-
-```sh
-make test
-```
-
-### Without Docker
-
-You will need Python 3 with pip, then you can install the dependencies:
-
-```sh
-pip3 install -r requirements.txt
-python3 -m nltk.downloader stopwords
-```
-
-Now you can retrain the model:
-
-```sh
-rm links.csv; python3 . --retrain
-```
-
-Then use the saved model to do predictions, by passing the news title and body:
-
-```sh
-python3 . "Chora bandidagem" "Chora turma dos direitos humanos. Michel Temer acaba de sancionar..."
->> Extremely Biased
-
-python3 . "Pato rebate provocação de Neymar com foto" "Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro..."
->> Legitimate
-```
-
-#### Running
-
-To run the server:
-
-```sh
-python3 . --server
-```
-
-#### Test Suite
-
-You can run all tests with:
-
-```sh
-python3 -m unittest
-```
-
-## Deploy
-
-The deploy is made by CircleCI using docker on heroku.
-
-Read more about deploying docker with heroku [on the oficial docs](https://devcenter.heroku.com/articles/container-registry-and-runtime).
+Also check out the [issues](issues) to find some things that you can do to help.
