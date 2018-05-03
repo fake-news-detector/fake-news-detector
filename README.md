@@ -40,4 +40,4 @@ This is the main website, which also allows users to check and flag content with
 
 ---
 
-Also check out the [issues](issues) to find some things that you can do to help.
+Also check out the [issues](https://github.com/fake-news-detector/robinho/issues) to find some things that you can do to help.
