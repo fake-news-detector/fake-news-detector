@@ -32,12 +32,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fake-news-detector/fake-news-detector.github.io.git"
+    "url": "git+https://github.com/fake-news-detector/fake-news-detector.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fake-news-detector/fake-news-detector.github.io/issues"
+    "url": "https://github.com/fake-news-detector/fake-news-detector/issues"
   },
-  "homepage": "https://github.com/fake-news-detector/fake-news-detector.github.io#readme"
+  "homepage": "https://fakenewsdetector.org/"
 }

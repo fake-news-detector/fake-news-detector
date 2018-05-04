@@ -12,7 +12,7 @@ that allows you to detect and flag news directly from your Facebook into
 
 After flagging a newstory, other people that have the extension will be able to see your flagging,
 will pay more attention to it and may also flag it. The data is then saved on a database and read by our robot,
-[Robinho](https://github.com/fake-news-detector/robinho).
+[Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
 Robinho reads the information given by us humans and learn with time to automatically flag
 news as Fake News, Click Bait, etc, based on its text. By doing that, even fresh news that no
@@ -40,4 +40,4 @@ This is the main website, which also allows users to check and flag content with
 
 ---
 
-Also check out the [issues](https://github.com/fake-news-detector/robinho/issues) to find some things that you can do to help.
+Also check out the [issues](https://github.com/fake-news-detector/fake-news-detector/issues) to find some things that you can do to help.

@@ -40,7 +40,7 @@ Response format:
 }]
 ```
 
-This endpoint is used by [Robinho](https://github.com/fake-news-detector/robinho) to fetch the links and train its classification algorithms.
+This endpoint is used by [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho) to fetch the links and train its classification algorithms.
 
 ### Votes
 
@@ -70,7 +70,7 @@ Response format:
 }
 ```
 
-The `domain` key is only present if the given url is listed on one of our [manually verified domains](https://github.com/fake-news-detector/api/blob/master/src/data/verified_domains.rs).
+The `domain` key is only present if the given url is listed on one of our [manually verified domains](https://github.com/fake-news-detector/fake-news-detector/blob/master/api/src/data/verified_domains.rs).
 When present, this value should be used over robot guesses.
 
 The `keywords` are extracted from the title and content to be used later for automatic googling for the users to fact-check themselves.
@@ -95,8 +95,8 @@ Response format:
 
 `{ link_id: int, category_id: int, uuid: string, ip: string }`
 
-The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/extension) and the [Fake News Website](https://github.com/fake-news-detector/site).
+The votes endpoints are used by the [Fake News Extension](https://github.com/fake-news-detector/fake-news-detector/tree/master/extension) and the [Fake News Website](https://github.com/fake-news-detector/fake-news-detector/tree/master/site).
 
 # Contributing
 
-If you want to help the project, you can fork it and run on your machine, for more details, read the [CONTRIBUTING.md](https://github.com/fake-news-detector/api/blob/master/CONTRIBUTING.md) guide.
+If you want to help the project, you can fork it and run on your machine, for more details, read the [CONTRIBUTING.md](https://github.com/fake-news-detector/fake-news-detector/blob/master/api/CONTRIBUTING.md) guide.

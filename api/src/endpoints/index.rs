@@ -5,5 +5,5 @@ use rocket::response::Redirect;
 
 #[get("/")]
 fn index() -> Redirect {
-    Redirect::moved("https://github.com/fake-news-detector/api/#json-api-endpoints")
+    Redirect::moved("https://github.com/fake-news-detector/fake-news-detector/tree/master/api/#json-api-endpoints")
 }

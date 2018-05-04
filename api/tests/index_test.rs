@@ -19,7 +19,7 @@ fn return_index_page() {
     let location = response.deref().headers().get("Location").next();
 
     assert_eq!(response.status(), Status::MovedPermanently);
-    assert_eq!(location, Some("https://github.com/fake-news-detector/api/#json-api-endpoints"));
+    assert_eq!(location, Some("https://github.com/fake-news-detector/fake-news-detector/tree/master/api/#json-api-endpoints"));
 }
 
 fn create_index_client() -> Client {

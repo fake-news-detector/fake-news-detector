@@ -158,7 +158,7 @@ como **Legítimas**, **Fake News**, **Click Bait**, **Extremamente Tendenciosa**
 
 Ao classificar uma notícia, outras pessoas que tem a extensão vão ver a sua sinalização,
 ficarão mais atentas e também poderão sinalizar. Essas informações são guardadas em um
-banco de dados e são lidas pelo nosso robô, o [Robinho](https://github.com/fake-news-detector/robinho).
+banco de dados e são lidas pelo nosso robô, o [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
 O Robinho se baseia na informação dada por nós humanos e vai aprendendo com o tempo a classificar
 automaticamente uma notícia como Fake News, Click Bait, etc, pelo seu texto. Com isso, mesmo novas
@@ -217,7 +217,7 @@ As tecnologias também são muito empolgantes: usamos Elm com WebExtensions para
 a extensão, Rust para a API e Python para Machine Learning. Não conhece? Não tem problema, afinal o objetivo do
 projeto é justamente aprender essas tecnologias enquanto ajuda o mundo.
 
-Se quiser ajudar, dê uma olhada no nosso [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
+Se quiser ajudar, dê uma olhada no nosso [ROADMAP](https://github.com/fake-news-detector/fake-news-detector/blob/master/site/ROADMAP.md)
 (em inglês) para entender a direção do projeto, e dê uma olhada também nas
 [issues do github dos projetos](https://github.com/fake-news-detector).
 

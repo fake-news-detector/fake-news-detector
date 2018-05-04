@@ -1,7 +1,6 @@
 ---
 
 [Pre-Requirements](#pre-requirements) | [Running](#running) | [Tech Stack](#tech-stack) | [Testing](#testing) | [Debugging](#debugging) | [Formatting](#formatting) | [Publishing](#publishing)
-
 ---
 
 # Contributing
@@ -35,7 +34,7 @@ It should fire up firefox for you, now go to `facebook.com` or `twitter.com`, si
 
 ## Tech Stack
 
-The main languages of the project are Elm and JavaScript. Elm is used for building the UI elements and comunication with the [API](https://github.com/fake-news-detector/api), while JavaScript is the glue for injecting Elm on the pages and accessing WebExtensions functions.
+The main languages of the project are Elm and JavaScript. Elm is used for building the UI elements and comunication with the [API](https://github.com/fake-news-detector/fake-news-detector/tree/master/api), while JavaScript is the glue for injecting Elm on the pages and accessing WebExtensions functions.
 
 If you don't know Elm, don't worry, you can contribute without it, but if you want to know more, the best place to start is the [official guide](https://guide.elm-lang.org/).
 

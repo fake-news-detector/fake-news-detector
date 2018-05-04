@@ -158,7 +158,7 @@ that allows you to detect and flag news directly from your Facebook into
 
 After flagging a newstory, other people that have the extension will be able to see your flagging,
 will pay more attention to it and may also flag. The data is then saved on a database and read by our robot,
-[Robinho](https://github.com/fake-news-detector/robinho).
+[Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
 Robinho reads the information given by us humans and learn with time to automatically flag
 news as Fake News, Click Bait, etc, based on its text. By doing that, even fresh news that no
@@ -218,7 +218,7 @@ extension, Rust for the API and Python for Machine Learning. Not an expert?
 Not a problem, after all the goal of the project is precisely to learn these
 technologies while helping the world.
 
-If you want to help, take a look at our [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
+If you want to help, take a look at our [ROADMAP](https://github.com/fake-news-detector/fake-news-detector/blob/master/site/ROADMAP.md)
 to understand where the project is going, also check out the
 [issues on github](https://github.com/fake-news-detector).
 

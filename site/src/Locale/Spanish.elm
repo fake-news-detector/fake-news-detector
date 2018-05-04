@@ -158,7 +158,7 @@ que te permite detectar y señalar noticias directamente en tu Facebook como
 
 Al clasificar una noticia, otras personas que tienen la extensión van a ver tu clasificación,
 quedarán más atentas y también podrán clasificar. Esta información se guarda en una base de datos,
-y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/robinho).
+y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
 El Robinho se basa en la información dada por nosotros y va aprendiendo
 con el tiempo a clasificar automáticamente una noticia como Fake News, Click Bait,
@@ -220,7 +220,7 @@ la extensión, Rust para la API y Python para Machine Learning. ¿No conoces? No
 hay problema, al final el objetivo del proyecto es justamente aprender esas
 tecnologías mientras ayuda al mundo.
 
-Si desea ayudar, echa un vistazo a nuestro [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
+Si desea ayudar, echa un vistazo a nuestro [ROADMAP](https://github.com/fake-news-detector/fake-news-detector/blob/master/site/ROADMAP.md)
 (en inglés) para entender la dirección del proyecto, y mira también
 las [issues del github de los proyectos](https://github.com/fake-news-detector).
 
