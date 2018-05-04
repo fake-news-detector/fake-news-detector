@@ -1,8 +1,3 @@
-[![Build Status][ci-svg]][ci-url]
-
-[ci-svg]: https://circleci.com/gh/fake-news-detector/extension.svg?style=shield
-[ci-url]: https://circleci.com/gh/fake-news-detector/extension
-
 # Fake News Detector Web Extension
 
 The Fake News Detector is a web extension for Chrome and Firefox that allows you to detect and classify news directly from your Facebook and Twitter feed as Legitimate, Fake News, Click Bait, Extremely Biased or Satire.

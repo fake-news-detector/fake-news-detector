@@ -1,7 +1,7 @@
 [![Build Status][ci-svg]][ci-url]
 
-[ci-svg]: https://circleci.com/gh/fake-news-detector/robinho.svg?style=shield
-[ci-url]: https://circleci.com/gh/fake-news-detector/robinho
+[ci-svg]: https://circleci.com/gh/fake-news-detector/fake-news-detector.svg?style=shield
+[ci-url]: https://circleci.com/gh/fake-news-detector/fake-news-detector
 
 # The Fake News Detector
 

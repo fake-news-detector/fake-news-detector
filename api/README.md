@@ -1,8 +1,3 @@
-[![Build Status][ci-svg]][ci-url]
-
-[ci-svg]: https://circleci.com/gh/fake-news-detector/api.svg?style=shield
-[ci-url]: https://circleci.com/gh/fake-news-detector/api
-
 # Fake News Detector API
 
 ## JSON API endpoints
