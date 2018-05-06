@@ -9,6 +9,7 @@
     "build": "rm -r ./build; npm run generate-html && NODE_ENV=production webpack --progress && sw-precache --config=sw-precache-config.js",
     "generate-html": "mkdir -p build/static/pages && elm-static-html -c elm-static-html.json",
     "install": "elm-package install -y && cd test && elm-package install -y",
+    "preinstall": "npx npm-force-resolutions",
     "deploy": "./deploy.sh",
     "test": "elm-test"
   },
@@ -29,6 +30,9 @@
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
+  },
+  "resolutions": {
+    "hoek": "4.2.1"
   },
   "repository": {
     "type": "git",
