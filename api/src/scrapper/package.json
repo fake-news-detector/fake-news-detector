@@ -18,6 +18,6 @@
   "homepage": "https://github.com/fake-news-detector/fake-news-detector/tree/master/api#readme",
   "dependencies": {
     "axios": "^0.17.0",
-    "unfluff": "^1.1.0"
+    "unfluff": "^3.0.0"
   }
 }
