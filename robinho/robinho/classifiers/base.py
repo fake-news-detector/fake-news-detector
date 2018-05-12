@@ -52,6 +52,12 @@ class BaseClassifier():
             df.to_csv("links.csv")
 
         df.dropna(subset=["title", "content"], inplace=True, how="all")
+        df["category_id"] = df['verified_category_id'].fillna(
+            df['category_id'])
+
+        df["clickbait_title"] = df['verified_clickbait_title'].fillna(
+            df['clickbait_title'])
+
         df = df.fillna('')
         df = df.loc[self.filter]
 
