@@ -81,8 +81,6 @@ struct PeopleVotes {
 #[derive(Serialize, Deserialize)]
 pub struct AllVotes {
     domain: Option<VerifiedVote>,
-    content: ContentVotes,
-    title: TitleVotes,
     robot: RobinhoPredictions,
     people: PeopleVotes,
     keywords: Vec<String>,
@@ -185,35 +183,11 @@ pub fn get_all_votes(
     let robinho_response = get_robinho_prediction(&title, &content_, &url);
     let robinho_votes = robinho_response.predictions;
     let keywords = robinho_response.keywords;
-    let people_content_votes = get_people_votes(&url, &*conn)?;
     let people_content_votes_clone = get_people_votes(&url, &*conn)?;
-    let people_clickbait_votes = get_people_clickbait_votes(&url, &*conn)?;
     let people_clickbait_votes_clone = get_people_clickbait_votes(&url, &*conn)?;
-
-    let robinho_votes_to_vec = vec![
-        RobotContentVote {
-            category_id: 2,
-            chance: robinho_votes.fake_news,
-        },
-        RobotContentVote {
-            category_id: 4,
-            chance: robinho_votes.extremely_biased,
-        },
-    ];
 
     Ok(AllVotes {
         domain: domain,
-        content: ContentVotes {
-            robot: robinho_votes_to_vec,
-            people: people_content_votes,
-        },
-        title: TitleVotes {
-            robot: RobotTitleVote {
-                clickbait: robinho_votes.clickbait > 0.5,
-                chance: robinho_votes.clickbait,
-            },
-            people: people_clickbait_votes,
-        },
         robot: robinho_votes,
         people: PeopleVotes {
             content: people_content_votes_clone,

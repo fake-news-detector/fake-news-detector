@@ -64,6 +64,13 @@ npm install
 cd -
 ```
 
+Create and migrate the database:
+
+```
+export DATABASE_URL="postgres://postgres:password@localhost:5432/fakenews"
+diesel database setup
+```
+
 Then start the app:
 
 ```
