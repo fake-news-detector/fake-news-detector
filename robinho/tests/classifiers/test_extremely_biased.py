@@ -4,7 +4,6 @@ from robinho.classifiers.extremely_biased import ExtremelyBiased
 from tests.helpers import test_scores_snapshot
 
 model = ExtremelyBiased()
-X, y = model.features_labels()
 
 
 class ExtremelyBiasedTestCase(unittest.TestCase):

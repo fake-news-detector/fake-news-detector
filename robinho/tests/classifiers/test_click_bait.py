@@ -5,7 +5,6 @@ from tests.helpers import test_scores_snapshot
 import pandas as pd
 
 model = ClickBait()
-X, y = model.features_labels()
 
 
 class ClickBaitTestCase(unittest.TestCase):
@@ -23,13 +22,13 @@ class ClickBaitTestCase(unittest.TestCase):
 
     def test_scores_snapshot(self):
         accuracy, f1, positive_recall = test_scores_snapshot(
-            self, "ClickBait", model)
+            self, "ClickBait", model, 1)
 
-        self.assertGreater(accuracy, 0.57)
-        self.assertGreater(f1, 0.57)
-        self.assertGreater(positive_recall, 0.54)
+        self.assertGreater(accuracy, 0.96)
+        self.assertGreater(f1, 0.96)
+        self.assertGreater(positive_recall, 0.97)
 
     def test_make_predictions(self):
         model.train()
         self.assertGreater(model.predict(
-            "8 truques que os pintores de paredes não contam para você", "", "http://example.com"), 0.55)
+            "8 truques que os pintores de paredes não contam para você", "", "http://example.com"), 0.9)

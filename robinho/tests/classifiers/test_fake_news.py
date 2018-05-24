@@ -4,7 +4,6 @@ from robinho.classifiers.fake_news import FakeNews
 from tests.helpers import test_scores_snapshot
 
 model = FakeNews()
-X, y = model.features_labels()
 
 
 class FakeNewsTestCase(unittest.TestCase):
