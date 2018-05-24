@@ -38,7 +38,7 @@ pub fn find_or_create(
     link.or_else(|_| {
         let content_ = match content {
             Some(text) => Some(String::from(text)),
-            None => scrapper::extract_text(url).to_owned(),
+            None => scrapper::extract_text(url).map(|r| r.text).to_owned(),
         };
 
         let new_link: NewLink = NewLink {
@@ -51,7 +51,7 @@ pub fn find_or_create(
 }
 
 pub fn rescrape_content(link: &Link, conn: &PgConnection) -> QueryResult<Link> {
-    let content = scrapper::extract_text(&link.url).to_owned();
+    let content = scrapper::extract_text(&link.url).map(|r| r.text).to_owned();
 
     update(link).set(dsl::content.eq(content)).get_result(conn)
 }

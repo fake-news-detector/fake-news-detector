@@ -178,8 +178,13 @@ pub fn get_all_votes(
     let domain = get_domain_category(&url);
     let content_ = match content {
         Some(text) => String::from(text),
-        None => scrapper::extract_text(&url).unwrap_or(String::from("")),
+        None => {
+            scrapper::extract_text(&url).map(|r| r.text).unwrap_or(
+                String::from(""),
+            )
+        }
     };
+    println!("Found content: {}", content_);
     let robinho_response = get_robinho_prediction(&title, &content_, &url);
     let robinho_votes = robinho_response.predictions;
     let keywords = robinho_response.keywords;
