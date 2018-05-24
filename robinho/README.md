@@ -60,7 +60,7 @@ python3 -m nltk.downloader stopwords
 Now you can retrain the model:
 
 ```sh
-rm links.csv; python3 . --retrain
+make retrain
 ```
 
 Then use the saved model to do predictions, by passing the news title and body:
