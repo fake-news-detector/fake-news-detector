@@ -16,4 +16,4 @@ redeploy:
 	curl -X POST https://circleci.com/api/v1/project/fake-news-detector/robinho/tree/master?circle-token=$$CIRCLE_CI_TOKEN
 
 retrain:
-	rm train_data/links.csv; python3 . --retrain
+	mv train_data/links.csv train_data/links.copy.csv; python3 . --retrain; mv train_data/links.copy.csv train_data/links.csv
