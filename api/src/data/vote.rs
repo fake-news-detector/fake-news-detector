@@ -176,16 +176,17 @@ pub fn get_all_votes(
     conn: &PgConnection,
 ) -> QueryResult<AllVotes> {
     let domain = get_domain_category(&url);
-    let content_ = match content {
-        Some(text) => String::from(text),
-        None => {
-            scrapper::extract_text(&url).map(|r| r.text).unwrap_or(
-                String::from(""),
-            )
-        }
+    let unscrapped_title_content = scrapper::UnfluffResponse {
+        title: String::from(title),
+        text: content.map(|t| String::from(t)).unwrap_or(String::from("")),
     };
-    println!("Found content: {}", content_);
-    let robinho_response = get_robinho_prediction(&title, &content_, &url);
+    let scrapped = if content.is_none() || title.is_empty() {
+        scrapper::extract_text(&url).unwrap_or(unscrapped_title_content)
+    } else {
+        unscrapped_title_content
+    };
+
+    let robinho_response = get_robinho_prediction(&scrapped.title, &scrapped.text, &url);
     let robinho_votes = robinho_response.predictions;
     let keywords = robinho_response.keywords;
     let people_content_votes_clone = get_people_votes(&url, &*conn)?;
