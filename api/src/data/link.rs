@@ -36,15 +36,24 @@ pub fn find_or_create(
     let link = dsl::links.filter(dsl::url.eq(url)).first::<Link>(conn);
 
     link.or_else(|_| {
-        let content_ = match content {
-            Some(text) => Some(String::from(text)),
-            None => scrapper::extract_text(url).map(|r| r.text).to_owned(),
+        let unscrapped_title_content = scrapper::UnfluffResponse {
+            title: String::from(title),
+            text: content.map(|t| String::from(t)).unwrap_or(String::from("")),
+        };
+        let scrapped = if content.is_none() || title.is_empty() {
+            scrapper::extract_text(&url).unwrap_or(unscrapped_title_content)
+        } else {
+            unscrapped_title_content
         };
 
         let new_link: NewLink = NewLink {
             url: url,
-            title: title,
-            content: content_.as_ref().map(String::as_ref),
+            title: &scrapped.title,
+            content: if scrapped.text.is_empty() {
+                None
+            } else {
+                Some(&scrapped.text)
+            },
         };
         diesel::insert(&new_link).into(dsl::links).get_result(conn)
     })
