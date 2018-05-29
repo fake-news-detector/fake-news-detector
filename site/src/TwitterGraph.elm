@@ -10,8 +10,6 @@ import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (button, div)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onClick, onMouseEnter, onMouseLeave)
-import Json.Decode as Decode
-import Mouse exposing (Position)
 import RemoteData exposing (..)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
@@ -30,10 +28,7 @@ screenHeight =
 
 
 type Msg
-    = DragStart NodeId Position
-    | DragAt Position
-    | DragEnd Position
-    | Tick Time
+    = Tick Time
     | LoadTweets
     | TweetsResponse (WebData (List Tweet))
     | MouseOver NodeId
@@ -41,18 +36,10 @@ type Msg
 
 
 type alias Model =
-    { drag : Maybe Drag
-    , tweetsData : WebData (List Tweet)
+    { tweetsData : WebData (List Tweet)
     , graph : Graph Entity ()
     , simulation : Force.State NodeId
     , highlightedNode : Maybe NodeId
-    }
-
-
-type alias Drag =
-    { start : Position
-    , current : Position
-    , index : NodeId
     }
 
 
@@ -74,23 +61,13 @@ generateForces graph =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { drag = Nothing
-      , tweetsData = NotAsked
+    ( { tweetsData = NotAsked
       , graph = initialGraph
       , simulation = generateForces initialGraph
       , highlightedNode = Nothing
       }
     , Cmd.none
     )
-
-
-updateNode : Position -> NodeContext Entity () -> NodeContext Entity ()
-updateNode pos nodeCtx =
-    let
-        nodeValue =
-            nodeCtx.node.label
-    in
-    updateContextWithValue nodeCtx { nodeValue | x = toFloat pos.x, y = toFloat pos.y }
 
 
 updateContextWithValue : NodeContext Entity () -> Entity -> NodeContext Entity ()
@@ -112,50 +89,14 @@ updateGraphWithList =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ drag, graph, simulation } as model) =
+update msg ({ graph, simulation } as model) =
     case msg of
         Tick t ->
             let
                 ( newState, list ) =
                     Force.tick simulation <| List.map .label <| Graph.nodes graph
             in
-            case drag of
-                Nothing ->
-                    ( { model | graph = updateGraphWithList graph list, simulation = newState }, Cmd.none )
-
-                Just { current, index } ->
-                    ( { model
-                        | graph =
-                            Graph.update index (Maybe.map (updateNode current)) (updateGraphWithList graph list)
-                        , simulation = newState
-                      }
-                    , Cmd.none
-                    )
-
-        DragStart index xy ->
-            ( { model | drag = Just (Drag xy xy index) }, Cmd.none )
-
-        DragAt xy ->
-            case drag of
-                Just { start, index } ->
-                    ( { model
-                        | drag = Just (Drag start xy index)
-                        , graph = Graph.update index (Maybe.map (updateNode xy)) graph
-                        , simulation = Force.reheat simulation
-                      }
-                    , Cmd.none
-                    )
-
-                Nothing ->
-                    ( model, Cmd.none )
-
-        DragEnd xy ->
-            case drag of
-                Just { start, index } ->
-                    ( { model | drag = Nothing, graph = Graph.update index (Maybe.map (updateNode xy)) graph }, Cmd.none )
-
-                Nothing ->
-                    ( model, Cmd.none )
+            ( { model | graph = updateGraphWithList graph list, simulation = newState }, Cmd.none )
 
         LoadTweets ->
             ( { model | tweetsData = Loading }
@@ -192,22 +133,10 @@ update msg ({ drag, graph, simulation } as model) =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    case model.drag of
-        Nothing ->
-            -- This allows us to save resources, as if the simulation is done, there is no point in subscribing
-            -- to the rAF.
-            if Force.isCompleted model.simulation then
-                Sub.none
-            else
-                AnimationFrame.times Tick
-
-        Just _ ->
-            Sub.batch [ Mouse.moves DragAt, Mouse.ups DragEnd, AnimationFrame.times Tick ]
-
-
-onMouseDown : NodeId -> Attribute Msg
-onMouseDown index =
-    on "mousedown" (Decode.map (DragStart index) Mouse.position)
+    if Force.isCompleted model.simulation then
+        Sub.none
+    else
+        AnimationFrame.times Tick
 
 
 linkElement : Model -> { b | from : NodeId, to : NodeId } -> Svg msg
@@ -274,7 +203,6 @@ nodeElement { highlightedNode, graph } node =
                 , fill "#FFF"
                 , stroke "#000"
                 , strokeWidth "1px"
-                , onMouseDown node.id
                 , cx (toString node.label.x)
                 , cy (toString node.label.y)
                 ]
@@ -319,7 +247,3 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
-
-
-
-{- {"delay": 5001} -}
