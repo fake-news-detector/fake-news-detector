@@ -10,37 +10,33 @@ import Visualization.Force as Force
 
 
 type alias TwitterUser =
-    { id : Int
+    { id : String
     , screenName : String
     }
 
 
 type alias IdAndUser =
-    { id : Int, user : TwitterUser }
+    { id : String, user : TwitterUser }
+
+
+type alias IdAndScreenName =
+    { id : String, screenName : String }
 
 
 type alias Tweet =
-    { id : Int
+    { id : String
     , user : TwitterUser
     , retweet : Maybe IdAndUser
     }
 
 
 type alias Entity =
-    Force.Entity NodeId { value : String }
+    Force.Entity NodeId { value : IdAndScreenName }
 
 
 initialGraph : Graph.Graph Entity ()
 initialGraph =
     Graph.fromNodeLabelsAndEdgePairs [] []
-        |> mapContexts
-
-
-sampleGraph : Graph.Graph Entity ()
-sampleGraph =
-    Graph.fromNodesAndEdges
-        [ Node 1 "Foo", Node 2 "Bar", Node 3 "Baz" ]
-        [ Edge 1 2 () ]
         |> mapContexts
 
 
@@ -63,27 +59,27 @@ decodeTweets =
         tweetDecoder : Decoder Tweet
         tweetDecoder =
             decode Tweet
-                |> required "id" int
+                |> required "id_str" string
                 |> required "user" twitterUserDecoder
                 |> optional "retweeted_status" idAndUserDecoder Nothing
 
         twitterUserDecoder : Decoder TwitterUser
         twitterUserDecoder =
             decode TwitterUser
-                |> required "id" int
+                |> required "id_str" string
                 |> required "screen_name" string
 
         idAndUserDecoder : Decoder (Maybe IdAndUser)
         idAndUserDecoder =
             decode IdAndUser
-                |> required "id" int
+                |> required "id_str" string
                 |> required "user" twitterUserDecoder
                 |> Json.Decode.map Just
     in
     field "statuses" (list tweetDecoder)
 
 
-buildTweetsGraph : List Tweet -> Graph.Graph String ()
+buildTweetsGraph : List Tweet -> Graph.Graph IdAndScreenName ()
 buildTweetsGraph tweets =
     let
         indexedTweets =
@@ -99,13 +95,13 @@ buildTweetsGraph tweets =
                 |> List.reverse
                 |> List.Extra.indexedFoldl
                     (\index tweet indexedTweets ->
-                        Dict.insert tweet.id { index = index, screenName = tweet.screenName } indexedTweets
+                        Dict.insert tweet.id { id = tweet.id, index = index, screenName = tweet.screenName } indexedTweets
                     )
                     Dict.empty
 
         nodes =
             Dict.values indexedTweets
-                |> List.map (\{ index, screenName } -> Node index screenName)
+                |> List.map (\{ index, id, screenName } -> Node index { id = id, screenName = screenName })
 
         getTweetIndex { id } =
             Dict.get id indexedTweets

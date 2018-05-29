@@ -16,9 +16,9 @@ suite =
                     decodeString decodeTweets sampleJsonWithoutRetweet
                         |> Expect.equal
                             (Ok
-                                [ { id = 1000933688572555300
+                                [ { id = "1000933688572555264"
                                   , user =
-                                        { id = 708092973716807700
+                                        { id = "708092973716807682"
                                         , screenName = "tuliovsky"
                                         }
                                   , retweet = Nothing
@@ -30,16 +30,16 @@ suite =
                     decodeString decodeTweets sampleJsonWithRetweet
                         |> Expect.equal
                             (Ok
-                                [ { id = 1000933688572555300
+                                [ { id = "1000933688572555264"
                                   , user =
-                                        { id = 708092973716807700
+                                        { id = "708092973716807682"
                                         , screenName = "tuliovsky"
                                         }
                                   , retweet =
                                         Just
-                                            { id = 1000857125235642400
+                                            { id = "1000857125235642368"
                                             , user =
-                                                { id = 758519817578086400
+                                                { id = "758519817578086400"
                                                 , screenName = "Desesquerdizada"
                                                 }
                                             }
@@ -53,9 +53,9 @@ suite =
                     buildTweetsGraph tweetsSample
                         |> Expect.equal
                             (Graph.fromNodesAndEdges
-                                [ Node 0 "Ricardo_Obadiah"
-                                , Node 1 "tuliovsky"
-                                , Node 2 "Desesquerdizada"
+                                [ Node 0 { id = "1000928922870132736", screenName = "Ricardo_Obadiah" }
+                                , Node 1 { id = "1000933688572555264", screenName = "tuliovsky" }
+                                , Node 2 { id = "1000857125235642368", screenName = "Desesquerdizada" }
                                 ]
                                 [ Edge 0 2 ()
                                 , Edge 1 2 ()
@@ -66,9 +66,9 @@ suite =
                     buildTweetsGraph tweetsSampleWithoutRetweetRoot
                         |> Expect.equal
                             (Graph.fromNodesAndEdges
-                                [ Node 0 "Ricardo_Obadiah"
-                                , Node 1 "tuliovsky"
-                                , Node 2 "Desesquerdizada"
+                                [ Node 0 { id = "1000928922870132736", screenName = "Ricardo_Obadiah" }
+                                , Node 1 { id = "1000933688572555264", screenName = "tuliovsky" }
+                                , Node 2 { id = "1000857125235642368", screenName = "Desesquerdizada" }
                                 ]
                                 [ Edge 0 2 ()
                                 , Edge 1 2 ()
@@ -79,7 +79,7 @@ suite =
                     buildTweetsGraph tweetsSampleWithoutRetweetRoot
                         |> Graph.nodes
                         |> List.drop 2
-                        |> Expect.equal [ Node 2 "Desesquerdizada" ]
+                        |> Expect.equal [ Node 2 { id = "1000857125235642368", screenName = "Desesquerdizada" } ]
             ]
         ]
 
@@ -90,9 +90,9 @@ sampleJsonWithoutRetweet =
 {
     "statuses": [
         {
-            "id": 1000933688572555300,
+            "id_str": "1000933688572555264",
             "user": {
-                "id": 708092973716807700,
+                "id_str": "708092973716807682",
                 "screen_name": "tuliovsky"
             }
         }
@@ -107,15 +107,15 @@ sampleJsonWithRetweet =
 {
     "statuses": [
         {
-            "id": 1000933688572555300,
+            "id_str": "1000933688572555264",
             "user": {
-                "id": 708092973716807700,
+                "id_str": "708092973716807682",
                 "screen_name": "tuliovsky"
             },
             "retweeted_status": {
-                "id": 1000857125235642400,
+                "id_str": "1000857125235642368",
                 "user": {
-                    "id": 758519817578086400,
+                    "id_str": "758519817578086400",
                     "screen_name": "Desesquerdizada"
                 }
             }
@@ -127,37 +127,37 @@ sampleJsonWithRetweet =
 
 tweetsSample : List Tweet
 tweetsSample =
-    [ { id = 1000857125235642400
+    [ { id = "1000857125235642368"
       , user =
-            { id = 758519817578086400
+            { id = "758519817578086400"
             , screenName = "Desesquerdizada"
             }
       , retweet = Nothing
       }
-    , { id = 1000933688572555300
+    , { id = "1000933688572555264"
       , user =
-            { id = 708092973716807700
+            { id = "708092973716807682"
             , screenName = "tuliovsky"
             }
       , retweet =
             Just
-                { id = 1000857125235642400
+                { id = "1000857125235642368"
                 , user =
-                    { id = 758519817578086400
+                    { id = "758519817578086400"
                     , screenName = "Desesquerdizada"
                     }
                 }
       }
-    , { id = 1000928922870132700
+    , { id = "1000928922870132736"
       , user =
-            { id = 169545469
+            { id = "169545469"
             , screenName = "Ricardo_Obadiah"
             }
       , retweet =
             Just
-                { id = 1000857125235642400
+                { id = "1000857125235642368"
                 , user =
-                    { id = 758519817578086400
+                    { id = "758519817578086400"
                     , screenName = "Desesquerdizada"
                     }
                 }
@@ -167,30 +167,30 @@ tweetsSample =
 
 tweetsSampleWithoutRetweetRoot : List Tweet
 tweetsSampleWithoutRetweetRoot =
-    [ { id = 1000933688572555300
+    [ { id = "1000933688572555264"
       , user =
-            { id = 708092973716807700
+            { id = "708092973716807682"
             , screenName = "tuliovsky"
             }
       , retweet =
             Just
-                { id = 1000857125235642400
+                { id = "1000857125235642368"
                 , user =
-                    { id = 758519817578086400
+                    { id = "758519817578086400"
                     , screenName = "Desesquerdizada"
                     }
                 }
       }
-    , { id = 1000928922870132700
+    , { id = "1000928922870132736"
       , user =
-            { id = 169545469
+            { id = "169545469"
             , screenName = "Ricardo_Obadiah"
             }
       , retweet =
             Just
-                { id = 1000857125235642400
+                { id = "1000857125235642368"
                 , user =
-                    { id = 758519817578086400
+                    { id = "758519817578086400"
                     , screenName = "Desesquerdizada"
                     }
                 }

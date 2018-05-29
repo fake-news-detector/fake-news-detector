@@ -8,7 +8,8 @@ import AnimationFrame
 import Data.TweetsGraph exposing (..)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (button, div)
-import Html.Events exposing (on, onClick)
+import Html.Attributes exposing (attribute)
+import Html.Events exposing (on, onClick, onMouseEnter, onMouseLeave)
 import Json.Decode as Decode
 import Mouse exposing (Position)
 import RemoteData exposing (..)
@@ -35,6 +36,8 @@ type Msg
     | Tick Time
     | LoadTweets
     | TweetsResponse (WebData (List Tweet))
+    | MouseOver NodeId
+    | MouseLeave NodeId
 
 
 type alias Model =
@@ -42,6 +45,7 @@ type alias Model =
     , tweetsData : WebData (List Tweet)
     , graph : Graph Entity ()
     , simulation : Force.State NodeId
+    , highlightedNode : Maybe NodeId
     }
 
 
@@ -74,6 +78,7 @@ init =
       , tweetsData = NotAsked
       , graph = initialGraph
       , simulation = generateForces initialGraph
+      , highlightedNode = Nothing
       }
     , Cmd.none
     )
@@ -178,6 +183,12 @@ update msg ({ drag, graph, simulation } as model) =
             , Cmd.none
             )
 
+        MouseOver nodeId ->
+            ( { model | highlightedNode = Just nodeId }, Cmd.none )
+
+        MouseLeave nodeId ->
+            ( { model | highlightedNode = Nothing }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -199,14 +210,19 @@ onMouseDown index =
     on "mousedown" (Decode.map (DragStart index) Mouse.position)
 
 
-linkElement : Graph Entity e -> { a | from : NodeId, to : NodeId } -> Svg msg
-linkElement graph edge =
+linkElement : Model -> { b | from : NodeId, to : NodeId } -> Svg msg
+linkElement { graph } edge =
     let
+        getEntity id =
+            Graph.get id graph
+                |> Maybe.map (.node >> .label)
+                |> Maybe.withDefault (Force.entity 0 { id = "", screenName = "" })
+
         source =
-            Maybe.withDefault (Force.entity 0 "") <| Maybe.map (.node >> .label) <| Graph.get edge.from graph
+            getEntity edge.from
 
         target =
-            Maybe.withDefault (Force.entity 0 "") <| Maybe.map (.node >> .label) <| Graph.get edge.to graph
+            getEntity edge.to
     in
     line
         [ strokeWidth "1"
@@ -219,8 +235,8 @@ linkElement graph edge =
         []
 
 
-nodeElement : Graph n e -> { d | id : NodeId, label : { c | x : Float, y : Float, value : String } } -> Svg Msg
-nodeElement graph node =
+nodeElement : Model -> { c | label : { b | x : Float, y : number, value : IdAndScreenName }, id : NodeId } -> Svg Msg
+nodeElement { highlightedNode, graph } node =
     let
         connectionsCount =
             Graph.edges graph
@@ -232,42 +248,54 @@ nodeElement graph node =
                 |> Basics.min 10
 
         nodeText =
-            if connectionsCount > 4 then
-                [ rect
-                    [ x (toString <| node.label.x - 11)
-                    , y (toString <| node.label.y - 11)
-                    , width (toString <| String.length node.label.value * 11)
-                    , height (toString <| 22)
-                    , rx (toString 10)
-                    , ry (toString 10)
-                    , fill "#FFF"
-                    , stroke "#333"
-                    ]
-                    []
-                , Svg.text_
-                    [ x (toString <| node.label.x + nodeSize + 5)
-                    , y (toString <| node.label.y + 5)
-                    , Attr.style "font-family: sans-serif; font-size: 14px"
-                    ]
-                    [ text node.label.value ]
+            Svg.text_
+                [ x (toString <| node.label.x + nodeSize + 5)
+                , y (toString <| node.label.y + 5)
+                , Attr.style "font-family: sans-serif; font-size: 14px"
                 ]
-            else
+                [ text node.label.value.screenName ]
+
+        nodeRect =
+            rect
+                [ x (toString <| node.label.x - 11)
+                , y (toString <| node.label.y - 11)
+                , width (toString <| String.length node.label.value.screenName * 11)
+                , height (toString <| 22)
+                , rx (toString 10)
+                , ry (toString 10)
+                , fill "#FFF"
+                , stroke "#333"
+                ]
                 []
+
+        nodeCircle =
+            circle
+                [ r (toString nodeSize)
+                , fill "#FFF"
+                , stroke "#000"
+                , strokeWidth "1px"
+                , onMouseDown node.id
+                , cx (toString node.label.x)
+                , cy (toString node.label.y)
+                ]
+                [ Svg.title [] [ text node.label.value.screenName ]
+                ]
     in
-    g []
-        (nodeText
-            ++ [ circle
-                    [ r (toString nodeSize)
-                    , fill "#000"
-                    , stroke "transparent"
-                    , strokeWidth "7px"
-                    , onMouseDown node.id
-                    , cx (toString node.label.x)
-                    , cy (toString node.label.y)
-                    ]
-                    [ Svg.title [] [ text node.label.value ]
-                    ]
-               ]
+    a
+        [ onMouseEnter (MouseOver node.id)
+        , onMouseLeave (MouseLeave node.id)
+        , attribute "href" ("https://twitter.com/" ++ node.label.value.screenName ++ "/status/" ++ node.label.value.id)
+        , target "_blank"
+        ]
+        (case ( highlightedNode == Just node.id, connectionsCount > 4 ) of
+            ( True, _ ) ->
+                [ nodeRect, nodeText, nodeCircle ]
+
+            ( False, True ) ->
+                [ nodeText, nodeCircle ]
+
+            ( False, False ) ->
+                [ nodeCircle ]
         )
 
 
@@ -276,8 +304,8 @@ view model =
     div []
         [ svg
             [ width (toString screenWidth ++ "px"), height (toString screenHeight ++ "px") ]
-            [ g [ class "links" ] <| List.map (linkElement model.graph) <| Graph.edges model.graph
-            , g [ class "nodes" ] <| List.map (nodeElement model.graph) <| Graph.nodes model.graph
+            [ g [ class "links" ] <| List.map (linkElement model) <| Graph.edges model.graph
+            , g [ class "nodes" ] <| List.map (nodeElement model) <| Graph.nodes model.graph
             ]
         , button [ onClick LoadTweets ] [ Html.text "Load data" ]
         ]
