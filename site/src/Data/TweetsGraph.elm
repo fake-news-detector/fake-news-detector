@@ -1,9 +1,11 @@
 module Data.TweetsGraph exposing (..)
 
-import Graph exposing (NodeId)
+import Dict
+import Graph exposing (Edge, Node, NodeId)
 import Http
 import Json.Decode exposing (Decoder, field, int, list, string, succeed)
 import Json.Decode.Pipeline exposing (decode, optional, required)
+import List.Extra
 import Visualization.Force as Force
 
 
@@ -34,15 +36,11 @@ initialGraph =
         |> mapContexts
 
 
-graphFromTweets : Graph.Graph Entity ()
-graphFromTweets =
-    Graph.fromNodeLabelsAndEdgePairs
-        [ "Foo"
-        , "Bar"
-        , "Baz"
-        ]
-        [ ( 1, 0 )
-        ]
+sampleGraph : Graph.Graph Entity ()
+sampleGraph =
+    Graph.fromNodesAndEdges
+        [ Node 1 "Foo", Node 2 "Bar", Node 3 "Baz" ]
+        [ Edge 1 2 () ]
         |> mapContexts
 
 
@@ -54,9 +52,9 @@ mapContexts =
         )
 
 
-getTweetData : Http.Request String
+getTweetData : Http.Request (List Tweet)
 getTweetData =
-    Http.get "/src/sample.json" (succeed "foo")
+    Http.get "/src/sample.json" decodeTweets
 
 
 decodeTweets : Decoder (List Tweet)
@@ -83,3 +81,47 @@ decodeTweets =
                 |> Json.Decode.map Just
     in
     field "statuses" (list tweetDecoder)
+
+
+buildTweetsGraph : List Tweet -> Graph.Graph String ()
+buildTweetsGraph tweets =
+    let
+        indexedTweets =
+            tweets
+                |> List.concatMap
+                    (\tweet ->
+                        tweet.retweet
+                            |> Maybe.map (\rt -> [ { id = rt.id, screenName = rt.user.screenName } ])
+                            |> Maybe.withDefault []
+                            |> flip (++) [ { id = tweet.id, screenName = tweet.user.screenName } ]
+                    )
+                |> List.Extra.uniqueBy .id
+                |> List.reverse
+                |> List.Extra.indexedFoldl
+                    (\index tweet indexedTweets ->
+                        Dict.insert tweet.id { index = index, screenName = tweet.screenName } indexedTweets
+                    )
+                    Dict.empty
+
+        nodes =
+            Dict.values indexedTweets
+                |> List.map (\{ index, screenName } -> Node index screenName)
+
+        getTweetIndex { id } =
+            Dict.get id indexedTweets
+                |> Maybe.map .index
+                |> Maybe.withDefault 0
+
+        edges =
+            tweets
+                |> List.concatMap
+                    (\tweet ->
+                        case tweet.retweet of
+                            Just retweet ->
+                                [ Edge (getTweetIndex tweet) (getTweetIndex retweet) () ]
+
+                            Nothing ->
+                                []
+                    )
+    in
+    Graph.fromNodesAndEdges nodes edges

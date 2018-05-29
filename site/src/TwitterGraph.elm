@@ -20,7 +20,7 @@ import Visualization.Force as Force exposing (State)
 
 screenWidth : Float
 screenWidth =
-    990
+    600
 
 
 screenHeight : Float
@@ -34,12 +34,12 @@ type Msg
     | DragEnd Position
     | Tick Time
     | LoadTweets
-    | TweetsResponse (WebData String)
+    | TweetsResponse (WebData (List Tweet))
 
 
 type alias Model =
     { drag : Maybe Drag
-    , tweetsData : WebData String
+    , tweetsData : WebData (List Tweet)
     , graph : Graph Entity ()
     , simulation : Force.State NodeId
     }
@@ -55,14 +55,17 @@ type alias Drag =
 generateForces : Graph n e -> State Int
 generateForces graph =
     let
-        link { from, to } =
-            ( from, to )
+        links =
+            graph
+                |> Graph.edges
+                |> List.map (\{ from, to } -> { source = from, target = to, distance = 20, strength = Just 1.5 })
     in
-    [ Force.links <| List.map link <| Graph.edges graph
-    , Force.manyBody <| List.map .id <| Graph.nodes graph
+    [ Force.customLinks 1 links
+    , Force.manyBodyStrength -45 <| List.map .id <| Graph.nodes graph
     , Force.center (screenWidth / 2) (screenHeight / 2)
     ]
         |> Force.simulation
+        |> Force.iterations 12
 
 
 init : ( Model, Cmd Msg )
@@ -157,10 +160,20 @@ update msg ({ drag, graph, simulation } as model) =
             )
 
         TweetsResponse response ->
+            let
+                graph =
+                    case response of
+                        Success tweets ->
+                            buildTweetsGraph tweets
+                                |> mapContexts
+
+                        _ ->
+                            Debug.crash "fail"
+            in
             ( { model
                 | tweetsData = response
-                , graph = graphFromTweets
-                , simulation = generateForces graphFromTweets
+                , graph = graph
+                , simulation = generateForces graph
               }
             , Cmd.none
             )
@@ -186,6 +199,7 @@ onMouseDown index =
     on "mousedown" (Decode.map (DragStart index) Mouse.position)
 
 
+linkElement : Graph Entity e -> { a | from : NodeId, to : NodeId } -> Svg msg
 linkElement graph edge =
     let
         source =
@@ -205,17 +219,56 @@ linkElement graph edge =
         []
 
 
-nodeElement node =
-    circle
-        [ r "5.0"
-        , fill "#000"
-        , stroke "transparent"
-        , strokeWidth "7px"
-        , onMouseDown node.id
-        , cx (toString node.label.x)
-        , cy (toString node.label.y)
-        ]
-        [ Svg.title [] [ text node.label.value ] ]
+nodeElement : Graph n e -> { d | id : NodeId, label : { c | x : Float, y : Float, value : String } } -> Svg Msg
+nodeElement graph node =
+    let
+        connectionsCount =
+            Graph.edges graph
+                |> List.filter (\{ to } -> to == node.id)
+                |> List.length
+
+        nodeSize =
+            (3 + toFloat connectionsCount * 0.2)
+                |> Basics.min 10
+
+        nodeText =
+            if connectionsCount > 4 then
+                [ rect
+                    [ x (toString <| node.label.x - 11)
+                    , y (toString <| node.label.y - 11)
+                    , width (toString <| String.length node.label.value * 11)
+                    , height (toString <| 22)
+                    , rx (toString 10)
+                    , ry (toString 10)
+                    , fill "#FFF"
+                    , stroke "#333"
+                    ]
+                    []
+                , Svg.text_
+                    [ x (toString <| node.label.x + nodeSize + 5)
+                    , y (toString <| node.label.y + 5)
+                    , Attr.style "font-family: sans-serif; font-size: 14px"
+                    ]
+                    [ text node.label.value ]
+                ]
+            else
+                []
+    in
+    g []
+        (nodeText
+            ++ [ circle
+                    [ r (toString nodeSize)
+                    , fill "#000"
+                    , stroke "transparent"
+                    , strokeWidth "7px"
+                    , onMouseDown node.id
+                    , cx (toString node.label.x)
+                    , cy (toString node.label.y)
+                    ]
+                    [ Svg.title [] [ text node.label.value ]
+                    ]
+               ]
+        )
 
 
 view : Model -> Svg Msg
@@ -224,7 +277,7 @@ view model =
         [ svg
             [ width (toString screenWidth ++ "px"), height (toString screenHeight ++ "px") ]
             [ g [ class "links" ] <| List.map (linkElement model.graph) <| Graph.edges model.graph
-            , g [ class "nodes" ] <| List.map nodeElement <| Graph.nodes model.graph
+            , g [ class "nodes" ] <| List.map (nodeElement model.graph) <| Graph.nodes model.graph
             ]
         , button [ onClick LoadTweets ] [ Html.text "Load data" ]
         ]
