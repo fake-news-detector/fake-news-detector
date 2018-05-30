@@ -11,6 +11,8 @@ use cookie::SameSite;
 use std::env;
 use rocket_contrib::Json;
 use std::borrow::Cow;
+use commons::responders::*;
+
 
 #[derive(FromForm)]
 pub struct AuthParams {
@@ -116,7 +118,9 @@ struct SearchResponse {
 #[derive(Debug, Serialize)]
 struct SearchTweet {
     id_str: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     user: Option<SearchUser>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     retweeted_status: Option<IdAndUser>,
 }
 
@@ -129,6 +133,7 @@ struct SearchUser {
 #[derive(Debug, Serialize)]
 struct IdAndUser {
     id_str: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     user: Option<SearchUser>,
 }
 
@@ -170,7 +175,7 @@ pub struct TwitterSearchParams {
 fn search(
     cookies: Cookies,
     params: TwitterSearchParams,
-) -> Result<Json<SearchResponse>, status::Custom<String>> {
+) -> Result<Cached<CredentialsCors<Json<SearchResponse>>>, status::Custom<String>> {
     let (mut core, handle, _) = get_config();
     let access_token = get_authenticated_token(cookies).ok_or(not_authenticated())?;
 
@@ -195,7 +200,9 @@ fn search(
         page = page + 1;
     }
 
-    Ok(Json(SearchResponse { statuses: statuses }))
+    Ok(Cached(
+        CredentialsCors(Json(SearchResponse { statuses: statuses })),
+    ))
 }
 
 fn get_config() -> (tokio_core::reactor::Core, tokio_core::reactor::Handle, egg_mode::KeyPair) {

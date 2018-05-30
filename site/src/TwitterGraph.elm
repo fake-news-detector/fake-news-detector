@@ -1,11 +1,11 @@
-module TwitterGraph exposing (main)
+module TwitterGraph exposing (..)
 
 {-| This demonstrates laying out the characters in Les Miserables
 based on their co-occurence in a scene. Try dragging the nodes!
 -}
 
 import AnimationFrame
-import Data.TweetsGraph exposing (..)
+import Data.Tweets exposing (..)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (button, div)
 import Html.Attributes exposing (attribute)
@@ -29,7 +29,7 @@ screenHeight =
 
 type Msg
     = Tick Time
-    | LoadTweets
+    | LoadTweets String
     | TweetsResponse (WebData (List Tweet))
     | MouseOver NodeId
     | MouseLeave NodeId
@@ -59,15 +59,13 @@ generateForces graph =
         |> Force.iterations 12
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( { tweetsData = NotAsked
-      , graph = initialGraph
-      , simulation = generateForces initialGraph
-      , highlightedNode = Nothing
-      }
-    , Cmd.none
-    )
+    { tweetsData = NotAsked
+    , graph = initialGraph
+    , simulation = generateForces initialGraph
+    , highlightedNode = Nothing
+    }
 
 
 updateContextWithValue : NodeContext Entity () -> Entity -> NodeContext Entity ()
@@ -98,9 +96,9 @@ update msg ({ graph, simulation } as model) =
             in
             ( { model | graph = updateGraphWithList graph list, simulation = newState }, Cmd.none )
 
-        LoadTweets ->
+        LoadTweets query ->
             ( { model | tweetsData = Loading }
-            , getTweetData
+            , getTweetData query
                 |> RemoteData.sendRequest
                 |> Cmd.map TweetsResponse
             )
@@ -235,15 +233,4 @@ view model =
             [ g [ class "links" ] <| List.map (linkElement model) <| Graph.edges model.graph
             , g [ class "nodes" ] <| List.map (nodeElement model) <| Graph.nodes model.graph
             ]
-        , button [ onClick LoadTweets ] [ Html.text "Load data" ]
         ]
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }

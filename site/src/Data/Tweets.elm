@@ -1,4 +1,4 @@
-module Data.TweetsGraph exposing (..)
+module Data.Tweets exposing (..)
 
 import Dict
 import Graph exposing (Edge, Node, NodeId)
@@ -48,9 +48,17 @@ mapContexts =
         )
 
 
-getTweetData : Http.Request (List Tweet)
-getTweetData =
-    Http.get "/src/sample.json" decodeTweets
+getTweetData : String -> Http.Request (List Tweet)
+getTweetData query =
+    Http.request
+        { method = "GET"
+        , headers = []
+        , url = "http://localhost:8000/twitter/search?q=" ++ Http.encodeUri query
+        , body = Http.emptyBody
+        , expect = Http.expectJson decodeTweets
+        , timeout = Nothing
+        , withCredentials = True
+        }
 
 
 decodeTweets : Decoder (List Tweet)

@@ -9,14 +9,17 @@ import Element.Events exposing (..)
 import FlagLink exposing (Query(..), decodeQuery)
 import Html exposing (Html)
 import Html.Attributes
-import Http exposing (encodeUri)
+import Http exposing (decodeUri, encodeUri)
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
 import Locale.Words exposing (LocaleKey(..))
 import Markdown
+import Navigation exposing (Location)
 import RemoteData exposing (..)
 import Return
+import Router exposing (..)
 import Stylesheet exposing (..)
+import TwitterGraph
 
 
 type alias Model =
@@ -27,6 +30,8 @@ type alias Model =
     , response : WebData { query : String, votes : VotesResponse }
     , language : Language
     , flagLink : FlagLink.Model
+    , route : Route
+    , twitterGraph : TwitterGraph.Model
     }
 
 
@@ -40,46 +45,61 @@ type Msg
     | Submit
     | UseExample
     | MsgForFlagLink FlagLink.Msg
+    | OnLocationChange Location
+    | MsgForTwitterGraph TwitterGraph.Msg
 
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
-        { init = init
+    Navigation.programWithFlags OnLocationChange
+        { init =
+            \flags location ->
+                init flags (Router.parseLocation location)
+                    |> update (OnLocationChange location)
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions =
+            \model ->
+                Sub.map MsgForTwitterGraph
+                    (TwitterGraph.subscriptions model.twitterGraph)
         }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Route -> Model
+init flags route =
     let
         language =
             Locale.fromCodeArray flags.languages
     in
-    ( { uuid = flags.uuid
-      , query = ""
-      , autoexpand = AutoExpand.initState (autoExpandConfig language)
-      , refreshUrlCounter = 0
-      , response = NotAsked
-      , language = language
-      , flagLink = FlagLink.init
-      }
-    , Cmd.none
-    )
+    { uuid = flags.uuid
+    , query = ""
+    , autoexpand = AutoExpand.initState (autoExpandConfig language)
+    , refreshUrlCounter = 0
+    , response = NotAsked
+    , language = language
+    , flagLink = FlagLink.init
+    , route = route
+    , twitterGraph = TwitterGraph.init
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Response query response ->
-            ( { model
-                | response = RemoteData.map (\votes -> { query = query, votes = votes }) response
-                , flagLink = FlagLink.init
-              }
-            , Cmd.none
-            )
+            let
+                updatedModel =
+                    { model
+                        | response = RemoteData.map (\votes -> { query = query, votes = votes }) response
+                        , flagLink = FlagLink.init
+                    }
+            in
+            case response of
+                Success _ ->
+                    update (MsgForTwitterGraph <| TwitterGraph.LoadTweets query) updatedModel
+
+                _ ->
+                    ( updatedModel, Cmd.none )
 
         UpdateInput { state, textValue } ->
             if String.isEmpty textValue then
@@ -93,26 +113,7 @@ update msg model =
                 ( { model | autoexpand = state, query = textValue }, Cmd.none )
 
         Submit ->
-            case decodeQuery model.query of
-                Url url ->
-                    ( { model | response = RemoteData.Loading }
-                    , Votes.getVotes url ""
-                        |> RemoteData.sendRequest
-                        |> Cmd.map (Response model.query)
-                    )
-
-                Content content ->
-                    ( { model | response = RemoteData.Loading }
-                    , Votes.getVotesByContent content
-                        |> RemoteData.sendRequest
-                        |> Cmd.map (Response model.query)
-                    )
-
-                Invalid ->
-                    ( model, Cmd.none )
-
-                Empty ->
-                    ( model, Cmd.none )
+            ( model, Navigation.newUrl <| toPath <| SearchRoute model.query )
 
         UseExample ->
             { model | refreshUrlCounter = model.refreshUrlCounter + 1 }
@@ -130,6 +131,56 @@ update msg model =
             FlagLink.update msg model.flagLink
                 |> Return.map (\flagLink -> { model | flagLink = flagLink })
                 |> Return.mapCmd MsgForFlagLink
+
+        OnLocationChange location ->
+            let
+                route =
+                    parseLocation location
+
+                updatedModel =
+                    { model | route = route }
+            in
+            case route of
+                IndexRoute ->
+                    ( updatedModel, Cmd.none )
+
+                SearchRoute query ->
+                    let
+                        urlQuery =
+                            decodeUri query |> Maybe.withDefault ""
+
+                        queryUpdatedModel =
+                            { updatedModel | query = urlQuery }
+                    in
+                    case decodeQuery urlQuery of
+                        Url url ->
+                            ( { queryUpdatedModel | response = RemoteData.Loading }
+                            , Votes.getVotes url ""
+                                |> RemoteData.sendRequest
+                                |> Cmd.map (Response queryUpdatedModel.query)
+                            )
+
+                        Content content ->
+                            ( { queryUpdatedModel | response = RemoteData.Loading }
+                            , Votes.getVotesByContent content
+                                |> RemoteData.sendRequest
+                                |> Cmd.map (Response queryUpdatedModel.query)
+                            )
+
+                        Invalid ->
+                            ( queryUpdatedModel, Cmd.none )
+
+                        Empty ->
+                            ( queryUpdatedModel, Cmd.none )
+
+        MsgForTwitterGraph msg ->
+            let
+                updated =
+                    TwitterGraph.update msg model.twitterGraph
+            in
+            ( { model | twitterGraph = Tuple.first updated }
+            , Cmd.map MsgForTwitterGraph <| Tuple.second updated
+            )
 
 
 view : Model -> Html Msg
@@ -252,6 +303,7 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
+        , Element.html <| Html.map MsgForTwitterGraph <| TwitterGraph.view model.twitterGraph
         , when (List.length votes.keywords > 0)
             (viewSearchResults model votes)
         ]
@@ -336,7 +388,7 @@ explanation model =
 
 staticView : String -> Html Msg
 staticView lang =
-    view (Tuple.first <| init { languages = [ lang ], uuid = "" })
+    view (init { languages = [ lang ], uuid = "" } IndexRoute)
 
 
 staticViewPt : Html Msg

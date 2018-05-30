@@ -1,4 +1,4 @@
-import App from "./TwitterGraph.elm";
+import App from "./Main.elm";
 import uuidv4 from "uuid/v4";
 
 const path = window.location.pathname;
@@ -29,8 +29,7 @@ window.resizeIframe = elem => {
   elem.style.height = elem.contentWindow.document.body.scrollHeight + "px";
 };
 
-// App.Main.embed(rootNode, { languages: [language], uuid });
-App.TwitterGraph.embed(rootNode);
+App.Main.embed(rootNode, { languages: [language], uuid });
 
 if (!process.env.DEBUG && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");

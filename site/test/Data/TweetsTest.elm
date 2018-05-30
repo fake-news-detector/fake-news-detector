@@ -1,6 +1,6 @@
-module Data.TweetsGraphTest exposing (..)
+module Data.TweetsTest exposing (..)
 
-import Data.TweetsGraph exposing (..)
+import Data.Tweets exposing (..)
 import Expect exposing (Expectation)
 import Graph exposing (Edge, Node)
 import Json.Decode exposing (decodeString)
@@ -9,7 +9,7 @@ import Test exposing (..)
 
 suite : Test
 suite =
-    describe "TweetsGraph"
+    describe "Tweets"
         [ describe "decode tweet"
             [ test "decode without retweet" <|
                 \_ ->
