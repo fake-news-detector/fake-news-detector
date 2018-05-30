@@ -44,6 +44,8 @@ pub fn start_server() {
                 endpoints::healthcheck::healthcheck,
                 endpoints::twitter::auth,
                 endpoints::twitter::callback,
+                endpoints::twitter::user,
+                endpoints::twitter::search,
                 endpoints::categories::get_categories,
                 endpoints::votes::get_votes,
                 endpoints::votes::get_votes_by_content,
