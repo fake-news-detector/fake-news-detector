@@ -14,6 +14,9 @@ import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onClick, onMouseEnter, onMouseLeave)
 import Html.Lazy
 import Http
+import Locale.Languages exposing (Language)
+import Locale.Locale as Locale exposing (translate)
+import Locale.Words exposing (LocaleKey(..))
 import RemoteData exposing (..)
 import Stylesheet exposing (..)
 import Svg exposing (..)
@@ -109,7 +112,7 @@ update msg ({ graph, simulation } as model) =
             ( { model | graph = updateGraphWithList graph list, simulation = newState }, Cmd.none )
 
         LoadTweets query ->
-            ( { model | tweetsData = Loading }
+            ( { model | tweetsData = RemoteData.Loading }
             , getTweetData query
                 |> RemoteData.sendRequest
                 |> Cmd.map TweetsResponse
@@ -254,40 +257,40 @@ nodeElement highlightedNode graph node =
         )
 
 
-view : String -> Model -> Element Classes variation Msg
-view locationHref model =
+view : Language -> String -> Model -> Element Classes variation Msg
+view language locationHref model =
     column NoStyle
         [ Element.Attributes.spacing 10 ]
-        [ bold "Disseminação no Twitter"
-        , tweetsDataResults locationHref model
+        [ bold <| translate language TwitterSpread
+        , tweetsDataResults language locationHref model
         ]
 
 
-tweetsDataResults : String -> Model -> Element Classes variation Msg
-tweetsDataResults locationHref model =
+tweetsDataResults : Language -> String -> Model -> Element Classes variation Msg
+tweetsDataResults language locationHref model =
     case model.tweetsData of
         NotAsked ->
             empty
 
         Success _ ->
             if Graph.isEmpty model.graph then
-                Element.text "Nenhum tweet encontrado"
+                Element.text <| translate language NoTweetsFound
             else
                 column NoStyle
                     []
-                    [ Element.text "Veja como isso está se espalhando pelo twitter"
+                    [ Element.text <| translate language CheckHowItIsSpreading
                     , Element.html <|
                         Html.Lazy.lazy3 drawGraph model.size model.highlightedNode model.graph
                     ]
 
-        Loading ->
-            Element.text "Carregando tweets..."
+        RemoteData.Loading ->
+            Element.text <| translate language LoadingTweets
 
         Failure _ ->
             column NoStyle
                 [ Element.Attributes.spacing 8 ]
-                [ Element.text "Para buscar a disseminação deste link precisamos que você faça login com a sua conta do Twitter"
-                , twitterSignInButton locationHref
+                [ Element.text <| translate language YouNeedToSignInWithTwitter
+                , twitterSignInButton language locationHref
                 ]
 
 
@@ -302,8 +305,8 @@ drawGraph size highlightedNode graph =
         ]
 
 
-twitterSignInButton : String -> Element Classes variation msg
-twitterSignInButton locationHref =
+twitterSignInButton : Language -> String -> Element Classes variation msg
+twitterSignInButton language locationHref =
     link (apiUrl ++ "/twitter/auth?return_to=" ++ Http.encodeUri locationHref)
         (Element.button TwitterButton
             [ Element.Attributes.padding 6 ]
@@ -316,7 +319,7 @@ twitterSignInButton locationHref =
                     empty
                 , el NoStyle
                     [ Element.Attributes.paddingLeft 5 ]
-                    (bold "Entrar com Twitter")
+                    (bold <| translate language SignInWithTwitter)
                 ]
             )
         )

@@ -322,7 +322,7 @@ viewVotes model query votes =
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
         , when (identifyQueryType query /= Content)
-            (Element.map MsgForTwitterGraph <| TwitterGraph.view model.locationHref model.twitterGraph)
+            (Element.map MsgForTwitterGraph <| TwitterGraph.view model.language model.locationHref model.twitterGraph)
         , when (List.length votes.keywords > 0)
             (viewSearchResults model votes)
         ]
