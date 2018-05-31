@@ -57,6 +57,13 @@ main =
             \flags location ->
                 init flags (Router.parseLocation location)
                     |> update (OnLocationChange location)
+                    |> Tuple.mapSecond
+                        (\cmd ->
+                            Cmd.batch
+                                [ cmd
+                                , Cmd.map MsgForTwitterGraph <| Tuple.second TwitterGraph.init
+                                ]
+                        )
         , view = view
         , update = update
         , subscriptions =
@@ -81,7 +88,7 @@ init flags route =
     , flagLink = FlagLink.init
     , route = route
     , locationHref = ""
-    , twitterGraph = TwitterGraph.init
+    , twitterGraph = Tuple.first TwitterGraph.init
     }
 
 

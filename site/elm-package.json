@@ -19,6 +19,7 @@
         "elm-lang/mouse": "1.0.1 <= v < 2.0.0",
         "elm-lang/navigation": "2.1.0 <= v < 3.0.0",
         "elm-lang/svg": "2.0.0 <= v < 3.0.0",
+        "elm-lang/window": "1.0.1 <= v < 2.0.0",
         "evancz/elm-markdown": "3.0.2 <= v < 4.0.0",
         "evancz/url-parser": "2.0.1 <= v < 3.0.0",
         "gampleman/elm-visualization": "1.6.1 <= v < 2.0.0",

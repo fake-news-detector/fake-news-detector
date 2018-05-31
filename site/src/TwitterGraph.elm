@@ -18,18 +18,10 @@ import RemoteData exposing (..)
 import Stylesheet exposing (..)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
+import Task
 import Time exposing (Time)
 import Visualization.Force as Force exposing (State)
-
-
-screenWidth : Float
-screenWidth =
-    600
-
-
-screenHeight : Float
-screenHeight =
-    504
+import Window exposing (resizes)
 
 
 type Msg
@@ -38,6 +30,7 @@ type Msg
     | TweetsResponse (WebData (List Tweet))
     | MouseOver NodeId
     | MouseLeave NodeId
+    | SetScreenSize Window.Size
 
 
 type alias Model =
@@ -45,11 +38,16 @@ type alias Model =
     , graph : Graph Entity ()
     , simulation : Force.State NodeId
     , highlightedNode : Maybe NodeId
+    , size : Size
     }
 
 
-generateForces : Graph n e -> State Int
-generateForces graph =
+type alias Size =
+    { width : Float, height : Float }
+
+
+generateForces : Size -> Graph n e -> State Int
+generateForces { width, height } graph =
     let
         links =
             graph
@@ -58,19 +56,22 @@ generateForces graph =
     in
     [ Force.customLinks 1 links
     , Force.manyBodyStrength -45 <| List.map .id <| Graph.nodes graph
-    , Force.center (screenWidth / 2) (screenHeight / 2)
+    , Force.center (width / 2) (height / 2)
     ]
         |> Force.simulation
         |> Force.iterations 12
 
 
-init : Model
+init : ( Model, Cmd Msg )
 init =
-    { tweetsData = NotAsked
-    , graph = initialGraph
-    , simulation = generateForces initialGraph
-    , highlightedNode = Nothing
-    }
+    ( { tweetsData = NotAsked
+      , graph = initialGraph
+      , simulation = Force.simulation []
+      , highlightedNode = Nothing
+      , size = { width = 0, height = 0 }
+      }
+    , Task.perform SetScreenSize Window.size
+    )
 
 
 updateContextWithValue : NodeContext Entity () -> Entity -> NodeContext Entity ()
@@ -89,6 +90,12 @@ updateGraphWithList =
             Maybe.map (\ctx -> updateContextWithValue ctx value)
     in
     List.foldr (\node graph -> Graph.update node.id (graphUpdater node) graph)
+
+
+calculateHeight : Graph a () -> Float
+calculateHeight graph =
+    Basics.min (100 + (Graph.size graph * 5)) 400
+        |> toFloat
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -118,11 +125,15 @@ update msg ({ graph, simulation } as model) =
 
                         _ ->
                             model.graph
+
+                size =
+                    { width = model.size.width, height = calculateHeight graph }
             in
             ( { model
                 | tweetsData = RemoteData.map (always ()) response
                 , graph = graph
-                , simulation = generateForces graph
+                , simulation = generateForces size graph
+                , size = size
               }
             , Cmd.none
             )
@@ -133,13 +144,26 @@ update msg ({ graph, simulation } as model) =
         MouseLeave nodeId ->
             ( { model | highlightedNode = Nothing }, Cmd.none )
 
+        SetScreenSize size ->
+            ( { model
+                | size =
+                    { width = toFloat <| Basics.min (size.width - 55) 800
+                    , height = model.size.height
+                    }
+              }
+            , Cmd.none
+            )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if Force.isCompleted model.simulation then
-        Sub.none
-    else
-        AnimationFrame.times Tick
+    Sub.batch
+        [ Window.resizes SetScreenSize
+        , if Force.isCompleted model.simulation then
+            Sub.none
+          else
+            AnimationFrame.times Tick
+        ]
 
 
 linkElement : Graph Entity () -> { b | from : NodeId, to : NodeId } -> Svg msg
@@ -253,7 +277,7 @@ tweetsDataResults locationHref model =
                     []
                     [ Element.text "Veja como isso está se espalhando pelo twitter"
                     , Element.html <|
-                        Html.Lazy.lazy2 drawGraph model.highlightedNode model.graph
+                        Html.Lazy.lazy3 drawGraph model.size model.highlightedNode model.graph
                     ]
 
         Loading ->
@@ -267,11 +291,11 @@ tweetsDataResults locationHref model =
                 ]
 
 
-drawGraph : Maybe NodeId -> Graph Entity () -> Html.Html Msg
-drawGraph highlightedNode graph =
+drawGraph : Size -> Maybe NodeId -> Graph Entity () -> Html.Html Msg
+drawGraph size highlightedNode graph =
     div []
         [ svg
-            [ width (toString screenWidth ++ "px"), height (toString screenHeight ++ "px") ]
+            [ width (toString size.width ++ "px"), height (toString size.height ++ "px") ]
             [ g [ class "links" ] <| List.map (linkElement graph) <| Graph.edges graph
             , g [ class "nodes" ] <| List.map (nodeElement highlightedNode graph) <| Graph.nodes graph
             ]
