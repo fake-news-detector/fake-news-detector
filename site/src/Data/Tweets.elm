@@ -1,12 +1,24 @@
 module Data.Tweets exposing (..)
 
+import Data.Votes
 import Dict
+import FlagLink exposing (Query(..), decodeQuery)
 import Graph exposing (Edge, Node, NodeId)
 import Http
 import Json.Decode exposing (Decoder, field, int, list, string, succeed)
 import Json.Decode.Pipeline exposing (decode, optional, required)
 import List.Extra
+import Regex
 import Visualization.Force as Force
+
+
+apiUrl : String
+apiUrl =
+    "http://localhost:8000"
+
+
+
+-- Data.Votes.apiUrl
 
 
 type alias TwitterUser =
@@ -50,10 +62,20 @@ mapContexts =
 
 getTweetData : String -> Http.Request (List Tweet)
 getTweetData query =
+    let
+        cleanQuery =
+            case decodeQuery query of
+                Url url ->
+                    Regex.replace Regex.All (Regex.regex "https?://") (\_ -> "") url
+                        |> Regex.replace Regex.All (Regex.regex "\\?.*") (\_ -> "")
+
+                _ ->
+                    query
+    in
     Http.request
         { method = "GET"
         , headers = []
-        , url = "http://localhost:8000/twitter/search?q=" ++ Http.encodeUri query
+        , url = apiUrl ++ "/twitter/search?q=" ++ Http.encodeUri cleanQuery
         , body = Http.emptyBody
         , expect = Http.expectJson decodeTweets
         , timeout = Nothing

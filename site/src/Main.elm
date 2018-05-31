@@ -31,6 +31,7 @@ type alias Model =
     , language : Language
     , flagLink : FlagLink.Model
     , route : Route
+    , locationHref : String
     , twitterGraph : TwitterGraph.Model
     }
 
@@ -79,6 +80,7 @@ init flags route =
     , language = language
     , flagLink = FlagLink.init
     , route = route
+    , locationHref = ""
     , twitterGraph = TwitterGraph.init
     }
 
@@ -138,7 +140,7 @@ update msg model =
                     parseLocation location
 
                 updatedModel =
-                    { model | route = route }
+                    { model | route = route, locationHref = location.href }
             in
             case route of
                 IndexRoute ->
@@ -303,7 +305,7 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
-        , Element.html <| Html.map MsgForTwitterGraph <| TwitterGraph.view model.twitterGraph
+        , Element.map MsgForTwitterGraph <| TwitterGraph.view model.locationHref model.twitterGraph
         , when (List.length votes.keywords > 0)
             (viewSearchResults model votes)
         ]

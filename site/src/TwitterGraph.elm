@@ -6,11 +6,16 @@ based on their co-occurence in a scene. Try dragging the nodes!
 
 import AnimationFrame
 import Data.Tweets exposing (..)
+import Element exposing (..)
+import Element.Attributes exposing (px)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (button, div)
 import Html.Attributes exposing (attribute)
 import Html.Events exposing (on, onClick, onMouseEnter, onMouseLeave)
+import Html.Lazy
+import Http
 import RemoteData exposing (..)
+import Stylesheet exposing (..)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
 import Time exposing (Time)
@@ -36,7 +41,7 @@ type Msg
 
 
 type alias Model =
-    { tweetsData : WebData (List Tweet)
+    { tweetsData : WebData ()
     , graph : Graph Entity ()
     , simulation : Force.State NodeId
     , highlightedNode : Maybe NodeId
@@ -112,10 +117,10 @@ update msg ({ graph, simulation } as model) =
                                 |> mapContexts
 
                         _ ->
-                            Debug.crash "fail"
+                            model.graph
             in
             ( { model
-                | tweetsData = response
+                | tweetsData = RemoteData.map (always ()) response
                 , graph = graph
                 , simulation = generateForces graph
               }
@@ -137,8 +142,8 @@ subscriptions model =
         AnimationFrame.times Tick
 
 
-linkElement : Model -> { b | from : NodeId, to : NodeId } -> Svg msg
-linkElement { graph } edge =
+linkElement : Graph Entity () -> { b | from : NodeId, to : NodeId } -> Svg msg
+linkElement graph edge =
     let
         getEntity id =
             Graph.get id graph
@@ -162,8 +167,8 @@ linkElement { graph } edge =
         []
 
 
-nodeElement : Model -> { c | label : { b | x : Float, y : number, value : IdAndScreenName }, id : NodeId } -> Svg Msg
-nodeElement { highlightedNode, graph } node =
+nodeElement : Maybe NodeId -> Graph Entity () -> { c | label : { b | x : Float, y : number, value : IdAndScreenName }, id : NodeId } -> Svg Msg
+nodeElement highlightedNode graph node =
     let
         connectionsCount =
             Graph.edges graph
@@ -180,13 +185,13 @@ nodeElement { highlightedNode, graph } node =
                 , y (toString <| node.label.y + 5)
                 , Attr.style "font-family: sans-serif; font-size: 14px"
                 ]
-                [ text node.label.value.screenName ]
+                [ Svg.text node.label.value.screenName ]
 
         nodeRect =
             rect
                 [ x (toString <| node.label.x - 11)
                 , y (toString <| node.label.y - 11)
-                , width (toString <| String.length node.label.value.screenName * 11)
+                , width (toString <| 25 + String.length node.label.value.screenName * 9)
                 , height (toString <| 22)
                 , rx (toString 10)
                 , ry (toString 10)
@@ -196,7 +201,7 @@ nodeElement { highlightedNode, graph } node =
                 []
 
         nodeCircle =
-            circle
+            Svg.circle
                 [ r (toString nodeSize)
                 , fill "#FFF"
                 , stroke "#000"
@@ -204,7 +209,7 @@ nodeElement { highlightedNode, graph } node =
                 , cx (toString node.label.x)
                 , cy (toString node.label.y)
                 ]
-                [ Svg.title [] [ text node.label.value.screenName ]
+                [ Svg.title [] [ Svg.text node.label.value.screenName ]
                 ]
     in
     a
@@ -225,12 +230,69 @@ nodeElement { highlightedNode, graph } node =
         )
 
 
-view : Model -> Svg Msg
-view model =
+view : String -> Model -> Element Classes variation Msg
+view locationHref model =
+    column NoStyle
+        [ Element.Attributes.spacing 10 ]
+        [ bold "Disseminação no Twitter"
+        , tweetsDataResults locationHref model
+        ]
+
+
+tweetsDataResults : String -> Model -> Element Classes variation Msg
+tweetsDataResults locationHref model =
+    case model.tweetsData of
+        NotAsked ->
+            empty
+
+        Success _ ->
+            if Graph.isEmpty model.graph then
+                Element.text "Nenhum tweet encontrado"
+            else
+                column NoStyle
+                    []
+                    [ Element.text "Veja como este link está se espalhando pelo twitter"
+                    , Element.html <|
+                        Html.Lazy.lazy2 drawGraph model.highlightedNode model.graph
+                    ]
+
+        Loading ->
+            Element.text "Carregando tweets..."
+
+        Failure _ ->
+            column NoStyle
+                [ Element.Attributes.spacing 8 ]
+                [ Element.text "Para buscar a disseminação deste link precisamos que você faça login com a sua conta do Twitter"
+                , twitterSignInButton locationHref
+                ]
+
+
+drawGraph : Maybe NodeId -> Graph Entity () -> Html.Html Msg
+drawGraph highlightedNode graph =
     div []
         [ svg
             [ width (toString screenWidth ++ "px"), height (toString screenHeight ++ "px") ]
-            [ g [ class "links" ] <| List.map (linkElement model) <| Graph.edges model.graph
-            , g [ class "nodes" ] <| List.map (nodeElement model) <| Graph.nodes model.graph
+            [ g [ class "links" ] <| List.map (linkElement graph) <| Graph.edges graph
+            , g [ class "nodes" ] <| List.map (nodeElement highlightedNode graph) <| Graph.nodes graph
             ]
         ]
+
+
+twitterSignInButton : String -> Element Classes variation msg
+twitterSignInButton locationHref =
+    link (apiUrl ++ "/twitter/auth?return_to=" ++ Http.encodeUri locationHref)
+        (Element.button TwitterButton
+            [ Element.Attributes.padding 6 ]
+            (row NoStyle
+                [ Element.Attributes.verticalCenter ]
+                [ el TwitterIcon
+                    [ Element.Attributes.width (px 20)
+                    , Element.Attributes.height (px 20)
+                    ]
+                    empty
+                , el NoStyle
+                    [ Element.Attributes.paddingLeft 5 ]
+                    (bold "Entrar com Twitter")
+                ]
+            )
+        )

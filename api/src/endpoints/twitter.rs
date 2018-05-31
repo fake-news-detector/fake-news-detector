@@ -153,7 +153,7 @@ fn parse_statuses(result: &egg_mode::Response<egg_mode::search::SearchResult>) -
                 retweeted_status: tweet.to_owned().retweeted_status.map(|rt| {
                     IdAndUser {
                         id_str: format!("{}", rt.id),
-                        user: tweet.to_owned().user.map(|user| {
+                        user: rt.to_owned().user.map(|user| {
                             SearchUser {
                                 id_str: format!("{}", user.id),
                                 screen_name: user.screen_name,
@@ -189,7 +189,7 @@ fn search(
 
     let mut statuses = parse_statuses(&search_result);
     let mut page = 1;
-    while page < 10 {
+    while page < 5 {
         if search_result.statuses.is_empty() {
             break;
         }
