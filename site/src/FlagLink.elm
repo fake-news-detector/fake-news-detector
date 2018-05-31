@@ -62,13 +62,13 @@ update msg model =
         SelectClickbaitTitle isClickbaitTitle ->
             ( { model | selectedClickbaitTitle = Just isClickbaitTitle }, Cmd.none )
 
-        SubmitFlag uuid url language ->
-            case ( decodeQuery url, model.selectedCategory, model.selectedClickbaitTitle ) of
-                ( Url url, Just selectedCategory, Just selectedClickbaitTitle ) ->
+        SubmitFlag uuid query language ->
+            case ( identifyQueryType query, model.selectedCategory, model.selectedClickbaitTitle ) of
+                ( Url, Just selectedCategory, Just selectedClickbaitTitle ) ->
                     ( { model | submitResponse = RemoteData.Loading }
                     , Votes.postVote
                         { uuid = uuid
-                        , url = url
+                        , url = query
                         , title = ""
                         , category = selectedCategory
                         , clickbaitTitle = selectedClickbaitTitle
@@ -77,9 +77,9 @@ update msg model =
                         |> Cmd.map SubmitResponse
                     )
 
-                ( Content content, Just selectedCategory, _ ) ->
+                ( Content, Just selectedCategory, _ ) ->
                     ( { model | submitResponse = RemoteData.Loading }
-                    , Votes.postVoteByContent uuid content selectedCategory
+                    , Votes.postVoteByContent uuid query selectedCategory
                         |> RemoteData.sendRequest
                         |> Cmd.map SubmitResponse
                     )
@@ -162,8 +162,8 @@ flagForm uuid url language model =
                         (translate Words.NotNewsDescription)
                     ]
                 }
-            , case decodeQuery url of
-                Url url ->
+            , case identifyQueryType url of
+                Url ->
                     column NoStyle
                         []
                         [ Element.column NoStyle
@@ -218,20 +218,27 @@ flagChoice category title description =
             ]
 
 
-type Query
-    = Url String
-    | Content String
+type QueryType
+    = Url
+    | Keywords
+    | Content
     | Invalid
     | Empty
 
 
-decodeQuery : String -> Query
-decodeQuery query =
+identifyQueryType : String -> QueryType
+identifyQueryType query =
+    let
+        words =
+            String.split " " query
+    in
     if String.isEmpty query then
         Empty
     else if String.startsWith "http" query then
-        Url query
-    else if String.length query >= 20 then
-        Content query
-    else
+        Url
+    else if String.length query < 4 then
         Invalid
+    else if List.length words < 6 then
+        Keywords
+    else
+        Content

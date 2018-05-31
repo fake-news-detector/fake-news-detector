@@ -2,7 +2,7 @@ module Data.Tweets exposing (..)
 
 import Data.Votes
 import Dict
-import FlagLink exposing (Query(..), decodeQuery)
+import FlagLink exposing (QueryType(..), identifyQueryType)
 import Graph exposing (Edge, Node, NodeId)
 import Http
 import Json.Decode exposing (Decoder, field, int, list, string, succeed)
@@ -64,10 +64,11 @@ getTweetData : String -> Http.Request (List Tweet)
 getTweetData query =
     let
         cleanQuery =
-            case decodeQuery query of
-                Url url ->
-                    Regex.replace Regex.All (Regex.regex "https?://") (\_ -> "") url
+            case identifyQueryType query of
+                Url ->
+                    Regex.replace Regex.All (Regex.regex "https?://") (\_ -> "") query
                         |> Regex.replace Regex.All (Regex.regex "\\?.*") (\_ -> "")
+                        |> Regex.replace Regex.All (Regex.regex "\\#.*") (\_ -> "")
 
                 _ ->
                     query

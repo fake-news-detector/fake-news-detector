@@ -251,7 +251,7 @@ tweetsDataResults locationHref model =
             else
                 column NoStyle
                     []
-                    [ Element.text "Veja como este link está se espalhando pelo twitter"
+                    [ Element.text "Veja como isso está se espalhando pelo twitter"
                     , Element.html <|
                         Html.Lazy.lazy2 drawGraph model.highlightedNode model.graph
                     ]

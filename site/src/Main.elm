@@ -6,7 +6,7 @@ import Data.Votes as Votes exposing (PeopleVotes, RobotPredictions, VerifiedVote
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import FlagLink exposing (Query(..), decodeQuery)
+import FlagLink exposing (QueryType(..), identifyQueryType)
 import Html exposing (Html)
 import Html.Attributes
 import Http exposing (decodeUri, encodeUri)
@@ -96,8 +96,11 @@ update msg model =
                         , flagLink = FlagLink.init
                     }
             in
-            case response of
-                Success _ ->
+            case ( response, identifyQueryType query ) of
+                ( _, Content ) ->
+                    ( updatedModel, Cmd.none )
+
+                ( Success _, _ ) ->
                     update (MsgForTwitterGraph <| TwitterGraph.LoadTweets query) updatedModel
 
                 _ ->
@@ -153,21 +156,27 @@ update msg model =
 
                         queryUpdatedModel =
                             { updatedModel | query = urlQuery }
-                    in
-                    case decodeQuery urlQuery of
-                        Url url ->
+
+                        contentRequest =
                             ( { queryUpdatedModel | response = RemoteData.Loading }
-                            , Votes.getVotes url ""
+                            , Votes.getVotesByContent queryUpdatedModel.query
+                                |> RemoteData.sendRequest
+                                |> Cmd.map (Response queryUpdatedModel.query)
+                            )
+                    in
+                    case identifyQueryType urlQuery of
+                        Url ->
+                            ( { queryUpdatedModel | response = RemoteData.Loading }
+                            , Votes.getVotes urlQuery ""
                                 |> RemoteData.sendRequest
                                 |> Cmd.map (Response queryUpdatedModel.query)
                             )
 
-                        Content content ->
-                            ( { queryUpdatedModel | response = RemoteData.Loading }
-                            , Votes.getVotesByContent content
-                                |> RemoteData.sendRequest
-                                |> Cmd.map (Response queryUpdatedModel.query)
-                            )
+                        Content ->
+                            contentRequest
+
+                        Keywords ->
+                            contentRequest
 
                         Invalid ->
                             ( queryUpdatedModel, Cmd.none )
@@ -261,7 +270,7 @@ flagButtonAndVotes model =
     in
     column NoStyle
         [ spacing 20 ]
-        [ when (decodeQuery model.query == Invalid)
+        [ when (identifyQueryType model.query == Invalid)
             (paragraph NoStyle [] [ el General [ padding 5 ] (text <| translate InvalidQueryError) ])
         , el General
             [ spacing 5, minWidth (px 130) ]
@@ -305,7 +314,8 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
-        , Element.map MsgForTwitterGraph <| TwitterGraph.view model.locationHref model.twitterGraph
+        , when (identifyQueryType query /= Content)
+            (Element.map MsgForTwitterGraph <| TwitterGraph.view model.locationHref model.twitterGraph)
         , when (List.length votes.keywords > 0)
             (viewSearchResults model votes)
         ]
