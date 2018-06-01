@@ -122,6 +122,9 @@ struct SearchTweet {
     user: Option<SearchUser>,
     #[serde(skip_serializing_if = "Option::is_none")]
     retweeted_status: Option<IdAndUser>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    quoted_status: Option<IdAndUser>,
+    entities: SearchEntities,
 }
 
 #[derive(Debug, Serialize)]
@@ -135,6 +138,11 @@ struct IdAndUser {
     id_str: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     user: Option<SearchUser>,
+}
+
+#[derive(Debug, Serialize)]
+struct SearchEntities {
+    user_mentions: Vec<SearchUser>,
 }
 
 fn parse_statuses(result: &egg_mode::Response<egg_mode::search::SearchResult>) -> Vec<SearchTweet> {
@@ -161,6 +169,31 @@ fn parse_statuses(result: &egg_mode::Response<egg_mode::search::SearchResult>) -
                         }),
                     }
                 }),
+                quoted_status: tweet.to_owned().quoted_status.map(|quote| {
+                    IdAndUser {
+                        id_str: format!("{}", quote.id),
+                        user: quote.to_owned().user.map(|user| {
+                            SearchUser {
+                                id_str: format!("{}", user.id),
+                                screen_name: user.screen_name,
+                            }
+                        }),
+                    }
+                }),
+                entities: SearchEntities {
+                    user_mentions: tweet
+                        .to_owned()
+                        .entities
+                        .user_mentions
+                        .iter()
+                        .map(|user| {
+                            SearchUser {
+                                id_str: format!("{}", user.id),
+                                screen_name: user.to_owned().screen_name,
+                            }
+                        })
+                        .collect(),
+                },
             }
         })
         .collect()
