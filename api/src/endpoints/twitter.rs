@@ -92,24 +92,6 @@ fn callback(
     Ok(Redirect::found(&*return_to))
 }
 
-#[derive(Serialize)]
-struct TwitterUser {
-    screen_name: String,
-}
-
-#[get("/twitter/user")]
-fn user(cookies: Cookies) -> Result<Json<TwitterUser>, status::Custom<String>> {
-    let (mut core, handle, _) = get_config();
-    let access_token = get_authenticated_token(cookies).ok_or(not_authenticated())?;
-
-    let user = core.run(egg_mode::verify_tokens(&access_token, &handle))
-        .map_err(|err| internal_error(&*format!("{}", err)))?;
-
-    Ok(Json(
-        TwitterUser { screen_name: user.screen_name.to_owned() },
-    ))
-}
-
 #[derive(Debug, Serialize)]
 struct SearchResponse {
     statuses: Vec<SearchTweet>,
