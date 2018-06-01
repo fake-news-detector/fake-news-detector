@@ -206,13 +206,13 @@ view model =
     Element.layout stylesheet <|
         column General
             [ width (percent 100), center ]
-            [ section HeaderSection
+            [ section NoStyle
                 [ addExtensionButtons model
                 , urlToCheck model
-                , flagButtonAndVotes model
                 ]
-            , section TwitterGraphSection [ twitterGraphSection model ]
-            , section GoogleSearchSection [ googleSearchSection model ]
+            , section NoStyle [ flagButtonAndVotes model ]
+            , section NoStyle [ twitterGraphSection model ]
+            , section NoStyle [ googleSearchSection model ]
             , section NoStyle [ explanation model ]
             ]
 
@@ -220,8 +220,13 @@ view model =
 section : Classes -> List (Element Classes variation msg) -> Element Classes variation msg
 section class children =
     row class
-        [ center, width (percent 100), padding 20 ]
+        [ center, width (percent 100), padding 10 ]
         [ column NoStyle [ width (percent 100), maxWidth (px 800) ] children ]
+
+
+card : Element Classes variation msg -> Element Classes variation msg
+card children =
+    el Card [ padding 20 ] children
 
 
 addExtensionButtons : Model -> Element Classes variation msg
@@ -250,7 +255,7 @@ addExtensionButtons model =
 urlToCheck : Model -> Element Classes variation Msg
 urlToCheck model =
     column NoStyle
-        [ spacing 10, paddingBottom 20 ]
+        [ spacing 10 ]
         [ node "form"
             (row NoStyle
                 [ onSubmit Submit ]
@@ -296,7 +301,7 @@ flagButtonAndVotes model =
             [ spacing 5, minWidth (px 130) ]
             (case model.response of
                 Success { query, votes } ->
-                    viewVotes model query votes
+                    card <| viewVotes model query votes
 
                 Failure _ ->
                     el NoStyle [ padding 6 ] (text <| translate LoadingError)
@@ -330,7 +335,11 @@ viewVotes model query votes =
                 [ spacing 20 ]
                 [ viewRobotBestGuess model votes.domain votes.robot
                 , if List.length peopleVotes > 0 then
-                    column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
+                    column NoStyle
+                        [ spacing 5 ]
+                        ([ h2 Subtitle [] <| text <| translate model.language PeoplesOpinion ]
+                            ++ List.map viewPeopleVote peopleVotes
+                        )
                   else
                     empty
                 , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
@@ -348,7 +357,10 @@ twitterGraphSection model =
     case model.response of
         Success { query } ->
             when (identifyQueryType query /= Content)
-                (Element.map MsgForTwitterGraph <| TwitterGraph.view model.language model.locationHref model.twitterGraph)
+                (TwitterGraph.view model.language model.locationHref model.twitterGraph
+                    |> Element.map MsgForTwitterGraph
+                    |> card
+                )
 
         _ ->
             empty
@@ -368,7 +380,7 @@ googleSearchSection model =
                         Nothing
             in
             whenJust keywords
-                (viewSearchResults model)
+                (viewSearchResults model >> card)
 
         _ ->
             empty
@@ -378,7 +390,7 @@ viewSearchResults : Model -> String -> Element Classes variation msg
 viewSearchResults model keywords =
     column NoStyle
         [ spacing 10 ]
-        [ bold <| translate model.language CheckYourself
+        [ h2 Subtitle [] <| text <| translate model.language CheckYourself
         , paragraph NoStyle [] [ text <| translate model.language WeDidAGoogleSearch ]
         , el NoStyle
             []
@@ -408,7 +420,7 @@ viewRobotBestGuess model verifiedVote robotVotes =
         renderPredictions items =
             column NoStyle
                 [ spacing 5 ]
-                ([ bold <| translate model.language RobinhosOpinion ] ++ items)
+                ([ h2 Subtitle [] <| text <| translate model.language RobinhosOpinion ] ++ items)
     in
     case ( verifiedVote, List.head robotPredictions ) of
         ( Just vote, _ ) ->
@@ -423,10 +435,14 @@ viewRobotBestGuess model verifiedVote robotVotes =
 
 nothingWrongExample : Model -> Element Classes variation Msg
 nothingWrongExample model =
-    paragraph NoStyle
-        []
-        [ text <| translate model.language NothingWrongExample
-        , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate model.language ClickHere))
+    column NoStyle
+        [ spacing 10 ]
+        [ h2 Subtitle [] <| text <| translate model.language RobinhosOpinion
+        , paragraph NoStyle
+            []
+            [ text <| translate model.language NothingWrongExample
+            , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate model.language ClickHere))
+            ]
         ]
 
 

@@ -24,9 +24,7 @@ type Classes
     | UrlInput
     | TwitterButton
     | TwitterIcon
-    | HeaderSection
-    | TwitterGraphSection
-    | GoogleSearchSection
+    | Card
 
 
 stylesheet : Style.StyleSheet Classes variation
@@ -110,13 +108,15 @@ stylesheet =
             , Border.rounded 5
             , Font.size 13
             ]
-        , style HeaderSection
-            [ Color.background (rgb 255 200 200)
-            ]
-        , style TwitterGraphSection
-            [ Color.background (rgb 200 255 200)
-            ]
-        , style GoogleSearchSection
-            [ Color.background (rgb 200 200 255)
+        , style Card
+            [ Shadow.box
+                { offset = ( 0, 0 )
+                , size = 1
+                , blur = 4
+                , color = rgba 0 0 0 0.1
+                }
+            , Border.all 1
+            , Border.rounded 5
+            , Color.border (rgb 229 229 229)
             ]
         ]

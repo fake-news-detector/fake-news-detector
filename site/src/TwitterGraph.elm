@@ -261,7 +261,7 @@ view : Language -> String -> Model -> Element Classes variation Msg
 view language locationHref model =
     column NoStyle
         [ Element.Attributes.spacing 10 ]
-        [ bold <| translate language TwitterSpread
+        [ h2 Subtitle [] <| Element.text <| translate language TwitterSpread
         , tweetsDataResults language locationHref model
         ]
 
