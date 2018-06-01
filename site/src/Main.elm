@@ -206,20 +206,20 @@ view model =
     Element.layout stylesheet <|
         column General
             [ width (percent 100), center ]
-            [ section NoStyle
+            [ section
                 [ addExtensionButtons model
                 , urlToCheck model
                 ]
-            , section NoStyle [ flagButtonAndVotes model ]
-            , section NoStyle [ twitterGraphSection model ]
-            , section NoStyle [ googleSearchSection model ]
-            , section NoStyle [ explanation model ]
+            , section [ flagButtonAndVotes model ]
+            , section [ twitterGraphSection model ]
+            , section [ googleSearchSection model ]
+            , section [ explanation model ]
             ]
 
 
-section : Classes -> List (Element Classes variation msg) -> Element Classes variation msg
-section class children =
-    row class
+section : List (Element Classes variation msg) -> Element Classes variation msg
+section children =
+    row NoStyle
         [ center, width (percent 100), padding 10 ]
         [ column NoStyle [ width (percent 100), maxWidth (px 800) ] children ]
 
@@ -301,7 +301,8 @@ flagButtonAndVotes model =
             [ spacing 5, minWidth (px 130) ]
             (case model.response of
                 Success { query, votes } ->
-                    card <| viewVotes model query votes
+                    when (identifyQueryType query /= Keywords)
+                        (card <| viewVotes model query votes)
 
                 Failure _ ->
                     el NoStyle [ padding 6 ] (text <| translate LoadingError)
@@ -323,33 +324,28 @@ viewVotes model query votes =
 
         viewPeopleVote vote =
             viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
-
-        queryType =
-            identifyQueryType query
     in
-    when (queryType /= Keywords)
-        (column NoStyle
-            [ spacing 30 ]
-            [ wrappedRow
-                NoStyle
-                [ spacing 20 ]
-                [ viewRobotBestGuess model votes.domain votes.robot
-                , if List.length peopleVotes > 0 then
-                    column NoStyle
-                        [ spacing 5 ]
-                        ([ h2 Subtitle [] <| text <| translate model.language PeoplesOpinion ]
-                            ++ List.map viewPeopleVote peopleVotes
-                        )
-                  else
-                    empty
-                , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
-                    nothingWrongExample model
-                  else
-                    empty
-                ]
-            , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
+    column NoStyle
+        [ spacing 30 ]
+        [ wrappedRow
+            NoStyle
+            [ spacing 20 ]
+            [ viewRobotBestGuess model votes.domain votes.robot
+            , if List.length peopleVotes > 0 then
+                column NoStyle
+                    [ spacing 5 ]
+                    ([ h2 Subtitle [] <| text <| translate model.language PeoplesOpinion ]
+                        ++ List.map viewPeopleVote peopleVotes
+                    )
+              else
+                empty
+            , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
+                nothingWrongExample model
+              else
+                empty
             ]
-        )
+        , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
+        ]
 
 
 twitterGraphSection : Model -> Element Classes variation Msg

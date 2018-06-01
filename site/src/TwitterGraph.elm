@@ -150,7 +150,7 @@ update msg ({ graph, simulation } as model) =
         SetScreenSize size ->
             ( { model
                 | size =
-                    { width = toFloat <| Basics.min (size.width - 55) 800
+                    { width = toFloat <| Basics.min (size.width - 55) 760
                     , height = model.size.height
                     }
               }
