@@ -52,7 +52,9 @@ const config = {
   },
   plugins: pagesPlugins
     .concat([
-      new webpack.EnvironmentPlugin(["DEBUG"]),
+      new webpack.EnvironmentPlugin({
+        DEBUG: !!process.env.DEBUG
+      }),
       new CopyWebpackPlugin([
         {
           from: "src/static",
