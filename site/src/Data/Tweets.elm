@@ -14,11 +14,7 @@ import Visualization.Force as Force
 
 apiUrl : String
 apiUrl =
-    "http://localhost:8000"
-
-
-
--- Data.Votes.apiUrl
+    Data.Votes.apiUrl
 
 
 type alias TwitterUser =
