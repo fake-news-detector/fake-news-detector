@@ -48,3 +48,9 @@ type LocaleKey
     | HelpRobinho
     | CheckYourself
     | WeDidAGoogleSearch
+    | TwitterSpread
+    | CheckHowItIsSpreading
+    | LoadingTweets
+    | NoTweetsFound
+    | YouNeedToSignInWithTwitter
+    | SignInWithTwitter

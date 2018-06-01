@@ -144,6 +144,24 @@ translate localeValue =
         WeDidAGoogleSearch ->
             "We did a Google search with keywords extracted from the text"
 
+        TwitterSpread ->
+            "Spread on Twitter"
+
+        CheckHowItIsSpreading ->
+            "Check how this is spreading on twitter"
+
+        LoadingTweets ->
+            "Loading tweets..."
+
+        NoTweetsFound ->
+            "No tweets found"
+
+        YouNeedToSignInWithTwitter ->
+            "To build the spread graph, we need you to login with you Twitter account"
+
+        SignInWithTwitter ->
+            "Sign in with Twitter"
+
 
 explanation : String
 explanation =

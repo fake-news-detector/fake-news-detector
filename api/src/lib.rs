@@ -12,6 +12,9 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate select;
 extern crate md5;
+extern crate egg_mode;
+extern crate tokio_core;
+extern crate cookie;
 
 pub mod data;
 pub mod endpoints;
@@ -39,6 +42,9 @@ pub fn start_server() {
             "/",
             routes![
                 endpoints::healthcheck::healthcheck,
+                endpoints::twitter::auth,
+                endpoints::twitter::callback,
+                endpoints::twitter::search,
                 endpoints::categories::get_categories,
                 endpoints::votes::get_votes,
                 endpoints::votes::get_votes_by_content,

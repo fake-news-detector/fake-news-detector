@@ -2,3 +2,4 @@
 address = "0.0.0.0"
 port = 8000
 template_dir = "src/views/"
+secret_key = "secretKeyJustForDevelopmentB3VRq9qA2y4lc+Mg="

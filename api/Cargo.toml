@@ -16,6 +16,9 @@ r2d2 = "0.7.4"
 reqwest = "0.8.0"
 select = "0.4.2"
 md5 = "0.3.6"
+egg-mode = "0.12.0"
+tokio-core = "0.1.6"
+cookie = "0.9"
 
 [dependencies.rocket_contrib]
 version = "0.3.3"

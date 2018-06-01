@@ -6,17 +6,20 @@ import Data.Votes as Votes exposing (PeopleVotes, RobotPredictions, VerifiedVote
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import FlagLink exposing (Query(..), decodeQuery)
+import FlagLink exposing (QueryType(..), identifyQueryType)
 import Html exposing (Html)
 import Html.Attributes
-import Http exposing (encodeUri)
+import Http exposing (decodeUri, encodeUri)
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
 import Locale.Words exposing (LocaleKey(..))
 import Markdown
+import Navigation exposing (Location)
 import RemoteData exposing (..)
 import Return
+import Router exposing (..)
 import Stylesheet exposing (..)
+import TwitterGraph
 
 
 type alias Model =
@@ -27,6 +30,9 @@ type alias Model =
     , response : WebData { query : String, votes : VotesResponse }
     , language : Language
     , flagLink : FlagLink.Model
+    , route : Route
+    , locationHref : String
+    , twitterGraph : TwitterGraph.Model
     }
 
 
@@ -40,46 +46,72 @@ type Msg
     | Submit
     | UseExample
     | MsgForFlagLink FlagLink.Msg
+    | OnLocationChange Location
+    | MsgForTwitterGraph TwitterGraph.Msg
 
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
-        { init = init
+    Navigation.programWithFlags OnLocationChange
+        { init =
+            \flags location ->
+                init flags (Router.parseLocation location)
+                    |> update (OnLocationChange location)
+                    |> Tuple.mapSecond
+                        (\cmd ->
+                            Cmd.batch
+                                [ cmd
+                                , Cmd.map MsgForTwitterGraph <| Tuple.second TwitterGraph.init
+                                ]
+                        )
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions =
+            \model ->
+                Sub.map MsgForTwitterGraph
+                    (TwitterGraph.subscriptions model.twitterGraph)
         }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Route -> Model
+init flags route =
     let
         language =
             Locale.fromCodeArray flags.languages
     in
-    ( { uuid = flags.uuid
-      , query = ""
-      , autoexpand = AutoExpand.initState (autoExpandConfig language)
-      , refreshUrlCounter = 0
-      , response = NotAsked
-      , language = language
-      , flagLink = FlagLink.init
-      }
-    , Cmd.none
-    )
+    { uuid = flags.uuid
+    , query = ""
+    , autoexpand = AutoExpand.initState (autoExpandConfig language)
+    , refreshUrlCounter = 0
+    , response = NotAsked
+    , language = language
+    , flagLink = FlagLink.init
+    , route = route
+    , locationHref = ""
+    , twitterGraph = Tuple.first TwitterGraph.init
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Response query response ->
-            ( { model
-                | response = RemoteData.map (\votes -> { query = query, votes = votes }) response
-                , flagLink = FlagLink.init
-              }
-            , Cmd.none
-            )
+            let
+                updatedModel =
+                    { model
+                        | response = RemoteData.map (\votes -> { query = query, votes = votes }) response
+                        , flagLink = FlagLink.init
+                    }
+            in
+            case ( response, identifyQueryType query ) of
+                ( _, Content ) ->
+                    ( updatedModel, Cmd.none )
+
+                ( Success _, _ ) ->
+                    update (MsgForTwitterGraph <| TwitterGraph.LoadTweets query) updatedModel
+
+                _ ->
+                    ( updatedModel, Cmd.none )
 
         UpdateInput { state, textValue } ->
             if String.isEmpty textValue then
@@ -93,26 +125,7 @@ update msg model =
                 ( { model | autoexpand = state, query = textValue }, Cmd.none )
 
         Submit ->
-            case decodeQuery model.query of
-                Url url ->
-                    ( { model | response = RemoteData.Loading }
-                    , Votes.getVotes url ""
-                        |> RemoteData.sendRequest
-                        |> Cmd.map (Response model.query)
-                    )
-
-                Content content ->
-                    ( { model | response = RemoteData.Loading }
-                    , Votes.getVotesByContent content
-                        |> RemoteData.sendRequest
-                        |> Cmd.map (Response model.query)
-                    )
-
-                Invalid ->
-                    ( model, Cmd.none )
-
-                Empty ->
-                    ( model, Cmd.none )
+            ( model, Navigation.newUrl <| toPath <| SearchRoute model.query )
 
         UseExample ->
             { model | refreshUrlCounter = model.refreshUrlCounter + 1 }
@@ -131,43 +144,118 @@ update msg model =
                 |> Return.map (\flagLink -> { model | flagLink = flagLink })
                 |> Return.mapCmd MsgForFlagLink
 
+        OnLocationChange location ->
+            let
+                route =
+                    parseLocation location
+
+                updatedModel =
+                    { model | route = route, locationHref = location.href }
+            in
+            case route of
+                IndexRoute ->
+                    ( updatedModel, Cmd.none )
+
+                SearchRoute query ->
+                    let
+                        urlQuery =
+                            decodeUri query |> Maybe.withDefault ""
+
+                        queryUpdatedModel =
+                            { updatedModel | query = urlQuery }
+
+                        contentRequest =
+                            ( { queryUpdatedModel | response = RemoteData.Loading }
+                            , Votes.getVotesByContent queryUpdatedModel.query
+                                |> RemoteData.sendRequest
+                                |> Cmd.map (Response queryUpdatedModel.query)
+                            )
+                    in
+                    case identifyQueryType urlQuery of
+                        Url ->
+                            ( { queryUpdatedModel | response = RemoteData.Loading }
+                            , Votes.getVotes urlQuery ""
+                                |> RemoteData.sendRequest
+                                |> Cmd.map (Response queryUpdatedModel.query)
+                            )
+
+                        Content ->
+                            contentRequest
+
+                        Keywords ->
+                            contentRequest
+
+                        Invalid ->
+                            ( queryUpdatedModel, Cmd.none )
+
+                        Empty ->
+                            ( queryUpdatedModel, Cmd.none )
+
+        MsgForTwitterGraph msg ->
+            let
+                updated =
+                    TwitterGraph.update msg model.twitterGraph
+            in
+            ( { model | twitterGraph = Tuple.first updated }
+            , Cmd.map MsgForTwitterGraph <| Tuple.second updated
+            )
+
 
 view : Model -> Html Msg
 view model =
     Element.layout stylesheet <|
-        row General
-            [ center, width (percent 100), padding 20 ]
-            [ column NoStyle
-                [ maxWidth (px 800) ]
-                [ wrappedRow NoStyle
-                    [ paddingBottom 20, paddingTop 120, spread ]
-                    [ h1 Title [] (text <| translate model.language FakeNewsDetector)
-                    , row NoStyle
-                        [ spacing 10 ]
-                        [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
-                            image NoStyle
-                                [ height (px 48) ]
-                                { src = "static/add-to-chrome.png"
-                                , caption = translate model.language AddToChrome
-                                }
-                        , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
-                            image NoStyle
-                                [ height (px 48) ]
-                                { src = "static/add-to-firefox.png"
-                                , caption = translate model.language AddToFirefox
-                                }
-                        ]
-                    ]
+        column General
+            [ width (percent 100), center ]
+            [ section
+                [ addExtensionButtons model
                 , urlToCheck model
-                , explanation model
                 ]
+            , section [ flagButtonAndVotes model ]
+            , section [ twitterGraphSection model ]
+            , section [ googleSearchSection model ]
+            , section [ explanation model ]
             ]
+
+
+section : List (Element Classes variation msg) -> Element Classes variation msg
+section children =
+    row NoStyle
+        [ center, width (percent 100), padding 10 ]
+        [ column NoStyle [ width (percent 100), maxWidth (px 800) ] children ]
+
+
+card : Element Classes variation msg -> Element Classes variation msg
+card children =
+    el Card [ padding 20 ] children
+
+
+addExtensionButtons : Model -> Element Classes variation msg
+addExtensionButtons model =
+    wrappedRow NoStyle
+        [ paddingBottom 20, paddingTop 120, spread ]
+        [ h1 Title [] (text <| translate model.language FakeNewsDetector)
+        , row NoStyle
+            [ spacing 10 ]
+            [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
+                image NoStyle
+                    [ height (px 48) ]
+                    { src = "static/add-to-chrome.png"
+                    , caption = translate model.language AddToChrome
+                    }
+            , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
+                image NoStyle
+                    [ height (px 48) ]
+                    { src = "static/add-to-firefox.png"
+                    , caption = translate model.language AddToFirefox
+                    }
+            ]
+        ]
 
 
 urlToCheck : Model -> Element Classes variation Msg
 urlToCheck model =
     column NoStyle
-        [ minHeight (px 200), spacing 10, paddingBottom 20 ]
+        [ spacing 10 ]
         [ node "form"
             (row NoStyle
                 [ onSubmit Submit ]
@@ -177,7 +265,6 @@ urlToCheck model =
                 , button BlueButton [ width (percent 20) ] (text <| translate model.language Check)
                 ]
             )
-        , flagButtonAndVotes model
         ]
 
 
@@ -208,13 +295,14 @@ flagButtonAndVotes model =
     in
     column NoStyle
         [ spacing 20 ]
-        [ when (decodeQuery model.query == Invalid)
+        [ when (identifyQueryType model.query == Invalid)
             (paragraph NoStyle [] [ el General [ padding 5 ] (text <| translate InvalidQueryError) ])
         , el General
             [ spacing 5, minWidth (px 130) ]
             (case model.response of
                 Success { query, votes } ->
-                    viewVotes model query votes
+                    when (identifyQueryType query /= Keywords)
+                        (card <| viewVotes model query votes)
 
                 Failure _ ->
                     el NoStyle [ padding 6 ] (text <| translate LoadingError)
@@ -239,11 +327,16 @@ viewVotes model query votes =
     in
     column NoStyle
         [ spacing 30 ]
-        [ wrappedRow NoStyle
+        [ wrappedRow
+            NoStyle
             [ spacing 20 ]
             [ viewRobotBestGuess model votes.domain votes.robot
             , if List.length peopleVotes > 0 then
-                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
+                column NoStyle
+                    [ spacing 5 ]
+                    ([ h2 Subtitle [] <| text <| translate model.language PeoplesOpinion ]
+                        ++ List.map viewPeopleVote peopleVotes
+                    )
               else
                 empty
             , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
@@ -252,22 +345,54 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
-        , when (List.length votes.keywords > 0)
-            (viewSearchResults model votes)
         ]
 
 
-viewSearchResults : Model -> VotesResponse -> Element Classes variation msg
-viewSearchResults model votes =
+twitterGraphSection : Model -> Element Classes variation Msg
+twitterGraphSection model =
+    case model.response of
+        Success { query } ->
+            when (identifyQueryType query /= Content)
+                (TwitterGraph.view model.language model.locationHref model.twitterGraph
+                    |> Element.map MsgForTwitterGraph
+                    |> card
+                )
+
+        _ ->
+            empty
+
+
+googleSearchSection : Model -> Element Classes variation Msg
+googleSearchSection model =
+    case model.response of
+        Success { query, votes } ->
+            let
+                keywords =
+                    if identifyQueryType query == Keywords then
+                        Just query
+                    else if List.length votes.keywords > 0 then
+                        Just (String.join " " votes.keywords)
+                    else
+                        Nothing
+            in
+            whenJust keywords
+                (viewSearchResults model >> card)
+
+        _ ->
+            empty
+
+
+viewSearchResults : Model -> String -> Element Classes variation msg
+viewSearchResults model keywords =
     column NoStyle
         [ spacing 10 ]
-        [ bold <| translate model.language CheckYourself
+        [ h2 Subtitle [] <| text <| translate model.language CheckYourself
         , paragraph NoStyle [] [ text <| translate model.language WeDidAGoogleSearch ]
         , el NoStyle
             []
             (Element.html
                 (Html.iframe
-                    [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri (String.join " " votes.keywords))
+                    [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri keywords)
                     , Html.Attributes.attribute "frameBorder" "0"
                     , Html.Attributes.attribute "height" "300px"
                     , Html.Attributes.attribute "width" "100%"
@@ -291,7 +416,7 @@ viewRobotBestGuess model verifiedVote robotVotes =
         renderPredictions items =
             column NoStyle
                 [ spacing 5 ]
-                ([ bold <| translate model.language RobinhosOpinion ] ++ items)
+                ([ h2 Subtitle [] <| text <| translate model.language RobinhosOpinion ] ++ items)
     in
     case ( verifiedVote, List.head robotPredictions ) of
         ( Just vote, _ ) ->
@@ -306,10 +431,14 @@ viewRobotBestGuess model verifiedVote robotVotes =
 
 nothingWrongExample : Model -> Element Classes variation Msg
 nothingWrongExample model =
-    paragraph NoStyle
-        []
-        [ text <| translate model.language NothingWrongExample
-        , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate model.language ClickHere))
+    column NoStyle
+        [ spacing 10 ]
+        [ h2 Subtitle [] <| text <| translate model.language RobinhosOpinion
+        , paragraph NoStyle
+            []
+            [ text <| translate model.language NothingWrongExample
+            , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate model.language ClickHere))
+            ]
         ]
 
 
@@ -336,7 +465,7 @@ explanation model =
 
 staticView : String -> Html Msg
 staticView lang =
-    view (Tuple.first <| init { languages = [ lang ], uuid = "" })
+    view (init { languages = [ lang ], uuid = "" } IndexRoute)
 
 
 staticViewPt : Html Msg
