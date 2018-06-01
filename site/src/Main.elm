@@ -305,31 +305,46 @@ viewVotes model query votes =
 
         viewPeopleVote vote =
             viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
+
+        queryType =
+            identifyQueryType query
+
+        keywords =
+            if queryType == Keywords then
+                Just query
+            else if List.length votes.keywords > 0 then
+                Just (String.join " " votes.keywords)
+            else
+                Nothing
     in
     column NoStyle
         [ spacing 30 ]
-        [ wrappedRow NoStyle
-            [ spacing 20 ]
-            [ viewRobotBestGuess model votes.domain votes.robot
-            , if List.length peopleVotes > 0 then
-                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
-              else
-                empty
-            , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
-                nothingWrongExample model
-              else
-                empty
-            ]
-        , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
-        , when (identifyQueryType query /= Content)
+        [ when (queryType /= Keywords)
+            (wrappedRow
+                NoStyle
+                [ spacing 20 ]
+                [ viewRobotBestGuess model votes.domain votes.robot
+                , if List.length peopleVotes > 0 then
+                    column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
+                  else
+                    empty
+                , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
+                    nothingWrongExample model
+                  else
+                    empty
+                ]
+            )
+        , when (queryType /= Keywords)
+            (Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink))
+        , when (queryType /= Content)
             (Element.map MsgForTwitterGraph <| TwitterGraph.view model.language model.locationHref model.twitterGraph)
-        , when (List.length votes.keywords > 0)
-            (viewSearchResults model votes)
+        , whenJust keywords
+            (viewSearchResults model)
         ]
 
 
-viewSearchResults : Model -> VotesResponse -> Element Classes variation msg
-viewSearchResults model votes =
+viewSearchResults : Model -> String -> Element Classes variation msg
+viewSearchResults model keywords =
     column NoStyle
         [ spacing 10 ]
         [ bold <| translate model.language CheckYourself
@@ -338,7 +353,7 @@ viewSearchResults model votes =
             []
             (Element.html
                 (Html.iframe
-                    [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri (String.join " " votes.keywords))
+                    [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri keywords)
                     , Html.Attributes.attribute "frameBorder" "0"
                     , Html.Attributes.attribute "height" "300px"
                     , Html.Attributes.attribute "width" "100%"
