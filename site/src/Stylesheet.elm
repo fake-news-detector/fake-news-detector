@@ -17,12 +17,16 @@ type Classes
     | Overlay
     | Popup
     | Title
+    | Subtitle
     | CloseButton
     | VoteEmoji
     | ErrorMessage
     | UrlInput
     | TwitterButton
     | TwitterIcon
+    | HeaderSection
+    | TwitterGraphSection
+    | GoogleSearchSection
 
 
 stylesheet : Style.StyleSheet Classes variation
@@ -74,6 +78,9 @@ stylesheet =
         , style Title
             [ Font.size 34
             ]
+        , style Subtitle
+            [ Font.size 22
+            ]
         , style CloseButton
             [ Font.size 18
             , Color.text grey
@@ -102,5 +109,14 @@ stylesheet =
             , Color.text (rgb 255 255 255)
             , Border.rounded 5
             , Font.size 13
+            ]
+        , style HeaderSection
+            [ Color.background (rgb 255 200 200)
+            ]
+        , style TwitterGraphSection
+            [ Color.background (rgb 200 255 200)
+            ]
+        , style GoogleSearchSection
+            [ Color.background (rgb 200 200 255)
             ]
         ]

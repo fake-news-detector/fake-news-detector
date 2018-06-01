@@ -204,39 +204,53 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Element.layout stylesheet <|
-        row General
-            [ center, width (percent 100), padding 20 ]
-            [ column NoStyle
-                [ maxWidth (px 800) ]
-                [ wrappedRow NoStyle
-                    [ paddingBottom 20, paddingTop 120, spread ]
-                    [ h1 Title [] (text <| translate model.language FakeNewsDetector)
-                    , row NoStyle
-                        [ spacing 10 ]
-                        [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
-                            image NoStyle
-                                [ height (px 48) ]
-                                { src = "static/add-to-chrome.png"
-                                , caption = translate model.language AddToChrome
-                                }
-                        , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
-                            image NoStyle
-                                [ height (px 48) ]
-                                { src = "static/add-to-firefox.png"
-                                , caption = translate model.language AddToFirefox
-                                }
-                        ]
-                    ]
+        column General
+            [ width (percent 100), center ]
+            [ section HeaderSection
+                [ addExtensionButtons model
                 , urlToCheck model
-                , explanation model
+                , flagButtonAndVotes model
                 ]
+            , section TwitterGraphSection [ twitterGraphSection model ]
+            , section GoogleSearchSection [ googleSearchSection model ]
+            , section NoStyle [ explanation model ]
             ]
+
+
+section : Classes -> List (Element Classes variation msg) -> Element Classes variation msg
+section class children =
+    row class
+        [ center, width (percent 100), padding 20 ]
+        [ column NoStyle [ width (percent 100), maxWidth (px 800) ] children ]
+
+
+addExtensionButtons : Model -> Element Classes variation msg
+addExtensionButtons model =
+    wrappedRow NoStyle
+        [ paddingBottom 20, paddingTop 120, spread ]
+        [ h1 Title [] (text <| translate model.language FakeNewsDetector)
+        , row NoStyle
+            [ spacing 10 ]
+            [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
+                image NoStyle
+                    [ height (px 48) ]
+                    { src = "static/add-to-chrome.png"
+                    , caption = translate model.language AddToChrome
+                    }
+            , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
+                image NoStyle
+                    [ height (px 48) ]
+                    { src = "static/add-to-firefox.png"
+                    , caption = translate model.language AddToFirefox
+                    }
+            ]
+        ]
 
 
 urlToCheck : Model -> Element Classes variation Msg
 urlToCheck model =
     column NoStyle
-        [ minHeight (px 200), spacing 10, paddingBottom 20 ]
+        [ spacing 10, paddingBottom 20 ]
         [ node "form"
             (row NoStyle
                 [ onSubmit Submit ]
@@ -246,7 +260,6 @@ urlToCheck model =
                 , button BlueButton [ width (percent 20) ] (text <| translate model.language Check)
                 ]
             )
-        , flagButtonAndVotes model
         ]
 
 
@@ -308,19 +321,11 @@ viewVotes model query votes =
 
         queryType =
             identifyQueryType query
-
-        keywords =
-            if queryType == Keywords then
-                Just query
-            else if List.length votes.keywords > 0 then
-                Just (String.join " " votes.keywords)
-            else
-                Nothing
     in
-    column NoStyle
-        [ spacing 30 ]
-        [ when (queryType /= Keywords)
-            (wrappedRow
+    when (queryType /= Keywords)
+        (column NoStyle
+            [ spacing 30 ]
+            [ wrappedRow
                 NoStyle
                 [ spacing 20 ]
                 [ viewRobotBestGuess model votes.domain votes.robot
@@ -333,14 +338,40 @@ viewVotes model query votes =
                   else
                     empty
                 ]
-            )
-        , when (queryType /= Keywords)
-            (Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink))
-        , when (queryType /= Content)
-            (Element.map MsgForTwitterGraph <| TwitterGraph.view model.language model.locationHref model.twitterGraph)
-        , whenJust keywords
-            (viewSearchResults model)
-        ]
+            , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
+            ]
+        )
+
+
+twitterGraphSection : Model -> Element Classes variation Msg
+twitterGraphSection model =
+    case model.response of
+        Success { query } ->
+            when (identifyQueryType query /= Content)
+                (Element.map MsgForTwitterGraph <| TwitterGraph.view model.language model.locationHref model.twitterGraph)
+
+        _ ->
+            empty
+
+
+googleSearchSection : Model -> Element Classes variation Msg
+googleSearchSection model =
+    case model.response of
+        Success { query, votes } ->
+            let
+                keywords =
+                    if identifyQueryType query == Keywords then
+                        Just query
+                    else if List.length votes.keywords > 0 then
+                        Just (String.join " " votes.keywords)
+                    else
+                        Nothing
+            in
+            whenJust keywords
+                (viewSearchResults model)
+
+        _ ->
+            empty
 
 
 viewSearchResults : Model -> String -> Element Classes variation msg
