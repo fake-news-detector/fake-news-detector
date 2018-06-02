@@ -20,10 +20,12 @@ pub struct CredentialsCors<R>(pub R);
 impl<'r, R: Responder<'r>> Responder<'r> for CredentialsCors<R> {
     #[inline(always)]
     fn respond_to(self, req: &Request) -> Result<Response<'r>, Status> {
+        let origin = format!("{}", req.headers().get("Origin").next().unwrap_or(""));
+
         Response::build()
             .merge(self.0.respond_to(req)?)
             .raw_header("Access-Control-Allow-Credentials", "true")
-            .raw_header("Access-Control-Allow-Origin", "http://localhost:8080")
+            .raw_header("Access-Control-Allow-Origin", origin)
             .raw_header("Access-Control-Allow-Methods", "GET")
             .ok()
     }
