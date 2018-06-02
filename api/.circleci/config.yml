@@ -32,4 +32,16 @@ api:
             echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
             docker tag fakenewsdetector/api registry.heroku.com/fake-news-detector-api/web
             docker push registry.heroku.com/fake-news-detector-api/web
+
+            curl -n -X PATCH https://api.heroku.com/apps/fake-news-detector-api/formation \
+              -d '{
+              "updates": [
+                {
+                  "type": "web",
+                  "docker_image": "$(docker inspect registry.heroku.com/fake-news-detector-api/web --format={{.Id}})"
+                }
+              ]
+            }' \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.heroku+json; version=3.docker-releases"
           fi
