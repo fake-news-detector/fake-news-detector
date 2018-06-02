@@ -20,14 +20,19 @@ pub struct CredentialsCors<R>(pub R);
 impl<'r, R: Responder<'r>> Responder<'r> for CredentialsCors<R> {
     #[inline(always)]
     fn respond_to(self, req: &Request) -> Result<Response<'r>, Status> {
+        let allowed_list = vec!["http://localhost:8080", "https://fakenewsdetector.org"];
         let origin = format!("{}", req.headers().get("Origin").next().unwrap_or(""));
 
-        Response::build()
-            .merge(self.0.respond_to(req)?)
-            .raw_header("Access-Control-Allow-Credentials", "true")
-            .raw_header("Access-Control-Allow-Origin", origin)
-            .raw_header("Access-Control-Allow-Methods", "GET")
-            .ok()
+        if allowed_list.contains(&&*origin) {
+            Response::build()
+                .merge(self.0.respond_to(req)?)
+                .raw_header("Access-Control-Allow-Credentials", "true")
+                .raw_header("Access-Control-Allow-Origin", origin)
+                .raw_header("Access-Control-Allow-Methods", "GET")
+                .ok()
+        } else {
+            self.0.respond_to(req)
+        }
     }
 }
 
