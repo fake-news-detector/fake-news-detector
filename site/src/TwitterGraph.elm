@@ -6,6 +6,7 @@ based on their co-occurence in a scene. Try dragging the nodes!
 
 import AnimationFrame
 import Data.Tweets exposing (..)
+import Dict
 import Element exposing (..)
 import Element.Attributes exposing (px)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
@@ -106,10 +107,13 @@ update msg ({ graph, simulation } as model) =
     case msg of
         Tick t ->
             let
-                ( newState, list ) =
+                ( newSimulation, list ) =
                     Force.tick simulation <| List.map .label <| Graph.nodes graph
+
+                newGraph =
+                    updateGraphWithList graph list
             in
-            ( { model | graph = updateGraphWithList graph list, simulation = newState }, Cmd.none )
+            ( { model | graph = newGraph, simulation = newSimulation }, Cmd.none )
 
         LoadTweets query ->
             ( { model | tweetsData = RemoteData.Loading }
@@ -194,13 +198,12 @@ linkElement graph edge =
         []
 
 
-nodeElement : Maybe NodeId -> Graph Entity () -> { c | label : { b | x : Float, y : number, value : IdAndScreenName }, id : NodeId } -> Svg Msg
-nodeElement highlightedNode graph node =
+nodeElement : Dict.Dict NodeId Int -> Maybe NodeId -> Graph Entity () -> { c | label : { b | x : Float, y : number, value : IdAndScreenName }, id : NodeId } -> Svg Msg
+nodeElement connectionsDict highlightedNode graph node =
     let
         connectionsCount =
-            Graph.edges graph
-                |> List.filter (\{ to } -> to == node.id)
-                |> List.length
+            Dict.get node.id connectionsDict
+                |> Maybe.withDefault 0
 
         nodeSize =
             (3 + toFloat connectionsCount * 0.2)
@@ -296,11 +299,20 @@ tweetsDataResults language locationHref model =
 
 drawGraph : Size -> Maybe NodeId -> Graph Entity () -> Html.Html Msg
 drawGraph size highlightedNode graph =
+    let
+        incrementMaybe =
+            Maybe.withDefault 0 >> (+) 1 >> Just
+
+        connectionsCount =
+            List.foldl (\link -> Dict.update link.to incrementMaybe)
+                Dict.empty
+                (Graph.edges graph)
+    in
     div []
         [ svg
             [ width (toString size.width ++ "px"), height (toString size.height ++ "px") ]
             [ g [ class "links" ] <| List.map (linkElement graph) <| Graph.edges graph
-            , g [ class "nodes" ] <| List.map (nodeElement highlightedNode graph) <| Graph.nodes graph
+            , g [ class "nodes" ] <| List.map (nodeElement connectionsCount highlightedNode graph) <| Graph.nodes graph
             ]
         ]
 
