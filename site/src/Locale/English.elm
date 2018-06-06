@@ -79,7 +79,7 @@ translate localeValue =
             "🏴 Flag it"
 
         InvalidQueryError ->
-            "Paste a valid link or text to check"
+            "Paste a valid link, a text or type more keywords to check"
 
         LoadingError ->
             "loading error"
@@ -97,7 +97,7 @@ translate localeValue =
             "check"
 
         PasteLink ->
-            "Paste a suspicious link or text here"
+            "Paste a suspicious link or text here, or use keywords to search for a hoax"
 
         FakeNewsDetector ->
             "Fake News Detector"

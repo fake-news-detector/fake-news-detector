@@ -79,7 +79,7 @@ translate localeValue =
             "🏴 Sinalizar"
 
         InvalidQueryError ->
-            "Cole um texto ou link válido para checar"
+            "Cole um texto, um link válido ou mais palavras-chave para checar"
 
         LoadingError ->
             "erro ao carregar"
@@ -97,7 +97,7 @@ translate localeValue =
             "checar"
 
         PasteLink ->
-            "Cole um link ou texto suspeito aqui"
+            "Cole um link ou texto suspeito aqui, ou busque um boato por palavras-chave"
 
         FakeNewsDetector ->
             "Detector de Fake News"
