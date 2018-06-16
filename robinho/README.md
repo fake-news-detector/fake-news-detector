@@ -81,6 +81,18 @@ To run the server:
 python3 . --server
 ```
 
+#### Running the Telegram Bot
+
+In order to run the Telegram Bot from your machine you'll need to create a bot and get a token from it.
+To do that, follow [this tutorial](https://core.telegram.org/bots#6-botfather).
+
+Then export the acquired token as the TELEGRAM_TOKEN env var and start the server:
+
+```
+export TELEGRAM_TOKEN='mytoken'
+python3 . --server
+```
+
 #### Test Suite
 
 You can run all tests with:

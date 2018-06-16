@@ -2,6 +2,7 @@ import sys
 from robinho.model import Robinho
 import robinho.server as server
 import robinho.categories as categories
+import robinho.bot as bot
 
 robinho = Robinho()
 
@@ -9,6 +10,7 @@ if "--retrain" in sys.argv:
     robinho.train()
     print("Done!")
 elif "--server" in sys.argv:
+    bot.start()
     server.start()
 else:
     predicted = robinho.predict(sys.argv[-2], sys.argv[-1])
