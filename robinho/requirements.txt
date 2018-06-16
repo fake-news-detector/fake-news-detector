@@ -8,3 +8,4 @@ marisa-trie
 lime
 nltk
 python-telegram-bot
+psutil
