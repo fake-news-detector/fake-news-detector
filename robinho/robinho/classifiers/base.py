@@ -1,15 +1,23 @@
 import pandas as pd
 import pickle
 from imblearn.under_sampling import RandomUnderSampler
+from robinho.utils import current_ram
+
+loaded_models = {}
 
 
 class BaseClassifier():
     RANDOM_SEED = 123
 
     def __init__(self):
+        filepath = 'output/' + self.name + '.pkl'
         try:
-            with open('output/' + self.name + '.pkl', "rb") as f:
-                self.clf = pickle.load(f)
+            if filepath not in loaded_models:
+                with open(filepath, "rb") as f:
+                    loaded_models[filepath] = pickle.load(f)
+                print("Loaded", filepath, "using", current_ram(), "of RAM")
+
+            self.clf = loaded_models[filepath]
         except FileNotFoundError:
             self.train()
 

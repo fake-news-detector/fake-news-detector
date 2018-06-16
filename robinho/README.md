@@ -63,14 +63,18 @@ Now you can retrain the model:
 make retrain
 ```
 
-Then use the saved model to do predictions, by passing the news title and body:
+Then use the saved model to do predictions, by running the Robinho bot in the terminal mode:
 
 ```sh
-python3 . "Chora bandidagem" "Chora turma dos direitos humanos. Michel Temer acaba de sancionar..."
->> Extremely Biased
+python3 .
 
-python3 . "Pato rebate provocação de Neymar com foto" "Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro..."
->> Legitimate
+> Chora bandidagem, chora turma dos direitos humanos. Michel Temer acaba de sancionar...
+
+Looks like Extremely Biased
+
+> Pato rebate provocação de Neymar com foto. Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro...
+
+There doesn't seem to be anything wrong with this content
 ```
 
 #### Running
@@ -78,6 +82,18 @@ python3 . "Pato rebate provocação de Neymar com foto" "Neymar e Alexandre Pato
 To run the server:
 
 ```sh
+python3 . --server
+```
+
+#### Running the Telegram Bot
+
+In order to run the Telegram Bot from your machine you'll need to create a bot and get a token from it.
+To do that, follow [this tutorial](https://core.telegram.org/bots#6-botfather).
+
+Then export the acquired token as the TELEGRAM_TOKEN env var and start the server:
+
+```
+export TELEGRAM_TOKEN='mytoken'
 python3 . --server
 ```
 
