@@ -63,14 +63,16 @@ Now you can retrain the model:
 make retrain
 ```
 
-Then use the saved model to do predictions, by passing the news title and body:
+Then use the saved model to do predictions, by running the Robinho bot in the terminal mode:
 
 ```sh
-python3 . "Chora bandidagem" "Chora turma dos direitos humanos. Michel Temer acaba de sancionar..."
->> Extremely Biased
+python3 .
 
-python3 . "Pato rebate provocação de Neymar com foto" "Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro..."
->> Legitimate
+> Chora bandidagem, chora turma dos direitos humanos. Michel Temer acaba de sancionar...
+Extremely Biased
+
+> Pato rebate provocação de Neymar com foto. Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro...
+Legitimate
 ```
 
 #### Running
