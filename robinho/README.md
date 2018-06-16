@@ -68,7 +68,7 @@ Then use the saved model to do predictions, by running the Robinho bot in the te
 ```sh
 python3 .
 
-> Chora bandidagem, chora turma dos direitos humanos. Michel Temer acaba de sancionar...
+> Chora bandidagem, chora turma dos direitos humanos. Michel Temer acaba de sancionar o projeto de lei aprovado pelo...
 
 Looks like Extremely Biased
 
