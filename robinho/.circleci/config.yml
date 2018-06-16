@@ -35,4 +35,16 @@ robinho:
             echo $HEROKU_KEY | docker login --username=_  --password-stdin registry.heroku.com
             docker tag fakenewsdetector/robinho registry.heroku.com/robinho/web
             docker push registry.heroku.com/robinho/web
+
+            curl -n -X PATCH https://api.heroku.com/apps/robinho/formation \
+              -d '{
+              "updates": [
+                {
+                  "type": "web",
+                  "docker_image": "$(docker inspect registry.heroku.com/robinho/web --format={{.Id}})"
+                }
+              ]
+            }' \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/vnd.heroku+json; version=3.docker-releases"
           fi
