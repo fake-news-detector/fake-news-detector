@@ -69,10 +69,12 @@ Then use the saved model to do predictions, by running the Robinho bot in the te
 python3 .
 
 > Chora bandidagem, chora turma dos direitos humanos. Michel Temer acaba de sancionar...
-Extremely Biased
+
+Looks like Extremely Biased
 
 > Pato rebate provocação de Neymar com foto. Neymar e Alexandre Pato resolveram brincar com os cabelos um do outro...
-Legitimate
+
+There doesn't seem to be anything wrong with this content
 ```
 
 #### Running

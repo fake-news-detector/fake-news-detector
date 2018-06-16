@@ -9,4 +9,4 @@ def start():
         if message == 'exit':
             break
 
-        print(check_text.respond(message))
+        print("\n" + check_text.respond(message) + "\n")
