@@ -9,3 +9,4 @@ lime
 nltk
 python-telegram-bot
 psutil
+requests
