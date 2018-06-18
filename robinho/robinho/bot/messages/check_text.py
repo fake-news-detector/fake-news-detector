@@ -1,4 +1,5 @@
 from robinho.model import Robinho
+import re
 
 robinho = Robinho()
 
@@ -8,25 +9,30 @@ def certainty_level(chance):
     if rebalancedChance >= 66:
         return "I'm almost certain it is"
     elif rebalancedChance >= 33:
-        return "Looks a lot like"
+        return "it looks a lot like"
     else:
-        return "Looks like"
+        return "it looks like"
 
 
 def respond(text):
     predicted = robinho.predict("", text, "")
 
-    lines = []
-    if predicted['fake_news']:
-        lines.append(certainty_level(predicted['fake_news']) + " Fake News")
-    if predicted['extremely_biased']:
-        lines.append(certainty_level(
+    text = ""
+    categories = []
+    if predicted['fake_news'] > 0.5:
+        categories.append(certainty_level(
+            predicted['fake_news']) + " Fake News")
+    if predicted['extremely_biased'] > 0.5:
+        categories.append(certainty_level(
             predicted['extremely_biased']) + " Extremely Biased")
-    if predicted['clickbait']:
-        lines.append(certainty_level(predicted['clickbait']) + " Clickbait")
+    if predicted['clickbait'] > 0.5:
+        categories.append(certainty_level(
+            predicted['clickbait']) + " Clickbait")
 
-    if lines == []:
-        lines.append(
-            "There doesn't seem to be anything wrong with this content")
+    text += "I've compared this with other texts I've seen, and "
+    text += re.sub(r'(.*)\,', r"\1 and", ", ".join(categories))
 
-    return "\n".join(lines)
+    if categories == []:
+        text += "there doesn't seem to be anything wrong with this content"
+
+    return text
