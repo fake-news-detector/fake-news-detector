@@ -66,6 +66,7 @@ def respond(message):
             response = json.loads(response.text)
             predicted = response['robot']
             keywords = response['keywords']
+            language = i18n.detect(" ".join(keywords))
         except Exception as err:
             print("Error", err)
             return i18n.translate(language, "SORRY_ERROR")
