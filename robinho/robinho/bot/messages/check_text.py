@@ -43,6 +43,8 @@ def respond_text_prediction(predicted):
         response += "There doesn't seem to be anything wrong with this content"
     else:
         response += re.sub(r'(.*)\,', r"\1 and", ", ".join(categories))
+        response = re.sub('^([a-z])', lambda x: x.groups()
+                          [0].upper(), response)
 
     return response
 
