@@ -1,20 +1,10 @@
+import robinho.bot.i18n as i18n
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 
 chatbot = ChatBot(
     'Robinho',
-    logic_adapters=[
-        {
-            "import_path": "chatterbot.logic.BestMatch",
-            "statement_comparison_function": "chatterbot.comparisons.levenshtein_distance",
-            "response_selection_method": "chatterbot.response_selection.get_first_response"
-        }
-        # {
-        #     'import_path': 'chatterbot.logic.LowConfidenceAdapter',
-        #     'threshold': 0.65,
-        #     'default_response': 'IDK'
-        # }
-    ],
+    logic_adapters=["chatterbot.logic.BestMatch"],
     trainer='chatterbot.trainers.ChatterBotCorpusTrainer'
 )
 
@@ -57,9 +47,8 @@ def train_multiple_questions(questions, response):
 
 def respond(message):
     response = chatbot.get_response(message)
-    if response.confidence < 0.65:
-        return ("I could not understand what you mean, " +
-                "if you want to check weather something is Fake News, " +
-                "please, paste a link or a text here")
+    if response.confidence < 0.60:
+        language = i18n.detect(message)
+        return i18n.translate(language, "COULD_NOT_UNDERSTAND")
 
     return response.text

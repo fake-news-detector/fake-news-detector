@@ -16,4 +16,7 @@ class I18nTestCase(unittest.TestCase):
         self.assertIn('anything wrong', translate('de', 'NOTHING_WRONG'))
 
     def test_detects_language(self):
-        self.assertEqual('es', detect('Que pasa hermano'))
+        self.assertEqual('es', detect('Una prueba más'))
+
+    def test_detects_language_as_english_when_cannot_tell(self):
+        self.assertEqual('en', detect('11111'))
