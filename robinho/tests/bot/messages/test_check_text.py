@@ -82,3 +82,9 @@ class CheckTextTestCase(unittest.TestCase):
         mock_find_keywords.return_value = ['foo', 'bar', 'baz qux']
         self.assertIn("https://www.google.com/search?q=foo+bar+baz+qux",
                       respond(sample_hoax))
+
+    @patch.object(robinho.model.Robinho, 'find_keywords')
+    def test_do_not_add_google_search_for_too_few_keywords(self, mock_find_keywords):
+        mock_find_keywords.return_value = ['foo', 'bar']
+        self.assertNotIn("https://www.google.com/",
+                         respond(sample_hoax))

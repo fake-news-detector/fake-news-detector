@@ -73,7 +73,11 @@ def respond(message):
         predicted = robinho.predict("", message, "")
         keywords = robinho.find_keywords("", message, "")
 
-    google_search = (i18n.translate(language, "SEARCH_YOURSELF") +
-                     "https://www.google.com/search?" +
-                     urlencode({"q": " ".join(keywords)}))
-    return respond_text_prediction(language, predicted) + "\n\n" + google_search
+    if len(keywords) >= 3:
+        google_search = ("\n\n" +
+                         i18n.translate(language, "SEARCH_YOURSELF") +
+                         "https://www.google.com/search?" +
+                         urlencode({"q": " ".join(keywords)}))
+    else:
+        google_search = ""
+    return respond_text_prediction(language, predicted) + google_search
