@@ -64,3 +64,15 @@ class CheckTextTestCase(unittest.TestCase):
 
     def test_validate_allow_urls(self):
         self.assertEqual(True, is_valid_for_checking("http://www.google.com"))
+
+    @patch.object(robinho.model.Robinho, 'predict')
+    def test_detects_language_from_content_and_returns_translated_response(self, mock_predict):
+        sample_hoax_pt = """
+        Copiei do Facebook: “Há dois dias que faço buscas e pesquisas em todos os tribunais do sul,
+        sudeste e centro-oeste, buscando ações em que Gilmar Mendes houvesse atuado como advogado…
+        """
+        mock_predict.return_value = {'fake_news': 0.0,
+                                     'extremely_biased': 0.0,
+                                     'clickbait': 0.0
+                                     }
+        self.assertIn("nada de errado", respond(sample_hoax_pt))

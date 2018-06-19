@@ -12,3 +12,4 @@ psutil
 requests
 chatterbot
 python-Levenshtein
+langdetect
