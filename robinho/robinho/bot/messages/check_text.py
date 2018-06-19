@@ -1,4 +1,5 @@
 from robinho.model import Robinho
+from urllib.parse import urlencode
 import re
 import requests
 import json
@@ -62,11 +63,17 @@ def respond(message):
                 'url': message,
                 'title': ''
             }, timeout=10)
-            predicted = json.loads(response.text)['robot']
+            response = json.loads(response.text)
+            predicted = response['robot']
+            keywords = response['keywords']
         except Exception as err:
             print("Error", err)
             return i18n.translate(language, "SORRY_ERROR")
     else:
         predicted = robinho.predict("", message, "")
+        keywords = robinho.find_keywords("", message, "")
 
-    return respond_text_prediction(language, predicted)
+    google_search = (i18n.translate(language, "SEARCH_YOURSELF") +
+                     "https://www.google.com/search?" +
+                     urlencode({"q": " ".join(keywords)}))
+    return respond_text_prediction(language, predicted) + "\n\n" + google_search

@@ -76,3 +76,9 @@ class CheckTextTestCase(unittest.TestCase):
                                      'clickbait': 0.0
                                      }
         self.assertIn("nada de errado", respond(sample_hoax_pt))
+
+    @patch.object(robinho.model.Robinho, 'find_keywords')
+    def test_adds_google_search(self, mock_find_keywords):
+        mock_find_keywords.return_value = ['foo', 'bar', 'baz qux']
+        self.assertIn("https://www.google.com/search?q=foo+bar+baz+qux",
+                      respond(sample_hoax))

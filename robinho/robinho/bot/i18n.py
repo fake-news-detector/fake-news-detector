@@ -10,7 +10,8 @@ words_en = {
     'COULD_NOT_UNDERSTAND': ("I could not understand what you mean, " +
                              "if you want to check weather something is Fake News, " +
                              "please, paste a link or a text here"),
-    'AND_JOIN': r"\1 and"
+    'AND_JOIN': r"\1 and",
+    'SEARCH_YOURSELF': "I also did a Google Search so you can check it for yourself: "
 }
 
 words_pt = {
@@ -23,7 +24,8 @@ words_pt = {
     'COULD_NOT_UNDERSTAND': ("Eu não entendi o que você quis dizer, " +
                              "se você quer checar se algo é Fake News, " +
                              "por favor, cole um link ou texto aqui"),
-    'AND_JOIN': r"\1 e"
+    'AND_JOIN': r"\1 e",
+    'SEARCH_YOURSELF': "Eu também fiz uma busca no Google para que você possa verificar por conta própria: "
 }
 
 words_es = {
@@ -36,7 +38,8 @@ words_es = {
     'COULD_NOT_UNDERSTAND': ("No pude entender lo que quieres decir, " +
                              "si quieres verificar si algo es Fake News, " +
                              "por favor, pega un enlace o un texto aquí"),
-    'AND_JOIN': r"\1 y"
+    'AND_JOIN': r"\1 y",
+    'SEARCH_YOURSELF': "Yo también hice una búsqueda en Google para que pueda verificarlo usted mismo: "
 }
 
 
