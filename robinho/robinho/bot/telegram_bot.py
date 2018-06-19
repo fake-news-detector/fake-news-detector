@@ -7,6 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 def telegram_message(text_fn):
     return (lambda bot, update:
             bot.send_message(chat_id=update.message.chat_id,
+                             disable_web_page_preview=True,
                              text=text_fn(update.message.text)))
 
 
