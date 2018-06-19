@@ -1,11 +1,7 @@
 import os
-import logging
 import robinho.bot.messages.welcome as welcome
 import robinho.bot.messages.check_text as check_text
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 def telegram_message(text_fn):

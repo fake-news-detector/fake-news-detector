@@ -10,3 +10,5 @@ nltk
 python-telegram-bot
 psutil
 requests
+chatterbot
+python-Levenshtein

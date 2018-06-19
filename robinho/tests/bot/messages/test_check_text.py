@@ -1,6 +1,6 @@
 import unittest
 import robinho.model
-from robinho.bot.messages.check_text import respond
+from robinho.bot.messages.check_text import respond, is_valid_for_checking
 from unittest.mock import patch
 
 sample_hoax = """
@@ -17,6 +17,7 @@ class CheckTextTestCase(unittest.TestCase):
                                      'clickbait': 0.0
                                      }
         self.assertIn("anything wrong", respond(sample_hoax))
+        mock_predict.assert_called_with("", sample_hoax, "")
 
     @patch.object(robinho.model.Robinho, 'predict')
     def test_one_thing_wrong(self, mock_predict):
@@ -56,16 +57,10 @@ class CheckTextTestCase(unittest.TestCase):
         self.assertNotIn("Fake News", respond(sample_hoax))
 
     def test_validate_prevent_small_texts(self):
-        self.assertIn(
-            "I could not understand what you mean, if you want to check weather something is Fake News, please, paste a link or a text here",
-            respond("foo bar baz qux"))
+        self.assertEqual(False, is_valid_for_checking("foo bar baz qux"))
 
-    @patch.object(robinho.model.Robinho, 'predict')
-    def test_validate_allow_texts_and_predict_with_it(self, mock_predict):
-        mock_predict.return_value = {'fake_news': 0.0,
-                                     'extremely_biased': 0.0,
-                                     'clickbait': 0.0
-                                     }
-        respond(sample_hoax)
+    def test_validate_allow_texts(self):
+        self.assertEqual(True, is_valid_for_checking(sample_hoax))
 
-        mock_predict.assert_called_with("", sample_hoax, "")
+    def test_validate_allow_urls(self):
+        self.assertEqual(True, is_valid_for_checking("http://www.google.com"))
