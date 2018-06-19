@@ -9,7 +9,8 @@ words_en = {
     'EXTREMELY_BIASED': "Extremely Biased content",
     'COULD_NOT_UNDERSTAND': ("I could not understand what you mean, " +
                              "if you want to check weather something is Fake News, " +
-                             "please, paste a link or a text here")
+                             "please, paste a link or a text here"),
+    'AND_JOIN': r"\1 and"
 }
 
 words_pt = {
@@ -21,7 +22,8 @@ words_pt = {
     'EXTREMELY_BIASED': "conteúdo Extremamente Tendencioso",
     'COULD_NOT_UNDERSTAND': ("Eu não entendi o que você quis dizer, " +
                              "se você quer checar se algo é Fake News, " +
-                             "por favor, cole um link ou texto aqui")
+                             "por favor, cole um link ou texto aqui"),
+    'AND_JOIN': r"\1 e"
 }
 
 words_es = {
@@ -33,7 +35,8 @@ words_es = {
     'EXTREMELY_BIASED': "Extremadamente Tienencioso",
     'COULD_NOT_UNDERSTAND': ("No pude entender lo que quieres decir, " +
                              "si quieres verificar si algo es Fake News, " +
-                             "por favor, pega un enlace o un texto aquí")
+                             "por favor, pega un enlace o un texto aquí"),
+    'AND_JOIN': r"\1 y"
 }
 
 

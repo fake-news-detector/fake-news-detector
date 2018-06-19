@@ -43,7 +43,8 @@ def respond_text_prediction(language, predicted):
     if categories == []:
         response += i18n.translate(language, "NOTHING_WRONG")
     else:
-        response += re.sub(r'(.*)\,', r"\1 and", ", ".join(categories))
+        and_join = i18n.translate(language, "AND_JOIN")
+        response += re.sub(r'(.*)\,', and_join, ", ".join(categories))
         response = re.sub('^([a-z])', lambda x: x.groups()
                           [0].upper(), response)
 
