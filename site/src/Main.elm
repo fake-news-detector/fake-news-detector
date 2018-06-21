@@ -236,15 +236,29 @@ addExtensionButtons model =
         [ h1 Title [] (text <| translate model.language FakeNewsDetector)
         , row NoStyle
             [ spacing 10 ]
-            [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
+            [ link "https://t.me/RobinhoFakeBot" <|
+                row TelegramButton
+                    [ padding 6, maxHeight (px 48), spacing 6, verticalCenter ]
+                    [ image NoStyle
+                        [ height (px 40) ]
+                        { src = "static/logo-telegram.png"
+                        , caption = translate model.language AddToChrome
+                        }
+                    , column NoStyle
+                        [ spacing -6 ]
+                        [ el TelegramButtonAddTo [] (text "add Robinho to")
+                        , el TelegramButtonTelegram [] (text "Telegram")
+                        ]
+                    ]
+            , link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
                 image NoStyle
-                    [ height (px 48) ]
+                    [ maxHeight (px 48) ]
                     { src = "static/add-to-chrome.png"
                     , caption = translate model.language AddToChrome
                     }
             , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
                 image NoStyle
-                    [ height (px 48) ]
+                    [ maxHeight (px 48) ]
                     { src = "static/add-to-firefox.png"
                     , caption = translate model.language AddToFirefox
                     }

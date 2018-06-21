@@ -25,6 +25,9 @@ type Classes
     | TwitterButton
     | TwitterIcon
     | Card
+    | TelegramButton
+    | TelegramButtonAddTo
+    | TelegramButtonTelegram
 
 
 stylesheet : Style.StyleSheet Classes variation
@@ -118,5 +121,17 @@ stylesheet =
             , Border.all 1
             , Border.rounded 5
             , Color.border (rgb 229 229 229)
+            ]
+        , style TelegramButton
+            [ Border.all 1
+            , Border.rounded 3
+            , Color.text (rgb 120 120 120)
+            , Color.border (rgb 210 210 210)
+            ]
+        , style TelegramButtonAddTo
+            [ Font.size 10
+            ]
+        , style TelegramButtonTelegram
+            [ Font.size 16
             ]
         ]
