@@ -255,5 +255,4 @@ Se você ficou interessado mas tem dúvidas de como pode ajudar, me procure no t
 
 E siga o nosso perfil do twitter para notícias sobre Fake News e novidades do projeto:
 [@fndetector](https://twitter.com/fndetector).
-
 """
