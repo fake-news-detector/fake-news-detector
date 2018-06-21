@@ -169,22 +169,33 @@ explanation =
 
 ## O que é isso?
 
-O Detector de Fake News é uma extensão para o [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-e [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-que permite detectar e classificar direto do seu feed do Facebook as notícias
-como **Legítimas**, **Fake News**, **Click Bait**, **Extremamente Tendenciosa**, **Sátira** ou **Não é notícia**.
+O Detector de Fake News te permite detectar e denunciar **Fake News**, **Click Baits** e notícias
+**Extremamente Tendenciosas**, graças ao nosso robô, o [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
-Ao classificar uma notícia, outras pessoas que tem a extensão vão ver a sua sinalização,
+Há varias formas de usar o Detector de Fake News:
+
+- Instalando a extensão para o [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
+ou [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/) que checa as notícias direto do seu feed do Twitter e Facebook
+- Conversando diretamente com o Robinho [no Telegram](https://t.me/RobinhoFakeBot)
+- Copiando e colando o link ou texto no campo acima para checar
+
+## Como funciona?
+
+Ao classificar uma notícia, outras pessoas que usam o Detector de Fake News vão ver a sua sinalização,
 ficarão mais atentas e também poderão sinalizar. Essas informações são guardadas em um
-banco de dados e são lidas pelo nosso robô, o [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
+banco de dados e são lidas pelo Robinho.
 
 O Robinho se baseia na informação dada por nós humanos e vai aprendendo com o tempo a classificar
 automaticamente uma notícia como Fake News, Click Bait, etc, pelo seu texto. Com isso, mesmo novas
 notícias que ninguém nunca viu poderão ser rapidamente classificadas.
 
-A extensão então mostra nas notícias do seu facebook a avaliação do robô e das pessoas:
+A extensão então mostra nas notícias do seu facebook ou twitter a avaliação do robô e das pessoas:
 
 <img src="static/clickbait.png" width="471" alt="Extensão mostrando que uma notícia foi classificada como click bait no facebook" />
+
+Ou, se você perguntar pra ele no Telegram, ele te diz:
+
+<img src="static/telegram-hoax.png" width="471" alt="Conversa no Telegram mostrando um texto que foi classificado como fake news pelo Robinho" />
 
 Quanto mais você avalia as notícias, mais você contribui para a construção de uma base para
 ensinar e melhorar o Robinho, que ainda está bem no início do seu desenvolvimento, veja, ele ainda

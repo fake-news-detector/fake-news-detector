@@ -169,14 +169,20 @@ explanation =
 
 ## What is this?
 
-The Fake News Detector is an extension for [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-that allows you to detect and flag news directly from your Facebook into
-**Legitimate**, **Fake News**, **Click Bait**, **Extremely Biased**, **Satire** or **Not news**.
+The Fake News Detector allows you to detect and flag **Fake News**, **Click Baits** and
+**Extremely Biased** news, thanks to our robot, [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
-After flagging a newstory, other people that have the extension will be able to see your flagging,
-will pay more attention to it and may also flag. The data is then saved on a database and read by our robot,
-[Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
+There are several ways to use the Fake News Detector:
+
+- Install the extension for [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
+or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/), this checks the news directly from your Twitter and Facebook feeds
+- Talk directly with Robinho [on Telegram](https://t.me/RobinhoFakeBot)
+- Copy and paste the link or text on the field above to check
+
+## How it works?
+
+After flagging a newstory, other people that use the Fake News Detector will be able to see your flagging,
+will pay more attention to it and may also flag. The data is then saved on a database and read by Robinho.
 
 Robinho reads the information given by us humans and learn with time to automatically flag
 news as Fake News, Click Bait, etc, based on its text. By doing that, even fresh news that no

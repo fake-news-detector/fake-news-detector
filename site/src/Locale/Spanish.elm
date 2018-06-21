@@ -169,12 +169,19 @@ explanation =
 
 ## ¿Qué es esto?
 
-El Fake News Detector es una extensión para [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-y [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-que te permite detectar y señalar noticias directamente en tu Facebook como
-**Auténtico**, **Fake News**, **Click Bait**, **Extremadamente Sesgado**, **Sátira** o **No es noticia**.
+El Fake News Detector te permite detectar y señalar **Fake News**, **Click Baits** e noticias
+**Extremadamente Sesgadas**, gracias a nuestro robot, el [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
-Al clasificar una noticia, otras personas que tienen la extensión van a ver tu clasificación,
+Hay varias formas de usar el Fake News Detector:
+
+- Instala la extensión para [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
+o [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/), esto verifica las noticias desde su feed de Twitter y Facebook
+- Habla directamente con Robinho [en Telegram](https://t.me/RobinhoFakeBot)
+- Copia y pega el enlace o texto en el campo arriba para verificar
+
+## ¿Cómo funciona?
+
+Al clasificar una noticia, otras personas que usan el Fake News Detector van a ver tu clasificación,
 quedarán más atentas y también podrán clasificar. Esta información se guarda en una base de datos,
 y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/fake-news-detector/tree/master/robinho).
 
