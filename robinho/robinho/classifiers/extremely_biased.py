@@ -49,6 +49,6 @@ class ExtremelyBiased(BaseClassifier):
                 },
             )),
             ('sampling', RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED)),
-            ('clf', SGDClassifier(max_iter=1000, loss='log',
+            ('clf', SGDClassifier(max_iter=1000, loss='log', tol=1e-3,
                                   random_state=BaseClassifier.RANDOM_SEED))
         ])

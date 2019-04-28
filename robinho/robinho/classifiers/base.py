@@ -27,7 +27,7 @@ class BaseClassifier():
     def undersample_data(self, X, y):
         columns = X.columns.values.tolist()
 
-        X, y = RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED, ratio='all').fit_sample(
+        X, y = RandomUnderSampler(random_state=BaseClassifier.RANDOM_SEED, sampling_strategy='all').fit_sample(
             X.values.tolist(), y.values.tolist())
         X = pd.DataFrame(X, columns=columns)
 

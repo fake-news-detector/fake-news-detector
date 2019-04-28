@@ -11,5 +11,8 @@ python-telegram-bot
 psutil
 requests
 chatterbot
+chatterbot_corpus
+PyYAML==3.13
 python-Levenshtein
 langdetect
+python-dateutil==2.7
