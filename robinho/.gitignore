@@ -5,4 +5,5 @@ output/*
 !output/.gitkeep
 notebooks/*_data*
 .env
-db.sqlite3
+db.sqlite3*
+sentence_tokenizer.pickle
