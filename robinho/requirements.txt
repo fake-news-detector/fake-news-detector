@@ -10,7 +10,7 @@ nltk
 python-telegram-bot
 psutil
 requests
-chatterbot
+chatterbot==1.0.5
 chatterbot_corpus
 PyYAML==3.13
 python-Levenshtein

@@ -1,6 +1,6 @@
 import robinho.bot.i18n as i18n
 from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer
+from chatterbot.trainers import ChatterBotCorpusTrainer, ListTrainer
 
 chatbot = ChatBot(
     'Robinho',
@@ -8,11 +8,14 @@ chatbot = ChatBot(
     trainer='chatterbot.trainers.ChatterBotCorpusTrainer'
 )
 
+corpus_trainer = ChatterBotCorpusTrainer(chatbot)
+list_trainer = ListTrainer(chatbot)
+
 
 def train():
-    chatbot.train("chatterbot.corpus.english")
-    chatbot.train("chatterbot.corpus.spanish")
-    chatbot.train("chatterbot.corpus.portuguese")
+    corpus_trainer.train("chatterbot.corpus.english")
+    corpus_trainer.train("chatterbot.corpus.spanish")
+    corpus_trainer.train("chatterbot.corpus.portuguese")
 
     # en
     questions = ["help", "what do you do", "how does this work",
@@ -37,9 +40,8 @@ def train():
 
 
 def train_multiple_questions(questions, response):
-    chatbot.set_trainer(ListTrainer)
     for question in questions:
-        chatbot.train([
+        list_trainer.train([
             question,
             response
         ])
