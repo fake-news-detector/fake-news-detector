@@ -2,14 +2,17 @@ import pandas as pd
 import pickle
 from imblearn.under_sampling import RandomUnderSampler
 from robinho.utils import current_ram
+from whatthelang import WhatTheLang
 
 loaded_models = {}
+loaded_df = None
 
 
 class BaseClassifier():
     RANDOM_SEED = 123
 
     def __init__(self):
+        global loaded_models
         filepath = 'output/' + self.name + '.pkl'
         try:
             if filepath not in loaded_models:
@@ -51,23 +54,39 @@ class BaseClassifier():
                 'youtube.com|youtu.be|twitter.com|vimeo.com|facebook.com') == False)  # NOQA
 
     def load_links(self):
-        try:
-            df = pd.read_csv("train_data/links.csv")
-        except FileNotFoundError:
-            print("Downloading links data...")
-            df = pd.read_json(
-                "https://api.fakenewsdetector.org/links/all")
-            df.to_csv("train_data/links.csv")
+        global loaded_df
+        if loaded_df is not None:
+            df = loaded_df
+        else:
+            try:
+                df = pd.read_csv("train_data/links.csv")
+            except FileNotFoundError:
+                print("Downloading links data...")
+                df = pd.read_json(
+                    "https://api.fakenewsdetector.org/links/all")
+                df.to_csv("train_data/links.csv")
 
-        df.dropna(subset=["title", "content"], inplace=True, how="all")
-        df["category_id"] = df['verified_category_id'].fillna(
-            df['category_id'])
+            df.dropna(subset=["title", "content"], inplace=True, how="all")
+            df["category_id"] = df['verified_category_id'].fillna(
+                df['category_id'])
 
-        df["clickbait_title"] = df['verified_clickbait_title'].fillna(
-            df['clickbait_title'])
+            df["clickbait_title"] = df['verified_clickbait_title'].fillna(
+                df['clickbait_title'])
 
-        df = df.fillna('')
+            df = df.fillna('')
+
+            # Limiting
+            df = df[0:5000]
+            df["title_content"] = self.join_text_and_content(df)
+            print("Detecting language and limiting links...")
+            wtl = WhatTheLang()
+            df["lang"] = [wtl.predict_lang(text[0:50]) for text in df["title_content"]]
+            df = df[df["lang"] == 'en'][0:500].append(df[df["lang"] == 'es'][0:500]).append(df[df["lang"] == 'pt'][0:500])
+            print(df[["title", "lang"]].groupby(['lang']).agg(['count']).T)
+
+        loaded_df = df
         df = df.loc[self.filter]
+        df = df.copy()
 
         return df
 

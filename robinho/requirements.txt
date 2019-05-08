@@ -16,3 +16,6 @@ PyYAML==3.13
 python-Levenshtein
 langdetect
 python-dateutil==2.7
+unidecode
+Cython
+whatthelang

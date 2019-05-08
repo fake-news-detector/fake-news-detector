@@ -3,6 +3,7 @@ from robinho.classifiers.base import BaseClassifier
 from robinho.marisa_vectorizers import MarisaTfidfVectorizer
 from nltk.corpus import stopwords
 import pandas as pd
+import unidecode
 
 AMOUNT_OF_KEYWORDS = 8
 
@@ -12,7 +13,6 @@ class Keywords(BaseClassifier):
 
     def features(self):
         df = self.load_links()
-        df["title_content"] = self.join_text_and_content(df)
 
         return df["title_content"].values.tolist()
 
@@ -25,9 +25,11 @@ class Keywords(BaseClassifier):
         self.save_model(clf)
 
     def classifier(self):
-        all_stopwords = stopwords.words('english') + \
+        all_stopwords = list(map(unidecode.unidecode,
+            stopwords.words('english') + \
             stopwords.words('portuguese') + \
             stopwords.words('spanish')
+        ))
 
         return MarisaTfidfVectorizer(
             strip_accents='ascii',
