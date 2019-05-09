@@ -1,8 +1,8 @@
 FROM python:3.6-alpine
 
 RUN apk add --no-cache --virtual .build-deps gcc musl-dev \
-    && pip install cython \
-    && apk del .build-deps
+  && pip install cython \
+  && apk del .build-deps
 
 RUN apk --no-cache add musl-dev linux-headers g++
 
