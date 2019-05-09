@@ -1,14 +1,6 @@
-FROM python:3.6-alpine
+FROM python:3.7
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev \
-  && pip install cython \
-  && apk del .build-deps
-
-RUN apk --no-cache add musl-dev linux-headers g++
-RUN apk --no-cache --update-cache add gcc gfortran python python-dev py-pip build-base wget freetype-dev libpng-dev openblas-dev
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
-
-RUN pip install numpy
+RUN pip3 install --no-cache-dir Cython
 
 WORKDIR /app
 
