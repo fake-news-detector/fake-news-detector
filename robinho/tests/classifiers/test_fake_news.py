@@ -11,9 +11,9 @@ class FakeNewsTestCase(unittest.TestCase):
         accuracy, f1, positive_recall = test_scores_snapshot(
             self, "FakeNews", model)
 
-        self.assertGreater(accuracy, 0.82)
-        self.assertGreater(f1, 0.82)
-        self.assertGreater(positive_recall, 0.84)
+        self.assertGreater(accuracy, 0.6)
+        self.assertGreater(f1, 0.6)
+        self.assertGreater(positive_recall, 0.7)
 
     def test_make_predictions(self):
         title = "Novela apresentará Beijo gay infantil"

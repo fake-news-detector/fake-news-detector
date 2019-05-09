@@ -26,7 +26,7 @@ class KeywordsTestCase(unittest.TestCase):
         keywords = model.find_keywords(title, content, url)
 
         self.assertIn('elite', keywords)
-        self.assertIn('fight', keywords)
+        self.assertIn('combat', keywords)
 
     def test_find_keywords_spanish_text(self):
         title = "Minuto a minuto de los Juegos Olímpicos de Invierno"
@@ -44,7 +44,7 @@ class KeywordsTestCase(unittest.TestCase):
         keywords = model.find_keywords(title, content, url)
 
         self.assertIn('minuto', keywords)
-        self.assertIn('diplomacia', keywords)
+        self.assertIn('ceremonia', keywords)
 
     def test_returns_empty_for_small_texts(self):
         keywords = model.find_keywords("hello there", "", "http://example.com")

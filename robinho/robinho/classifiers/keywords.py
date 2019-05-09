@@ -26,16 +26,16 @@ class Keywords(BaseClassifier):
 
     def classifier(self):
         all_stopwords = list(map(unidecode.unidecode,
-            stopwords.words('english') + \
-            stopwords.words('portuguese') + \
-            stopwords.words('spanish')
-        ))
+                                 stopwords.words('english') +
+                                 stopwords.words('portuguese') +
+                                 stopwords.words('spanish')
+                                 ))
 
         return MarisaTfidfVectorizer(
             strip_accents='ascii',
             ngram_range=(1, 3),
             max_df=0.1,
-            min_df=5,
+            min_df=2,
             use_idf=True,
             lowercase=True,
             stop_words=all_stopwords)
