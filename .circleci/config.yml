@@ -171,7 +171,7 @@ jobs:
       - run:
           name: check for changes
           command: |
-            if [ ! -e .project-metadata/.robinho-changed ]; then
+            if [ -z "$FORCE_DEPLOY" ] && [ ! -e .project-metadata/.robinho-changed ]; then
               echo "robinho has not changed, skipping build"
               circleci step halt
             fi
@@ -232,7 +232,7 @@ jobs:
           name: install-dependencies
           command: npm install
       - save_cache:
-          key: npm-dependenciest-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
+          key: npm-dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
           paths:
           - node_modules
       - restore_cache:

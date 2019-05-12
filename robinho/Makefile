@@ -13,7 +13,7 @@ run:
 	docker run -p 8888:8888 -it --rm fakenewsdetector/robinho
 
 redeploy:
-	curl -X POST https://circleci.com/api/v1/project/fake-news-detector/fake-news-detector/tree/master?circle-token=$$CIRCLE_CI_TOKEN
+	curl -X POST -d build_parameters[CIRCLE_JOB]=robinho -d build_parameters[FORCE_DEPLOY]=true https://circleci.com/api/v1.1/project/github/fake-news-detector/fake-news-detector/tree/master?circle-token=$$CIRCLE_CI_TOKEN
 
 retrain:
 	mv train_data/links.csv train_data/links.copy.csv; python3 . --retrain; mv train_data/links.copy.csv train_data/links.csv

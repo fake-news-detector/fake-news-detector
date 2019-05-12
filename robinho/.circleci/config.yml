@@ -9,7 +9,7 @@ robinho:
     - run:
         name: check for changes
         command: |
-          if [ ! -e .project-metadata/.robinho-changed ]; then
+          if [ -z "$FORCE_DEPLOY" ] && [ ! -e .project-metadata/.robinho-changed ]; then
             echo "robinho has not changed, skipping build"
             circleci step halt
           fi
