@@ -25,7 +25,7 @@ class ModelTestCase(unittest.TestCase):
 
         predictions = robinho.predict(title, content, url)
 
-        self.assertGreater(predictions['extremely_biased'], 0.5)
+        self.assertGreater(predictions['extremely_biased'], 0.4)
 
     def test_find_keywords(self):
         title = "Em entrevista exclusiva, psicóloga afirma que existe um movimento para “naturalizar a pedofilia”"

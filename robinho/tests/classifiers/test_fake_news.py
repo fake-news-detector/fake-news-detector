@@ -13,7 +13,7 @@ class FakeNewsTestCase(unittest.TestCase):
 
         self.assertGreater(accuracy, 0.6)
         self.assertGreater(f1, 0.6)
-        self.assertGreater(positive_recall, 0.7)
+        self.assertGreater(positive_recall, 0.5)
 
     def test_make_predictions(self):
         title = "Novela apresentará Beijo gay infantil"
