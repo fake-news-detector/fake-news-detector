@@ -65,17 +65,13 @@ mod tests {
 
     #[test]
     fn it_extracts_text_and_title_from_url() {
-        let response = extract_text("https://goo.gl/d9WM3W").unwrap();
+        let response = extract_text("https://www.folhaimpacto.com.br/noticia/2552/urgente-crivella-mandou-20-homens-armados-recolher-livros-de-felipe-neto").unwrap();
 
         println!("Found text: {}", response.text);
-        assert!(response.text.contains(
-            "Em setembro, a imagem de uma menina tocando o pé do artista Wagner Schwartz",
-        ));
+        assert!(response.text.contains("Neste momento a tropa do Crivella"));
 
         println!("Found title: {}", response.title);
-        assert!(response.title.contains(
-            "Globo defende exposições do “MAM” e “Queermuseu”, ofende brasileiros e revolta a internet",
-        ));
+        assert!(response.title.contains("Crivella mandou 20 homens"));
     }
 
     #[test]
@@ -87,15 +83,15 @@ mod tests {
 
     #[test]
     fn it_extracts_text_from_facebook_posts() {
-        let url = "https://www.facebook.com/VerdadeSemManipulacao/videos/479313152193503/";
+        let url = "https://www.facebook.com/verdadesemmanipulacao/videos/687409251687311/";
         let response = extract_text(url).unwrap();
 
         println!("Found text: {}", response.text);
         assert!(response.text.contains(
-            "Feliciano,admite que estaria com um grupo, blindando e salvando a pele de Eduardo Cunha",
+            "O Papa Francisco mandou uma mensagem para a população mundial, pedindo justiça e imparcialidade",
         ));
 
         println!("Found title: {}", response.title);
-        assert!(response.title.contains("Um escândalo sem precedentes."));
+        assert!(response.title.contains("Papa envia mensagem a juízes"));
     }
 }
