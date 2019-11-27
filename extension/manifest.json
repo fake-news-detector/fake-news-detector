@@ -3,7 +3,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
-  "version": "0.30",
+  "version": "0.31",
   "homepage_url": "https://fakenewsdetector.org/",
   "icons": {
     "48": "icons/trump-48.png",
