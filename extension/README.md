@@ -13,4 +13,3 @@ If you are not a programmer, no worries, all help is welcome, check out [the iss
 # Credits
 
 The extension icon was created by Leif Michelsen, for The Noun Project.
-
