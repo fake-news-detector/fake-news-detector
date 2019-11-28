@@ -131,7 +131,7 @@ jobs:
               circleci step halt
             fi
       - restore_cache:
-          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
+          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm.json" }}
       - run:
           name: install-dependencies
           command: npm install
@@ -142,7 +142,7 @@ jobs:
           name: build
           command: npm run build
       - save_cache:
-          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm-package.json" }}-{{ checksum "test/elm-package.json" }}
+          key: dependencies-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}-{{ checksum "elm.json" }}
           paths:
             - node_modules
             - elm-stuff
