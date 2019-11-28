@@ -75,7 +75,7 @@ toEmoji category =
             "🙉"
 
         Satire ->
-            "\x1F921"
+            "\u{1F921}"
 
         NotNews ->
             "🏳️"

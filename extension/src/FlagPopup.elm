@@ -1,5 +1,7 @@
 port module FlagPopup exposing (..)
 
+import Browser
+import Browser.Events exposing (onKeyDown)
 import Data.Category as Category exposing (Category(..))
 import Data.Votes as Votes exposing (YesNoIdk(..))
 import Element exposing (..)
@@ -10,7 +12,7 @@ import Helpers exposing (humanizeError, onClickStopPropagation)
 import Html exposing (Html)
 import Html.Attributes
 import Http
-import Keyboard
+import Json.Decode
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
 import Locale.Words as Words exposing (LocaleKey)
@@ -60,7 +62,7 @@ type Msg
     | SelectClickbaitTitle YesNoIdk
     | SubmitFlag
     | SubmitResponse (WebData ())
-    | KeyboardDown Keyboard.KeyCode
+    | KeyboardDown String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,15 +88,13 @@ update msg model =
             case ( model.selectedCategory, model.selectedClickbaitTitle ) of
                 ( Just selectedCategory, Just selectedClickbaitTitle ) ->
                     ( { model | submitResponse = RemoteData.Loading }
-                    , Votes.postVote
+                    , Votes.postVote SubmitResponse
                         { uuid = model.uuid
                         , url = model.url
                         , title = model.title
                         , category = selectedCategory
                         , clickbaitTitle = selectedClickbaitTitle
                         }
-                        |> RemoteData.sendRequest
-                        |> Cmd.map SubmitResponse
                     )
 
                 _ ->
@@ -117,13 +117,14 @@ update msg model =
                             |> Maybe.withDefault 0
                     }
                 )
+
             else
                 ( { model | submitResponse = response }, Cmd.none )
 
         KeyboardDown code ->
-            -- 27 is the escape keycode
-            if code == 27 then
+            if code == "Escape" then
                 update ClosePopup model
+
             else
                 ( model, Cmd.none )
 
@@ -134,7 +135,7 @@ type alias Flags =
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
+    Browser.element
         { init = init
         , view = view
         , update = update
@@ -146,15 +147,19 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ openFlagPopup OpenPopup
-        , Keyboard.downs KeyboardDown
+        , onKeyDown (Json.Decode.map KeyboardDown keyDecoder)
         ]
+
+
+keyDecoder : Json.Decode.Decoder String
+keyDecoder =
+    Json.Decode.field "key" Json.Decode.string
 
 
 view : Model -> Html Msg
 view model =
     Html.div
-        [ Html.Attributes.style
-            [ ( "float", "right" ) ]
+        [ Html.Attributes.style "float" "right"
         ]
         [ Element.layout stylesheet (popup model)
         ]
@@ -165,6 +170,7 @@ popup model =
     when model.isOpen
         (if model.isExtensionPopup then
             modalContents model
+
          else
             row NoStyle
                 []
@@ -268,6 +274,7 @@ flagForm model =
                     [ padding 5, onClickStopPropagation SubmitFlag ]
                     (if isLoading model.submitResponse then
                         text <| translate Words.Loading
+
                      else
                         text <| translate Words.FlagSubmitButton
                     )

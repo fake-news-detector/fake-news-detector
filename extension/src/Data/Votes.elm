@@ -1,11 +1,13 @@
 module Data.Votes exposing (..)
 
 import Data.Category as Category exposing (..)
-import Http exposing (encodeUri)
-import Json.Decode exposing (Decoder, bool, float, int, list, nullable)
-import Json.Decode.Pipeline exposing (decode, required)
+import Http
+import Json.Decode exposing (Decoder, bool, float, int, list, nullable, succeed)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode
 import Locale.Words as Words
+import RemoteData exposing (WebData)
+import Url exposing (percentEncode)
 
 
 type alias PeopleVotes =
@@ -72,39 +74,42 @@ decodeVotesResponse =
             required "category_id" (Json.Decode.map Category.fromId int)
 
         decodeDomainCategory =
-            decode VerifiedVote
+            succeed VerifiedVote
                 |> decodeCategory
 
         decodeRobotPredictions =
-            decode RobotPredictions
+            succeed RobotPredictions
                 |> required "fake_news" float
                 |> required "extremely_biased" float
                 |> required "clickbait" float
 
         decodeContentPeopleVote =
-            decode PeopleContentVote
+            succeed PeopleContentVote
                 |> decodeCategory
                 |> required "count" int
 
         decodePeopleTitleVotes =
-            decode PeopleTitleVotes
+            succeed PeopleTitleVotes
                 |> required "clickbait" bool
                 |> required "count" int
 
         decodePeopleVotes =
-            decode PeopleVotes
+            succeed PeopleVotes
                 |> required "content" (list decodeContentPeopleVote)
                 |> required "title" decodePeopleTitleVotes
     in
-    decode VotesResponse
+    succeed VotesResponse
         |> required "domain" (nullable decodeDomainCategory)
         |> required "robot" decodeRobotPredictions
         |> required "people" decodePeopleVotes
 
 
-getVotes : String -> String -> Http.Request VotesResponse
-getVotes url title =
-    Http.get ("https://api.fakenewsdetector.org/votes?url=" ++ encodeUri url ++ "&title=" ++ encodeUri title) decodeVotesResponse
+getVotes : (WebData VotesResponse -> msg) -> String -> String -> Cmd msg
+getVotes msg url title =
+    Http.get
+        { url = "https://api.fakenewsdetector.org/votes?url=" ++ percentEncode url ++ "&title=" ++ percentEncode title
+        , expect = Http.expectJson (RemoteData.fromResult >> msg) decodeVotesResponse
+        }
 
 
 encodeNewVote : NewVote -> Json.Encode.Value
@@ -118,11 +123,13 @@ encodeNewVote { uuid, url, title, category, clickbaitTitle } =
         ]
 
 
-postVote : NewVote -> Http.Request ()
-postVote newVote =
-    Http.post "https://api.fakenewsdetector.org/vote"
-        (Http.jsonBody (encodeNewVote newVote))
-        (Json.Decode.succeed ())
+postVote : (WebData () -> msg) -> NewVote -> Cmd msg
+postVote msg newVote =
+    Http.post
+        { url = "https://api.fakenewsdetector.org/vote"
+        , body = Http.jsonBody (encodeNewVote newVote)
+        , expect = Http.expectWhatever (RemoteData.fromResult >> msg)
+        }
 
 
 chanceToText : number -> Words.LocaleKey
@@ -133,8 +140,10 @@ chanceToText chance =
     in
     if rebalancedChance >= 66 then
         Words.AlmostCertain
+
     else if rebalancedChance >= 33 then
         Words.LooksALotLike
+
     else
         Words.LooksLike
 
@@ -156,6 +165,7 @@ joinClickbaitCategory peopleVotes =
         allCategories =
             if peopleVotes.title.clickbait then
                 peopleVotes.content ++ [ { category = Clickbait, count = peopleVotes.title.count } ]
+
             else
                 peopleVotes.content
     in

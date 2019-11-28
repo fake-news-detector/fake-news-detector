@@ -10,26 +10,24 @@ import Locale.Words as Words exposing (LocaleKey)
 
 
 onClickStopPropagation : msg -> Element.Attribute variation msg
-onClickStopPropagation msg =
-    onWithOptions "click"
-        { defaultOptions | stopPropagation = True, preventDefault = True }
-        (Json.Decode.succeed msg)
+onClickStopPropagation message =
+    Element.Events.custom "click" (Json.Decode.succeed { message = message, stopPropagation = True, preventDefault = True })
 
 
 humanizeError : Language -> Http.Error -> String
 humanizeError language error =
     case error of
-        BadStatus data ->
-            data.body
-
         Timeout ->
             Locale.translate language Words.TimeoutError
 
         NetworkError ->
             Locale.translate language Words.NetworkError
 
-        BadPayload _ data ->
-            data.body
+        BadBody err ->
+            "BadBody " ++ err
 
-        BadUrl error ->
-            error
+        BadUrl err ->
+            "BadUrl " ++ err
+
+        BadStatus code ->
+            "BadStatus " ++ String.fromInt code

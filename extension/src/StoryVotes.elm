@@ -1,5 +1,6 @@
 port module StoryVotes exposing (..)
 
+import Browser
 import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (VerifiedVote, VotesResponse)
 import Element exposing (..)
@@ -37,7 +38,7 @@ port addVote : ({ categoryId : Int } -> msg) -> Sub msg
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
+    Browser.element
         { init = init
         , view = view
         , update = update
@@ -53,9 +54,7 @@ init flags =
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
       }
-    , Votes.getVotes flags.url flags.title
-        |> RemoteData.sendRequest
-        |> Cmd.map VotesResponse
+    , Votes.getVotes VotesResponse flags.url flags.title
     )
 
 
@@ -86,6 +85,7 @@ update msg model =
                         Success votes ->
                             if List.Extra.find isCategory votes.people.content == Nothing then
                                 { category = category, count = 1 } :: votes.people.content
+
                             else
                                 List.Extra.updateIf isCategory
                                     (\voteCount -> { voteCount | count = voteCount.count + 1 })
@@ -120,16 +120,15 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Html.div
-        [ Html.Attributes.style
-            (if model.isExtensionPopup then
-                [ ( "float", "right" ) ]
-             else
-                [ ( "position", "absolute" )
-                , ( "right", "0" )
-                , ( "z-index", "1" )
-                ]
-            )
-        ]
+        (if model.isExtensionPopup then
+            [ Html.Attributes.style "float" "right" ]
+
+         else
+            [ Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "right" "0"
+            , Html.Attributes.style "z-index" "1"
+            ]
+        )
         [ Element.layout stylesheet (flagButtonAndVotes model)
         ]
 
@@ -165,6 +164,7 @@ flagButtonAndVotes model =
                 _ ->
                     empty
             ]
+
     else
         el General [ padding 5 ] (text <| translate Words.InvalidUrlError ++ model.url)
 
@@ -183,10 +183,10 @@ viewVotes model votes =
             Votes.joinClickbaitCategory votes.people
 
         viewRobotVote ( chanceText, category ) =
-            viewVote model "\x1F916" (Locale.translate model.language chanceText) category ""
+            viewVote model "\u{1F916}" (Locale.translate model.language chanceText) category ""
 
         viewPeopleVote vote =
-            viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
+            viewVote model (Category.toEmoji vote.category) (String.fromInt vote.count) vote.category ""
 
         robotPredictions =
             Votes.predictionsToText votes.robot

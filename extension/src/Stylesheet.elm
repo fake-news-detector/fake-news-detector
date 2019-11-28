@@ -1,7 +1,6 @@
 module Stylesheet exposing (..)
 
-import Color exposing (..)
-import Style exposing (..)
+import Style exposing (hover, pseudo, rgba, style, styleSheet)
 import Style.Border as Border
 import Style.Color as Color
 import Style.Font as Font
@@ -20,6 +19,22 @@ type Classes
     | CloseButton
     | VoteEmoji
     | ErrorMessage
+
+
+rgb a b c =
+    Style.rgb (a / 255) (b / 255) (c / 255)
+
+
+white =
+    rgb 255 255 255
+
+
+darkGrey =
+    rgb 186 189 182
+
+
+grey =
+    rgb 211 215 207
 
 
 stylesheet : Style.StyleSheet Classes variation

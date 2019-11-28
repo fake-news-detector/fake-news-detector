@@ -1,5 +1,5 @@
-import { StoryVotes } from "./StoryVotes.elm";
-import { FlagPopup } from "./FlagPopup.elm";
+import StoryVotes from "./StoryVotes.elm";
+import FlagPopup from "./FlagPopup.elm";
 import facebookInjector from "./injectors/facebook";
 import twitterInjector from "./injectors/twitter";
 import {
@@ -13,7 +13,16 @@ localStorage.setItem("uuid", uuid);
 
 const languages = navigator.languages || ["en"];
 
-const popup = FlagPopup.fullscreen({ uuid, isExtensionPopup, languages });
+const popupDiv = document.createElement("div");
+document.body.appendChild(popupDiv);
+const popup = FlagPopup.Elm.FlagPopup.init({
+  node: popupDiv,
+  flags: {
+    uuid,
+    isExtensionPopup,
+    languages
+  }
+});
 
 let storyVotes = {};
 const onInject = ({ elem, url, title }) => {
@@ -24,11 +33,14 @@ const onInject = ({ elem, url, title }) => {
   newNode.style.position = "relative";
   elem.insertBefore(newNode, elem.firstChild);
 
-  const storyVoting = StoryVotes.embed(newNode, {
-    url,
-    title,
-    isExtensionPopup,
-    languages
+  const storyVoting = StoryVotes.Elm.StoryVotes.init({
+    node: newNode,
+    flags: {
+      url,
+      title,
+      isExtensionPopup,
+      languages
+    }
   });
   storyVoting.ports.openFlagPopup.subscribe(popup.ports.openFlagPopup.send);
   storyVotes[url] = storyVoting;

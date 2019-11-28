@@ -1,9 +1,8 @@
-module Locale.Locale
-    exposing
-        ( fromCodeArray
-        , toCodeArray
-        , translate
-        )
+module Locale.Locale exposing
+    ( fromCodeArray
+    , toCodeArray
+    , translate
+    )
 
 import Locale.English as English
 import Locale.Languages exposing (Language(..))
@@ -54,6 +53,7 @@ extractPreferredLanguage codes =
     in
     if List.member "pt" convertedCodes then
         Portuguese
+
     else
         case List.head convertedCodes of
             Just "es" ->
