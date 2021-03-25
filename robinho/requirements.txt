@@ -12,7 +12,7 @@ psutil
 requests
 chatterbot==1.0.5
 chatterbot_corpus
-PyYAML==3.13
+PyYAML==5.4
 python-Levenshtein
 langdetect
 python-dateutil==2.7
